@@ -1,0 +1,26 @@
+---
+title: "Winner's Curse Adjustment Methods for GWAS summary statistics"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Winner's Curse Adjustment Methods for GWAS summary statistics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(winnerscurse)
+```
+
+
+I need to start with a section on creating a dataset, and then illustrate how a user would perform each of the methods on that dataset. First, small introduction to the problem etc., then discuss the creation of a toy simulated dataset which is appropriate for use for each of my functions: 
+
+1. conditional likelihood methods described in Ghosh et al. (2008)
+2. empirical bayes method described in Ferguson et al. (2013) - haven't implemented the combination approach suggested in this paper yet
+3. FDR Inverse Quantile transformation method of Bigdeli et al. (2016) 

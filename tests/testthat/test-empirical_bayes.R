@@ -4,7 +4,7 @@ context("empirical bayes")
 
 
 
-test_that("testing example",
+test_that("testing if empirical bayes is giving appropriate output",
 
           {
             N <- 10^5

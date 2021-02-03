@@ -7,12 +7,12 @@
 conditional_likelihood(summary_data, alpha)
 }
 \arguments{
-\item{summary_data}{Data frame containing summary data of only significant SNPs, three columns: rsid, beta, se}
+\item{summary_data}{Data frame containing summary data, three columns: rsid, beta, se}
 
 \item{alpha}{significance threshold used in discovery GWAS}
 }
 \value{
-Data frame with summary data together with three corrected estimates
+Data frame with summary data of only significant SNPs together with three corrected estimates
 }
 \description{
 Conditional likelihood methods to correct for Winner’s Curse - Ghosh et al. (2008)
