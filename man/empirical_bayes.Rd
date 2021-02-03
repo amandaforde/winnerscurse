@@ -10,7 +10,7 @@ empirical_bayes(summary_data)
 \item{summary_data}{Data frame containing summary data, three columns: rsid, beta, se}
 }
 \value{
-Data frame with summary data together with adjusted estimates but (1) for now
+Data frame with summary data together with adjusted estimates
 }
 \description{
 Empirical Bayes correction method for Winner's Curse - simplest implementation - Ferguson et al. (2013)

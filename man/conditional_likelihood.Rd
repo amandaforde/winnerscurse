@@ -7,7 +7,7 @@
 conditional_likelihood(summary_data, alpha)
 }
 \arguments{
-\item{summary_data}{Data frame containing summary data, three columns: rsid, beta, se}
+\item{summary_data}{Data frame containing summary data of only significant SNPs, three columns: rsid, beta, se}
 
 \item{alpha}{significance threshold used in discovery GWAS}
 }
