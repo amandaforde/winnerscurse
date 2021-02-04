@@ -2,16 +2,19 @@
 #'
 #' @param summary_data Data frame containing summary data, three columns: rsid, beta, se
 #' @param alpha significance threshold used in discovery GWAS
+#' @param sig select true to only return data frame with significant SNPs and corrected estimates
 #'
 #' @return Data frame with summary data of only significant SNPs together with three corrected estimates
 #' @export
 #'
 #'
 #'
-conditional_likelihood <- function(summary_data, alpha)
+conditional_likelihood <- function(summary_data, alpha, sig = FALSE)
 
 {
   summary_data_sig <- summary_data[(2*(1-stats::pnorm(abs(summary_data$beta/summary_data$se))))<alpha,]
+  summary_data_notsig <- summary_data[(2*(1-stats::pnorm(abs(summary_data$beta/summary_data$se))))>=alpha,]
+
   z <- summary_data_sig$beta/summary_data_sig$se
   c <- stats::qnorm(1-(alpha)/2)
 
@@ -28,9 +31,20 @@ conditional_likelihood <- function(summary_data, alpha)
     beta.cl3[i] <- (beta.cl1[i]+beta.cl2[i])/2
   }
 
-  summary_data_sig <- cbind(summary_data_sig,beta.cl1,beta.cl2,beta.cl3)
+  if (sig == TRUE) {
+    summary_data_sig <- cbind(summary_data_sig,beta.cl1,beta.cl2,beta.cl3)
+    summary_data_sig <- dplyr::arrange(summary_data_sig,dplyr::desc(abs(summary_data_sig$beta/summary_data_sig$se)))
+    return(summary_data_sig)
+  }
 
-  return(summary_data_sig)
 
+  else {
+    summary_data_sig <- cbind(summary_data_sig,beta.cl1,beta.cl2,beta.cl3)
+    beta.cl_notsig <- data.frame(beta.cl1 = summary_data_notsig$beta, beta.cl2 = summary_data_notsig$beta, beta.cl3 = summary_data_notsig$beta)
+    summary_data_notsig <- cbind(summary_data_notsig,beta.cl_notsig)
+    summary_data <- rbind(summary_data_sig,summary_data_notsig)
+    summary_data <- dplyr::arrange(summary_data,dplyr::desc(abs(summary_data$beta/summary_data$se)))
+    return(summary_data)
+  }
 
 }

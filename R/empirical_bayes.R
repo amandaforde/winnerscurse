@@ -43,6 +43,8 @@ empirical_bayes <- function(summary_data)
   beta_EB <- z_hat*summary_data$se
   summary_data <- cbind(summary_data,beta_EB)
 
+  summary_data <- dplyr::arrange(summary_data,dplyr::desc(abs(summary_data$beta/summary_data$se)))
+
   return(summary_data)
 
 }

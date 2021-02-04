@@ -21,6 +21,8 @@ FDR_IQT <- function(summary_data, min_pval=10^-15)
   beta_FIQT <- sign(summary_data$beta)*adj_z*summary_data$se
   summary_data <- cbind(summary_data,beta_FIQT)
 
+  summary_data <- dplyr::arrange(summary_data,dplyr::desc(abs(summary_data$beta/summary_data$se)))
+
   return(summary_data)
 
 }
