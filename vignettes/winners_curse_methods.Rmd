@@ -24,3 +24,72 @@ I need to start with a section on creating a dataset, and then illustrate how a 
 1. conditional likelihood methods described in Ghosh et al. (2008)
 2. empirical bayes method described in Ferguson et al. (2013) - haven't implemented the combination approach suggested in this paper yet
 3. FDR Inverse Quantile transformation method of Bigdeli et al. (2016) 
+
+
+
+## Part 1: creating the toy dataset - description
+
+- generating summary statistics for 1 million SNPs in which there exists a polygenic background of 10,000 SNPs and all others have no effects
+- by specifying the total number of SNPs, the number of SNPs truly associated with the trait, the number of samples, the various minor allele frequencies and finally, the variance explained in the trait by all SNPs, we can obtain quite realistic summary statistics as shown below.
+- it is worth noting that we have arranged the data here in a suitable way for each method - in the form of a data frame with columns `rsid`, `beta` and `se`. 
+
+```{r}
+#n_snps <- 10^6
+#effect_snps <- 10000
+#n_samples <- 30000
+
+#maf <- runif(n_snps,0.01,0.5)
+#se <- 1/sqrt(2*n_samples*maf*(1-maf))
+
+#true_beta <- rnorm(effect_snps,0,1)
+#h2 <- 0.7 # variance explained by effect SNPs
+#var_y <- sum(2*maf[1:effect_snps]*(1-maf[1:effect_snps])*true_beta^2)/h2
+
+#true_beta <- true_beta/sqrt(var_y) # scaling to represent a phenotype with variance 1
+#true_beta <- c(true_beta, rep(0,n_snps-effect_snps))
+
+#summary_stats <- data.frame(rsid=seq(1,n_snps),beta=rnorm(n=n_snps,mean=true_beta,sd=se),se=se)
+
+```
+
+## Method 1: Conditional likelihood - Ghosh et al. (2008)
+
+The function `conditional_likelihood` requires a data frame, in the form described above, a value for `alpha`, the significance threshold used in the GWAS, and lastly, it allows the user to decide if they wish merely the significant SNPs with their adjusted estimates to be returned or a data frame containing all of the inputted SNPs. This argument defaults as `FALSE` but setting it as `TRUE` will return that data frame with only the SNPs which have passed the inputted value for the genome-wide significance threshold. This option is included as the conditional likelihood method is not designed to be used for SNPs which are not deemed significant and so, if all SNPs are returned, the user will be able to see that the conditional likelihood methods do not adjust the original estimates of beta for non-significant SNPs. Also, it is worth noting that if no SNPs are detected as significant, the function will merely return the inputted data frame. Furthermore, the data frame returned has SNPs ordered based on their $p$-values from smallest to largest, or equivalently, in descending order of $\mid z \mid$ in which $z$ is the estimated value for $\beta$ divided by its standard error. 
+We can implement the function on our toy data set as follows, choosing a significance threshold of `5e-8`:
+
+```{r}
+#out_1 <- conditional_likelihood(summary_data = summary_stats, alpha = 5e-8) # only significant SNPs returned 
+#head(out_1)
+```
+
+We can see that three columns have been added to the right of the inputted data frame. These columns each represent a correction method suggested in Ghosh et al. (2008). The first is referred to as the conditional MLE, the second is the mean of the normalized conditional likelihood with the third merely being the average of the first two, known as the compromise estimator. 
+**note on comments in Ghosh et al. regarding performance possibly?**
+
+## Method 2: Empirical Bayes - Ferguson et al. (2013)
+
+THe function `empirical_bayes` implements the Empirical Bayes method for correcting for Winner's Curse, detailed in Ferguson et al. (2013). The function has one argument, `summary_data` which is the data frame containing `rsid`, `beta` and `se` columns. It returns a data frame with the fourth column, `beta_EB` in which the adjusted estimates of this procedure have been added. 
+
+
+```{r}
+#out_2 <- empirical_bayes(summary_data = summary_stats)
+#head(out_2)
+#out_2[31:37,]
+```
+discuss issue in the tails!! - reason for beta_EB returning non-adjusted values for top 6 significant SNPs, however for lets say the 31st-37th SNPs which will be closer to the centre of the distribution, we can see adjustments being made! 
+
+**TO DO: implement combination approach of empirical bayes and conditional likelihood method suggested in Ferguson et al. (2013) as empirical bayes is known to perform poorly in the tails of the distribution**
+
+## Method 3: FDR Inverse Quantile Transformation - Bigdeli et al. (2016)
+The function `FDR_IQT` implements the winner's curse adjustment method detailed in Bigdeli et al. (2016). Similar to the approaches above, the function requires a data frame with three columns `rsid`, `beta` and `se`. It also has an argument `min_pval` for which the default setting is `1e-15`. This is included in order to avoid zero $p$-values which can prove problematic for the function when evaluating `qnorm()`. Furthermore, due to the nature of winner's curse, it is in fact rare that observations with $\mid z \mid > 8$ are biased. The function outputs a data frame similar to that inputted with an additional column containing the adjusted estimate, `beta_FIQT`, and again, the SNPs have been reordered according to their individual $z$-statistics. 
+
+```{r}
+#out_3 <- FDR_IQT(summary_data = summary_stats)
+#head(out_3)
+```
+
+
+**maybe graph density of adjustments for significant SNPs or calculate MSE or something?** 
+
+**idea: have names link to papers possibly?**
+
+Important to note: the conditional likelihood method adjusts each statistic one at a time, and so summary statistics of one individual SNP could easily be inputted into the function. However, both empirical Bayes method and FDR Inverse Quantile Transformation require many SNPs, especially for the empirical Bayes method as the more information given to the function, the more accurate it will be at modelling the distribution and thus, making adjustments. 

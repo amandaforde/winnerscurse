@@ -7,7 +7,7 @@
 #' @export
 #'
 #'
-FDR_IQT <- function(summary_data, min_pval=10^-15)
+FDR_IQT <- function(summary_data, min_pval=1e-15)
 
 {
   z <- summary_data$beta/summary_data$se

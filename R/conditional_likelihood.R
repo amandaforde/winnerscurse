@@ -13,6 +13,11 @@
 conditional_likelihood <- function(summary_data, alpha, sig = FALSE)
 
 {
+  if (sum((2*(1-stats::pnorm(abs(summary_data$beta/summary_data$se))))<alpha) == 0) {
+    summary_data <- dplyr::arrange(summary_data,dplyr::desc(abs(summary_data$beta/summary_data$se)))
+    return(summary_data)
+  }
+
   summary_data_sig <- summary_data[(2*(1-stats::pnorm(abs(summary_data$beta/summary_data$se))))<alpha,]
   summary_data_notsig <- summary_data[(2*(1-stats::pnorm(abs(summary_data$beta/summary_data$se))))>=alpha,]
 
@@ -47,5 +52,4 @@ conditional_likelihood <- function(summary_data, alpha, sig = FALSE)
     summary_data <- dplyr::arrange(summary_data,dplyr::desc(abs(summary_data$beta/summary_data$se)))
     return(summary_data)
   }
-
 }

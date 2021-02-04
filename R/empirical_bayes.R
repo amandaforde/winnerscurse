@@ -1,4 +1,4 @@
-#' Empirical Bayes correction method for Winner's Curse - simplest implementation - Ferguson et al. (2013)
+#' Empirical Bayes correction method for Winner's Curse - Ferguson et al. (2013)
 #'
 #' @param summary_data Data frame containing summary data, three columns: rsid, beta, se
 #'
