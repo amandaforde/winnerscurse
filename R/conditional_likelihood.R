@@ -2,9 +2,10 @@
 #'
 #' @param summary_data Data frame containing summary data, three columns: rsid, beta, se
 #' @param alpha significance threshold used in discovery GWAS
-#' @param sig select true to only return data frame with significant SNPs and corrected estimates
+#' @param sig TRUE returns data frame with only significant SNPs and corrected estimates
 #'
 #' @return Data frame with summary data of only significant SNPs together with three corrected estimates
+#' or data frame with all summary data and corrected estimates of significant SNPs
 #' @export
 #'
 #'
