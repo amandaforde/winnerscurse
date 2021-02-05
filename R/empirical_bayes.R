@@ -9,6 +9,9 @@
 empirical_bayes <- function(summary_data)
 
 {
+
+  if(nrow(summary_data) == 1){return(summary_data)}
+
   z <- summary_data$beta/summary_data$se
 
   bins <- seq(min(z),max(z),length.out=120)
