@@ -4,7 +4,7 @@
 \alias{FDR_IQT}
 \title{FDR Inverse Quantile Transformation method to correct for Winner’s Curse - Bigdeli et al. (2016)}
 \usage{
-FDR_IQT(summary_data, min_pval = 10^-15)
+FDR_IQT(summary_data, min_pval = 1e-15)
 }
 \arguments{
 \item{summary_data}{Data frame containing summary data, three columns: rsid, beta, se}
