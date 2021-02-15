@@ -114,6 +114,8 @@ out_EB[31:37,]
  
 - An approach of combining the empirical bayes and the conditional likelihood methods is suggested by Ferguson et al. (2013) to assist overcoming the issues here. 
 
+**Discuss how issue with tails can be fixed to some extent by making changes to the method suggested in this paper.**
+
 
 ## Method 3: FDR Inverse Quantile Transformation - Bigdeli et al. (2016)
 
@@ -140,16 +142,19 @@ We can gain a visual insight into the adjustments made by these functions by plo
 
 out_EB_sig <- out_EB[2*(1-pnorm(abs(out_EB$beta/out_EB$se))) < 5e-8,]
 out_FIQT_sig <- out_FIQT[2*(1-pnorm(abs(out_FIQT$beta/out_FIQT$se))) < 5e-8,]
+
+library("RColorBrewer")
+col <- brewer.pal(7,"Dark2")
   
-plot(density(abs(out_EB_sig$beta)),ylim=c(0,80),xlim=c(-0.01,0.09),main="Comparing Winner's Curse Methods")
-lines(density(abs(out_EB_sig$beta_EB)),col="red")
-lines(density(abs(out_FIQT_sig$beta_FIQT)),col="green")
-lines(density(abs(out_CL$beta.cl1)),col="blue")
-lines(density(abs(out_CL$beta.cl2)),col="orange")
-lines(density(abs(out_CL$beta.cl3)),col="purple")
-lines(density(abs(true_beta[out_CL$rsid])),col="pink")
-legend(-0.008, 77.5, legend=c("beta_naive", "beta_EB","beta_FIQT","beta.cl1","beta.cl2","beta.cl3","true_beta"),
-       col=c("black","red","green", "blue","orange","purple","pink"),lty=1)
+plot(density(abs(out_EB_sig$beta)),ylim=c(0,80),xlim=c(-0.01,0.09),main="Comparing Winner's Curse Methods",col=col[1],lwd=2)
+lines(density(abs(true_beta[out_CL$rsid])),col=col[2],lwd=2)
+lines(density(abs(out_FIQT_sig$beta_FIQT)),col=col[3],lwd=2)
+lines(density(abs(out_CL$beta.cl1)),col=col[4],lwd=2)
+lines(density(abs(out_CL$beta.cl2)),col=col[5],lwd=2)
+lines(density(abs(out_CL$beta.cl3)),col=col[6],lwd=2)
+lines(density(abs(out_EB_sig$beta_EB)),col=col[7],lwd=2)
+legend(-0.008, 77.5, legend=c("beta_naive", "true_beta","beta_FIQT","beta.cl1","beta.cl2","beta.cl3","beta_EB"),
+       col=col,lty=1,lwd=2)
 
 ```
 

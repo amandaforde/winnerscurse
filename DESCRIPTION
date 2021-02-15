@@ -19,5 +19,6 @@ Suggests:
 RoxygenNote: 7.1.1
 Imports: 
     stats,
-    dplyr
+    dplyr,
+    RColorBrewer
 VignetteBuilder: knitr

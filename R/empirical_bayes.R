@@ -18,16 +18,20 @@ empirical_bayes <- function(summary_data)
   mids <- (bins[-length(bins)]+bins[-1])/2
   counts <- graphics::hist(z,breaks=bins,plot=F)$counts
 
+  most_extreme <- 10
+  boundary_lower <- sort(z)[most_extreme]
+  boundary_upper <- sort(z,decreasing=TRUE)[most_extreme]
+
   df <- 7
   AIC_vector <- c(rep(0,28))
   for (best_df in 3:30){
-    model <- stats::glm(counts ~ splines::ns(mids,df=best_df),stats::poisson,weights=rep(10^-50,length(counts)))
+    model <- stats::glm(counts ~ splines::ns(mids,knots = (seq(from=boundary_lower,to=boundary_upper,length=best_df+1)[2:best_df]), Boundary.knots=c(boundary_lower,boundary_upper)),stats::poisson,weights=rep(10^-50,length(counts)))
     minus2loglike <- 10^50*(model$deviance)
     AIC_vector[best_df-2] <- minus2loglike + 2*(best_df-2)
   }
   df <- 2 + which.min(AIC_vector)
 
-  f <- stats::glm(counts ~ splines::ns(mids,df=7),stats::poisson,weight=rep(10^-50,length(counts)))$fit
+  f <- stats::glm(counts ~ splines::ns(mids,knots = (seq(from=boundary_lower,to=boundary_upper,length=df+1)[2:df]), Boundary.knots=c(boundary_lower,boundary_upper)),stats::poisson,weight=rep(10^-50,length(counts)))$fit
   f[f==0] <- min(f[f>0])
 
   log_f <- as.vector(log(f))
