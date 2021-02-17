@@ -23,10 +23,10 @@ This package has been designed to provide easy access to published methods which
 
 In order to demonstrate how this package can be used, we first create a toy data set and subsequently, illustrate how a user could engage with each of the package's functions using this data set. The methods currently available for implementation are: 
 
-1. Conditional Likelihood methods - [Ghosh et al. (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/)
-2. Empirical Bayes method - [Ferguson et al. (2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/) 
-3. FDR Inverse Quantile transformation method - [Bigdeli et al. (2016)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/) 
-
+1. Conditional Likelihood methods - [Ghosh *et al.* (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/)
+2. Empirical Bayes method - [Ferguson *et al.* (2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/) 
+3. FDR Inverse Quantile transformation method - [Bigdeli *et al.* (2016)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/) 
+4. Bootstrap method - adapted from [Faye *et al.* (2011)](https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4228)
 
 
 ## Creating a toy data set
@@ -66,7 +66,7 @@ summary_stats <- data.frame(rsid=seq(1,n_snps),beta=rnorm(n=n_snps,mean=true_bet
 head(summary_stats)
 ```
 
-## Method 1: Conditional Likelihood - Ghosh et al. (2008)
+## Method 1: Conditional Likelihood - Ghosh *et al.* (2008)
 
 - The function `conditional_likelihood` requires a data frame, in the form described above, and a value for `alpha`, the significance threshold used in the GWAS. 
 
@@ -82,16 +82,17 @@ head(summary_stats)
 
 out_CL <- conditional_likelihood(summary_data = summary_stats, alpha = 5e-8) 
 head(out_CL)
+
 ```
 
-- Three columns have been added to the right of the inputted data frame: each represents a correction method suggested in [Ghosh et al. (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/). The first, `beta.cl1`, is referred to as the conditional MLE while the second, `beta.cl2`, is the mean of the normalized conditional likelihood. The third, `beta.cl3` is merely the average of the first two, known as the compromise estimator. 
+- Three columns have been added to the right of the inputted data frame: each represents a correction method suggested in [Ghosh *et al.* (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/). The first, `beta.cl1`, is referred to as the conditional MLE while the second, `beta.cl2`, is the mean of the normalized conditional likelihood. The third, `beta.cl3` is merely the average of the first two, known as the compromise estimator. 
 
-- Ghosh et al. (2008) noted that for instances in which the true $\beta$ value is close to zero, `beta.cl2` often has greater mean squared error than `beta.cl1` but for true $\beta$ values further from zero, `beta.cl2` performs better. Thus, it was suggested that `beta.cl3` be used to combine the strengths of these two estimators. However, this function, `conditional_likelihood`, outputs values for all three estimators in order to allow the user to make their own decision on which they believe to be the most appropriate. 
+- Ghosh *et al.* (2008) noted that for instances in which the true $\beta$ value is close to zero, `beta.cl2` often has greater mean squared error than `beta.cl1` but for true $\beta$ values further from zero, `beta.cl2` performs better. Thus, it was suggested that `beta.cl3` be used to combine the strengths of these two estimators. However, this function, `conditional_likelihood`, outputs values for all three estimators in order to allow the user to make their own decision on which they believe to be the most appropriate. 
 
 
-## Method 2: Empirical Bayes - Ferguson et al. (2013)
+## Method 2: Empirical Bayes - Ferguson *et al.* (2013)
 
-- The function `empirical_bayes` implements the Empirical Bayes method for correcting for Winner's Curse, detailed in [Ferguson et al. (2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/). 
+- The function `empirical_bayes` implements the Empirical Bayes method for correcting for Winner's Curse, detailed in [Ferguson *et al.* (2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/), with a slight modification. 
 
 - The function has one argument, `summary_data`, which is the data frame containing `rsid`, `beta` and `se` columns. 
 
@@ -99,27 +100,26 @@ head(out_CL)
 
 - As the Empirical Bayes method makes adjustments to all SNPs, not only those that have been considered significant, this data frame contains all SNPs.  
 
-- **Note:** The conditional likelihood methods adjust each statistic one at a time, and so summary statistics of one individual SNP can easily be inputted into the function. However, the Empirical Bayes method requires many SNPs as the more information given to the function, the more accurate it will be at modelling the distribution and thus, making adjustments. Thus, if `summary_data` contains information related to only one SNP, `empirical_bayes` will merely return the inputted data frame. 
+- **Note:** The conditional likelihood methods adjust each statistic one at a time, and so summary statistics of one individual SNP can easily be inputted into the `conditional_likelihood` function. However, the Empirical Bayes method requires many SNPs as the more information given to the function, the more accurate it will be at modelling the distribution and thus, making adjustments. Thus, if `summary_data` contains information related to only one SNP, `empirical_bayes` will merely return the inputted data frame. 
 
 - Below is a demonstration of using `empirical_bayes` with our toy data set:
 
 ```{r}
 out_EB <- empirical_bayes(summary_data = summary_stats)
 head(out_EB)
-out_EB[31:37,]
+
 ```
 
 
-- Unfortunately, the Empirical Bayes estimator is known to perform poorly in the extreme tails of the distribution. This explains why we witness that none of the $\beta$ values of the top 6 significant SNPs have been adjusted. However, after having a look at significant SNPs that do not have as extreme $z$-statistics, we can see that reductions in the estimates have been made.
- 
-- An approach of combining the empirical bayes and the conditional likelihood methods is suggested by Ferguson et al. (2013) to assist overcoming the issues here. 
+- Unfortunately, the Empirical Bayes estimator described by Ferguson *et al.* (2013) is known to perform poorly in the extreme tails of the distribution. Therefore, it is quite possible that a lack of adjustment for the $\beta$ values of SNPs with the most extreme $z$-statistics could be witnessed with this method. A somewhat ad hoc approach to overcome this issue of combining the Empirical Bayes and the conditional likelihood methods was suggested by Ferguson *et al.* (2013). 
 
-**Discuss how issue with tails can be fixed to some extent by making changes to the method suggested in this paper.**
+- In order to ensure that shrinkage does occur for the $\beta$ values of these extreme SNPs, it was decided that the following modification would be added to the `empirical_bayes` function detailed here. The basis function of the natural cubic spline has been altered so that the boundary knots are no longer the most extreme $z$-values. Instead, the lower boundary knot is defined as the $10^{\text{th}}$ $z$-statistic when the $z$-statistics lie in increasing order while the upper boundary knot is the $10^{\text{th}}$ $z$-statistic when the $z$-statistics have been arranged in decreasing order. The natural cubic spline is then merely linear beyond these boundary knots. This assists in fixing the 'tails' issue discussed above. We see that the reduction of the estimated $\beta$ values for all of the top 6 most significant SNPs has occurred. 
 
 
-## Method 3: FDR Inverse Quantile Transformation - Bigdeli et al. (2016)
 
-- The function `FDR_IQT` implements the winner's curse adjustment method detailed in [Bigdeli et al. (2016)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/). 
+## Method 3: FDR Inverse Quantile Transformation - Bigdeli *et al.* (2016)
+
+- The function `FDR_IQT` implements the winner's curse adjustment method detailed in [Bigdeli *et al.* (2016)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/). 
 
 - Similar to the approaches above, the function requires a data frame with three columns `rsid`, `beta` and `se`. 
 
@@ -130,21 +130,68 @@ out_EB[31:37,]
 ```{r}
 out_FIQT <- FDR_IQT(summary_data = summary_stats)
 head(out_FIQT)
+
 ```
 
+## Method 4: Bootstrap - adapted from Faye *et al.* (2011)
+
+- Inspired by the winner's curse adjustment method detailed in [Faye *et al.* (2011)](https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4228), the function `out_BR_ss` implements a bootstrap method which is suitable for use with summary statistics. However, this approach is much more computationally intensive than all three methods described above.
+
+**describe the method**: 
+
+$$\hat\beta_{\text{boot}(k)} = \hat\beta_{\text{N}(k)} - \text{se}(\hat\beta_{(k)}) \cdot \frac{1}{N_{(k)}} \sum^{N_{(k)}}_{i=1} \frac{\hat\beta_{\text{b}i(k)} - \hat\beta_{\text{oob}i(k)}}{\text{se}(\hat\beta_{i(k)})}$$
+
+- 100 bootstraps are used. 
+
+- Currently issues with this... need to look into further .. 
+
+```{r}
+out_BR_ss <- BR_ss(summary_data = summary_stats)
+head(out_BR_ss)
+
+```
 
 
 ## Comparing Results
 
-We can gain a visual insight into the adjustments made by these functions by plotting the adjusted values along with the naive estimates and the true estimates as follows: 
+As we have simulated our data set, we have the ability to quantify the amount of bias present in the original naive $\beta$ estimates and also, in our adjusted estimates for each method. We can use measures such as the sum of squared differences and mean of absolute differences to assess this bias. First, we take a look at the conditional likelihood method as follows, in which only SNPs that are originally deemed significant are included: 
+
+```{r}
+sq_diff_1 <- data.frame(naive = sum((true_beta[out_CL$rsid] - out_CL$beta)^2), beta.cl1 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl1)^2),  beta.cl2 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl2)^2),  beta.cl3 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl3)^2))
+sq_diff_1
+
+mean_abs_diff_1 <- data.frame(naive = mean(abs(true_beta[out_CL$rsid] - out_CL$beta)), beta.cl1 = mean(abs(true_beta[out_CL$rsid] - out_CL$beta.cl1)),  beta.cl2 = mean(abs(true_beta[out_CL$rsid] - out_CL$beta.cl2)),  beta.cl3 = mean(abs(true_beta[out_CL$rsid] - out_CL$beta.cl3)))
+mean_abs_diff_1
+```
+
+For both quantities, the values for all three conditional likelihood methods are less than that of the naive estimate. 
+
+
+Next, we investigate the other three methods described above which take into account all SNPs, not just those with $p$-values less than a specified threshold. 
+
+```{r}
+sq_diff_2 <- data.frame(naive = sum((true_beta[out_EB$rsid] - out_EB$beta)^2), beta_EB = sum((true_beta[out_EB$rsid] - out_EB$beta_EB)^2), beta_FIQT = sum((true_beta[out_FIQT$rsid] - out_FIQT$beta_FIQT)^2), beta_BR_ss = sum((true_beta[out_BR_ss$rsid] - out_BR_ss$beta_BR_ss)^2))
+sq_diff_2
+
+mean_abs_diff_2 <- data.frame(naive = mean(abs(true_beta[out_EB$rsid] - out_EB$beta)), beta_EB = mean(abs(true_beta[out_EB$rsid] - out_EB$beta_EB)), beta_FIQT = mean(abs(true_beta[out_FIQT$rsid] - out_FIQT$beta_FIQT)), beta_BR_ss = mean(abs(true_beta[out_BR_ss$rsid] - out_BR_ss$beta_BR_ss)))
+mean_abs_diff_2
+
+```
+Again, we see that in both cases, the value associated with the naive estimate is greatest. This assures us that the new adjusted estimates provided by each method are indeed less biased than the original $\beta$ estimate. 
+
+$~$
+$~$
+
+In addition, we can gain a visual insight into the adjustments made by these functions by plotting the adjusted values along with the naive estimates and the true estimates of SNPs which are originally deemed as significant, i.e. those with raw $p$-values less than `5e-8`, as follows: 
 
 ```{r, fig.height=4.5,fig.width=6.5}
 
 out_EB_sig <- out_EB[2*(1-pnorm(abs(out_EB$beta/out_EB$se))) < 5e-8,]
 out_FIQT_sig <- out_FIQT[2*(1-pnorm(abs(out_FIQT$beta/out_FIQT$se))) < 5e-8,]
-
+out_BR_ss_sig <- out_BR_ss[2*(1-pnorm(abs(out_BR_ss$beta/out_BR_ss$se))) < 5e-8,]
+  
 library("RColorBrewer")
-col <- brewer.pal(7,"Dark2")
+col <- brewer.pal(8,"Dark2")
   
 plot(density(abs(out_EB_sig$beta)),ylim=c(0,80),xlim=c(-0.01,0.09),main="Comparing Winner's Curse Methods",col=col[1],lwd=2)
 lines(density(abs(true_beta[out_CL$rsid])),col=col[2],lwd=2)
@@ -153,21 +200,12 @@ lines(density(abs(out_CL$beta.cl1)),col=col[4],lwd=2)
 lines(density(abs(out_CL$beta.cl2)),col=col[5],lwd=2)
 lines(density(abs(out_CL$beta.cl3)),col=col[6],lwd=2)
 lines(density(abs(out_EB_sig$beta_EB)),col=col[7],lwd=2)
-legend(-0.008, 77.5, legend=c("beta_naive", "true_beta","beta_FIQT","beta.cl1","beta.cl2","beta.cl3","beta_EB"),
+lines(density(abs(out_BR_ss_sig$beta_BR_ss)),col=col[8],lwd=2)
+legend(-0.008, 77.5, legend=c("beta_naive", "true_beta","beta_FIQT","beta.cl1","beta.cl2","beta.cl3","beta_EB","beta_BR_ss"),
        col=col,lty=1,lwd=2)
 
 ```
 
-
-The 'tails' issue of the Empirical Bayes method is evident in the above plot, and so, we also look at the Empirical Bayes adjusted estimates on their own but in which we include SNPs with $p$-values less than `5e-4`. It is evident from the plot below that the `empirical_bayes` function does result in a reduction of the naive $\beta$ estimates with the density of the adjusted estimates much closer to that of the true values. 
-
-```{r, fig.height=4.5, fig.width=6.5}
-out_EB_sig_4 <- out_EB[2*(1-pnorm(abs(out_EB$beta/out_EB$se))) < 5e-4,]
-plot(density(abs(out_EB_sig_4$beta)),ylim=c(0,105),xlim=c(-0.01,0.08),main="Empirical Bayes Method")
-lines(density(abs(out_EB_sig_4$beta_EB)),col="orange")
-lines(density(abs(true_beta[out_EB_sig_4$rsid])),col="purple")
-legend(0.05,80,legend=c("beta_naive","beta_EB","true_beta"),col=c("black","orange","purple"),lty=1)
-```
 
 
 
@@ -175,8 +213,6 @@ $~$
 $~$
 
 **TO DO:** 
-
-- *Implement combination approach of Empirical Bayes and Conditional Likelihood method suggested in Ferguson et al. (2013) as Empirical Bayes is known to perform poorly in the tails of the distribution.*
 
 - *Possibly implement Bayesian Model Averaging - Xu et al. (2011) and BR-squared for summary statistics.*
 

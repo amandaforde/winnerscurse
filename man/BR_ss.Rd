@@ -2,7 +2,7 @@
 % Please edit documentation in R/BR_ss.R
 \name{BR_ss}
 \alias{BR_ss}
-\title{Adaptation of BR-squared method suitable for summary statistics}
+\title{Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary statistics}
 \usage{
 BR_ss(summary_data)
 }
@@ -13,5 +13,5 @@ BR_ss(summary_data)
 Data frame with summary data together with adjusted estimates
 }
 \description{
-Adaptation of BR-squared method suitable for summary statistics
+Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary statistics
 }

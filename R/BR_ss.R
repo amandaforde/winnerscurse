@@ -17,7 +17,7 @@ BR_ss <- function(summary_data){
 
   beta_oob <- beta_mat
 
-  ordering <- apply(beta_boot/se_mat, 2,order,decreasing=TRUE)
+  ordering <- apply(abs(beta_boot/se_mat), 2,order,decreasing=TRUE)
   bias_correct <- matrix(nrow=N, ncol=100)
 
   for (i in 1:100){
