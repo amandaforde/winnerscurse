@@ -26,7 +26,7 @@ In order to demonstrate how this package can be used, we first create a toy data
 1. Conditional Likelihood methods - [Ghosh *et al.* (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/)
 2. Empirical Bayes method - [Ferguson *et al.* (2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/) 
 3. FDR Inverse Quantile transformation method - [Bigdeli *et al.* (2016)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/) 
-
+4. Bootstrap method - adapted from [Faye *et al.* (2011)](https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4228)
 
 ## Creating a toy data set
 
@@ -132,6 +132,25 @@ head(out_FIQT)
 ```
 
 
+## Method 4: Bootstrap - adapted from Faye *et al.* (2011)
+
+- Inspired by the winner's curse adjustment method detailed in [Faye *et al.* (2011)](https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4228), the function `out_BR_ss` implements a bootstrap method which is suitable for use with summary statistics. However, this approach is much more computationally intensive than all three methods described above.
+
+**describe the method**: 
+
+$$\hat\beta_{\text{boot}(k)} = \hat\beta_{\text{N}(k)} - \text{se}(\hat\beta_{(k)}) \cdot \frac{1}{N_{(k)}} \sum^{N_{(k)}}_{i=1} \frac{\hat\beta_{\text{b}i(k)} - \hat\beta_{\text{oob}i(k)}}{\text{se}(\hat\beta_{i(k)})}$$
+
+- 100 bootstraps are used. 
+
+
+```{r}
+out_BR_ss <- BR_ss(summary_data = summary_stats)
+head(out_BR_ss)
+```
+
+
+
+
 
 ## Comparing Results
 
@@ -148,13 +167,13 @@ mean_abs_diff_1
 For both quantities, the values for all three conditional likelihood methods are less than that of the naive estimate. 
 
 
-Next, we investigate the other two methods described above which take into account all SNPs, not just those with $p$-values less than a specified threshold. 
+Next, we investigate the other three methods described above which take into account all SNPs, not just those with $p$-values less than a specified threshold. 
 
 ```{r}
-sq_diff_2 <- data.frame(naive = sum((true_beta[out_EB$rsid] - out_EB$beta)^2), beta_EB = sum((true_beta[out_EB$rsid] - out_EB$beta_EB)^2), beta_FIQT = sum((true_beta[out_FIQT$rsid] - out_FIQT$beta_FIQT)^2))
+sq_diff_2 <- data.frame(naive = sum((true_beta[out_EB$rsid] - out_EB$beta)^2), beta_EB = sum((true_beta[out_EB$rsid] - out_EB$beta_EB)^2), beta_FIQT = sum((true_beta[out_FIQT$rsid] - out_FIQT$beta_FIQT)^2), beta_BR_ss = sum((true_beta[out_BR_ss$rsid] - out_BR_ss$beta_BR_ss)^2))
 sq_diff_2
 
-mean_abs_diff_2 <- data.frame(naive = mean(abs(true_beta[out_EB$rsid] - out_EB$beta)), beta_EB = mean(abs(true_beta[out_EB$rsid] - out_EB$beta_EB)), beta_FIQT = mean(abs(true_beta[out_FIQT$rsid] - out_FIQT$beta_FIQT)))
+mean_abs_diff_2 <- data.frame(naive = mean(abs(true_beta[out_EB$rsid] - out_EB$beta)), beta_EB = mean(abs(true_beta[out_EB$rsid] - out_EB$beta_EB)), beta_FIQT = mean(abs(true_beta[out_FIQT$rsid] - out_FIQT$beta_FIQT)), beta_BR_ss = mean(abs(true_beta[out_BR_ss$rsid] - out_BR_ss$beta_BR_ss)))
 mean_abs_diff_2
 
 ```
@@ -165,11 +184,13 @@ Finally, we can compare the performance of all methods for the SNPs with with ra
 ```{r}
 out_EB_sig <- out_EB[2*(1-pnorm(abs(out_EB$beta/out_EB$se))) < 5e-8,]
 out_FIQT_sig <- out_FIQT[2*(1-pnorm(abs(out_FIQT$beta/out_FIQT$se))) < 5e-8,]
+out_BR_ss_sig <- out_BR_ss[2*(1-pnorm(abs(out_BR_ss$beta/out_BR_ss$se))) < 5e-8,]
 
-sq_diff_3 <- data.frame(naive = sum((true_beta[out_CL$rsid] - out_CL$beta)^2), beta.cl1 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl1)^2),  beta.cl2 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl2)^2),  beta.cl3 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl3)^2), beta_EB = sum((true_beta[out_EB_sig$rsid] - out_EB_sig$beta_EB)^2), beta_FIQT = sum((true_beta[out_FIQT_sig$rsid] - out_FIQT_sig$beta_FIQT)^2))
+
+sq_diff_3 <- data.frame(naive = sum((true_beta[out_CL$rsid] - out_CL$beta)^2), beta.cl1 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl1)^2),  beta.cl2 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl2)^2),  beta.cl3 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl3)^2), beta_EB = sum((true_beta[out_EB_sig$rsid] - out_EB_sig$beta_EB)^2), beta_FIQT = sum((true_beta[out_FIQT_sig$rsid] - out_FIQT_sig$beta_FIQT)^2), beta_BR_ss = sum((true_beta[out_BR_ss_sig$rsid] - out_BR_ss_sig$beta_BR_ss)^2))
 sq_diff_3
 
-mean_abs_diff_3 <- data.frame(naive = mean(abs(true_beta[out_CL$rsid] - out_CL$beta)), beta.cl1 = mean(abs(true_beta[out_CL$rsid] - out_CL$beta.cl1)),  beta.cl2 = mean(abs(true_beta[out_CL$rsid] - out_CL$beta.cl2)),  beta.cl3 = mean(abs(true_beta[out_CL$rsid] - out_CL$beta.cl3)), beta_EB = mean(abs(true_beta[out_EB_sig$rsid] - out_EB_sig$beta_EB)), beta_FIQT = mean(abs(true_beta[out_FIQT_sig$rsid] - out_FIQT_sig$beta_FIQT)))
+mean_abs_diff_3 <- data.frame(naive = mean(abs(true_beta[out_CL$rsid] - out_CL$beta)), beta.cl1 = mean(abs(true_beta[out_CL$rsid] - out_CL$beta.cl1)),  beta.cl2 = mean(abs(true_beta[out_CL$rsid] - out_CL$beta.cl2)),  beta.cl3 = mean(abs(true_beta[out_CL$rsid] - out_CL$beta.cl3)), beta_EB = mean(abs(true_beta[out_EB_sig$rsid] - out_EB_sig$beta_EB)), beta_FIQT = mean(abs(true_beta[out_FIQT_sig$rsid] - out_FIQT_sig$beta_FIQT)), beta_BR_ss = mean(abs(true_beta[out_BR_ss_sig$rsid] - out_BR_ss_sig$beta_BR_ss)))
 mean_abs_diff_3
 ```
 
@@ -181,7 +202,7 @@ In addition, we can gain a visual insight into the adjustments made by these fun
 
 ```{r, fig.height=4.5,fig.width=6.5}
 library("RColorBrewer")
-col <- brewer.pal(7,"Dark2")
+col <- brewer.pal(8,"Dark2")
   
 plot(density(abs(out_EB_sig$beta)),ylim=c(0,80),xlim=c(-0.01,0.09),main="Comparing Winner's Curse Methods",col=col[1],lwd=2)
 lines(density(abs(true_beta[out_CL$rsid])),col=col[2],lwd=2)
@@ -190,7 +211,8 @@ lines(density(abs(out_CL$beta.cl1)),col=col[4],lwd=2)
 lines(density(abs(out_CL$beta.cl2)),col=col[5],lwd=2)
 lines(density(abs(out_CL$beta.cl3)),col=col[6],lwd=2)
 lines(density(abs(out_EB_sig$beta_EB)),col=col[7],lwd=2)
-legend(-0.008, 77.5, legend=c("beta_naive", "true_beta","beta_FIQT","beta.cl1","beta.cl2","beta.cl3","beta_EB"),
+lines(density(abs(out_BR_ss_sig$beta_BR_ss)),col=col[8],lwd=2)
+legend(-0.008, 77.5, legend=c("beta_naive", "true_beta","beta_FIQT","beta.cl1","beta.cl2","beta.cl3","beta_EB", "beta_BR_ss"),
        col=col,lty=1,lwd=2)
 
 ```
