@@ -16,7 +16,7 @@ FDR_IQT <- function(summary_data, min_pval=1e-15)
 
   adj_p <- stats::p.adjust(p_val, method="fdr")
   adj_z <- stats::qnorm(1-(adj_p/2))
-  adj_z[abs(z) > stats::qnorm(1-(min_pval/2))] <- z[abs(z) > stats::qnorm(1-(min_pval/2))]
+  adj_z[abs(z) > stats::qnorm(1-(min_pval/2))] <- abs(z[abs(z) > stats::qnorm(1-(min_pval/2))])
 
   beta_FIQT <- sign(summary_data$beta)*adj_z*summary_data$se
   summary_data <- cbind(summary_data,beta_FIQT)
@@ -26,3 +26,5 @@ FDR_IQT <- function(summary_data, min_pval=1e-15)
   return(summary_data)
 
 }
+
+
