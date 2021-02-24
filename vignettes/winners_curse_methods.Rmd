@@ -2,7 +2,7 @@
 title: "Obtaining adjusted $\\hat\\beta$ estimates"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Winner's Curse Adjustment Methods for GWAS summary statistics}
+  %\VignetteIndexEntry{Obtaining adjusted $\\hat\\beta$ estimates}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -19,9 +19,7 @@ library(winnerscurse)
 ```
 
 
-This package has been designed to provide easy access to published methods which aim to correct for winner's curse, using GWAS summary statistics. The winner's curse is a statistical effect resulting in the exaggeration of SNP-trait association estimates in the sample in which these associations were discovered. With merely estimates of the association, $\beta$, and corresponding standard error, $\text{se}(\beta)$, for each SNP, this package permits users to implement adjustment methods to obtain less biased estimates of the true $\beta$ values. Methods can be applied to data relating to both quantitative and binary traits.
-
-In order to demonstrate how this package can be used, we first create a toy data set and subsequently, illustrate how a user could engage with each of the package's functions using this data set. The methods currently available for implementation are: 
+In order to demonstrate how this package can be used to obtain new adjusted $\hat\beta$ estimates, we first create a toy data set and subsequently, illustrate how a user could engage with each of the package's functions using this data set. The methods currently available for implementation are: 
 
 1. Conditional Likelihood methods - [Ghosh *et al.* (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/)
 2. Empirical Bayes method - [Ferguson *et al.* (2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/) 
