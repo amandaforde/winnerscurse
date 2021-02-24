@@ -1,5 +1,5 @@
 ---
-title: "Winner's Curse Adjustment Methods for GWAS summary statistics"
+title: "Obtaining adjusted $\\hat\\beta$ estimates"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Winner's Curse Adjustment Methods for GWAS summary statistics}
