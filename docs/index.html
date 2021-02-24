@@ -58,7 +58,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="articles/winners_curse_methods.html">Winner's Curse Adjustment Methods for GWAS summary statistics</a>
+      <a href="articles/winners_curse_methods.html">Obtaining adjusted `beta` estimates</a>
     </li>
   </ul>
 </li>
@@ -75,12 +75,50 @@
 
       </header><div class="row">
   <div class="contents col-md-9">
-<div id="winnerscurse" class="section level1">
+<div id="winners-curse-adjustment-methods-for-gwas-summary-statistics" class="section level1">
 <div class="page-header"><h1 class="hasAnchor">
-<a href="#winnerscurse" class="anchor"></a>winnerscurse</h1></div>
-<p>This is a line from RStudio.</p>
+<a href="#winners-curse-adjustment-methods-for-gwas-summary-statistics" class="anchor"></a>Winner’s Curse Adjustment Methods for GWAS summary statistics</h1></div>
 <!-- badges: start -->
-<p><a href="https://github.com/amandaforde/winners_curse/actions"><img src="https://github.com/amandaforde/winners_curse/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a> <!-- badges: end --></p>
+
+<p><span class="math inline"> </span> <span class="math inline"> </span></p>
+<p>This package has been designed to provide easy access to published methods which aim to correct for Winner’s Curse, using GWAS summary statistics. With merely estimates of the association, <code>beta</code>, and corresponding standard error, <code>se</code>, for each SNP, this package permits users to implement adjustment methods to obtain less biased estimates of the true <code>beta</code> values. Methods can be applied to data relating to both quantitative and binary traits.</p>
+<div id="installation" class="section level3">
+<h3 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h3>
+<p>You can install the current version of <code>winnerscurse</code> from GitHub with:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"amandaforde/winnerscurse"</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="winners-curse" class="section level3">
+<h3 class="hasAnchor">
+<a href="#winners-curse" class="anchor"></a>Winner’s Curse</h3>
+<p>The Winner’s Curse is a statistical effect resulting in the exaggeration of SNP-trait association estimates in the sample in which these associations were discovered.</p>
+<p>However, the Winner’s Curse isn’t just a phenomenon related to GWAS. An understanding of Winner’s Curse may be gained through the following simple example. Consider rugby players who are ranked based on the number of points scored in one World Cup tournament. The top ranking players, the <em>‘winners’</em>, are most likely players who had an above average tournament, perhaps those who were at the peak of their career and fitness. However, across many tournaments, these highly ranked players may not score as many points nor be as outstanding consistently.</p>
+<p>Now, let us reframe this idea in the context of GWAS. The <em>‘winners’</em> here are SNPs whose effect sizes are <em>stochastically</em> higher in the discovery study than their true association values. Clearly, these raw effect estimates are therefore biased estimates of <code>beta</code>, especially for those SNPs who are ranked highly in the study - the most significant SNPs. SNPs are often ranked according to their <em>z</em>-statistics or corresponding <em>p</em>-values.</p>
+<p>The goal of the functions in this package is to adjust the raw effect estimates, <code>beta</code>, rendering them less biased. These adjustments are made using only the summary statistics obtained from the discovery study.</p>
+</div>
+<div id="simple-example" class="section level3">
+<h3 class="hasAnchor">
+<a href="#simple-example" class="anchor"></a>Simple Example</h3>
+<p>We will now provide a visual</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1948</span><span class="op">)</span>
+<span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">1000</span>,<span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>
+<span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>id <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">1000</span>, z <span class="op">=</span> <span class="va">z</span><span class="op">)</span>
+<span class="va">z</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">z</span>, <span class="fu">desc</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+
+<span class="va">z_hat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="fl">1000</span>,<span class="va">z</span><span class="op">$</span><span class="va">z</span>,<span class="fl">0.5</span><span class="op">)</span>   <span class="co"># observed data </span>
+<span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">z</span>, <span class="va">z_hat</span><span class="op">)</span>
+
+<span class="va">z</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="va">z</span>, <span class="fu">desc</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">z_hat</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>  <span class="co"># SNPs are arranged according to observed abs(z_hat) in descending order</span>
+
+<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/density.html">density</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">z</span><span class="op">$</span><span class="va">z</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">50</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1.4</span><span class="op">)</span>,xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">4.5</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/density.html">density</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">z</span><span class="op">$</span><span class="va">z_hat</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">50</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>, col<span class="op">=</span><span class="st">"red"</span><span class="op">)</span></code></pre></div>
+<p><img src="readme_plot.png" alt="picture"></p>
+<p>In visual terms, we would like our functions to produce estimates which are more in line with the true values, i.e. shifted more towards the density plot on the left, avoiding the obvious inflation incurred by the raw <code>z_hat</code> estimates here.</p>
+<p><strong>Note:</strong> The above data is not suitable for use with the functions in this package. It has merely been used a very simple example to demonstrate the concept of winner’s curse. In order to appropriately use the functions, summary statistics must be in the form of a <em>data frame</em> in which the first column, titled <code>rsid</code>, contains the SNP ID number, the second column, named <code>beta</code>, contains the effect size estimate while the third column, <code>se</code> holds the corresponding estimated standard error.</p>
+</div>
 </div>
   </div>
 
@@ -99,7 +137,13 @@
 </ul>
 </div>
 
-  </div>
+  <div class="dev-status">
+<h2>Dev status</h2>
+<ul class="list-unstyled">
+<li><a href="https://github.com/amandaforde/winners_curse/actions"><img src="https://github.com/amandaforde/winners_curse/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
+</ul>
+</div>
+</div>
 </div>
 
 

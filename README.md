@@ -8,7 +8,7 @@
 $~$
 $~$
 
-This package has been designed to provide easy access to published methods which aim to correct for Winner's Curse, using GWAS summary statistics. With merely estimates of the association, $\\hat\\beta$, and corresponding standard error, $\\text{se}(\\hat\\beta)$, for each SNP, this package permits users to implement adjustment methods to obtain less biased estimates of the true $\\beta$ values. Methods can be applied to data relating to both quantitative and binary traits.
+This package has been designed to provide easy access to published methods which aim to correct for Winner's Curse, using GWAS summary statistics. With merely estimates of the association, `beta`, and corresponding standard error, `se`, for each SNP, this package permits users to implement adjustment methods to obtain less biased estimates of the true `beta` values. Methods can be applied to data relating to both quantitative and binary traits.
 
 
 ### Installation
@@ -27,9 +27,9 @@ The Winner's Curse is a statistical effect resulting in the exaggeration of SNP-
 
 However, the Winner's Curse isn't just a phenomenon related to GWAS. An understanding of Winner's Curse may be gained through the following simple example. Consider rugby players who are ranked based on the number of points scored in one World Cup tournament. The top ranking players, the *'winners'*, are most likely players who had an above average tournament, perhaps those who were at the peak of their career and fitness. However, across many tournaments, these highly ranked players may not score as many points nor be as outstanding consistently. 
 
-Now, let us reframe this idea in the context of GWAS. The *'winners'* here are SNPs whose effect sizes are *stochastically* higher in the discovery study than their true association values. Clearly, these raw effect estimates, $\\hat\\beta$, are therefore biased estimates of $\beta$, especially for those SNPs who are ranked highly in the study - the most significant SNPs. SNPs are often ranked according to their $z$-statistics, in which $$z_i = \frac{\hat\beta_i}{\text{se}(\hat\beta_i)}$$  for SNP $i$, or corresponding $p$-values. 
+Now, let us reframe this idea in the context of GWAS. The *'winners'* here are SNPs whose effect sizes are *stochastically* higher in the discovery study than their true association values. Clearly, these raw effect estimates are therefore biased estimates of `beta`, especially for those SNPs who are ranked highly in the study - the most significant SNPs. SNPs are often ranked according to their *z*-statistics or corresponding *p*-values. 
 
-The goal of the functions in this package is to adjust the raw effect estimates, $\hat\beta$, rendering them less biased. These adjustments are made using only the summary statistics obtained from the discovery study.  
+The goal of the functions in this package is to adjust the raw effect estimates, `beta`, rendering them less biased. These adjustments are made using only the summary statistics obtained from the discovery study.  
 
 
 
