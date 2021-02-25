@@ -5,8 +5,7 @@
   [![R-CMD-check](https://github.com/amandaforde/winners_curse/workflows/R-CMD-check/badge.svg)](https://github.com/amandaforde/winners_curse/actions)
   <!-- badges: end -->
 
-$~$
-$~$
+
 
 This package has been designed to provide easy access to published methods which aim to correct for Winner's Curse, using GWAS summary statistics. With merely estimates of the association, `beta`, and corresponding standard error, `se`, for each SNP, this package permits users to implement adjustment methods to obtain less biased estimates of the true `beta` values. Methods can be applied to data relating to both quantitative and binary traits.
 
@@ -55,11 +54,11 @@ lines(density(abs(z$z_hat[1:50])), col="red")
 
 
 
-![picture](readme_plot.png)
+![](https://raw.githubusercontent.com/amandaforde/winnerscurse/main/readme_plot.png)
 
 
 
 
 In visual terms, we would like our functions to produce estimates which are more in line with the true values, i.e. shifted more towards the density plot on the left, avoiding the obvious inflation incurred by the raw `z_hat` estimates here. 
 
-**Note:** The above data is not suitable for use with the functions in this package. It has merely been used a very simple example to demonstrate the concept of winner's curse. In order to appropriately use the functions, summary statistics must be in the form of a *data frame* in which the first column, titled `rsid`, contains the SNP ID number, the second column, named `beta`, contains the effect size estimate while the third column, `se` holds the corresponding estimated standard error. 
+**Note:** The above data is not suitable for use with the functions in this package. It has merely been used a very simple example to demonstrate the concept of winner's curse. In order to appropriately use the functions, summary statistics must be in the form of a **data frame** in which the first column, titled `rsid`, contains the SNP ID number, the second column, named `beta`, contains the effect size estimate while the third column, `se` holds the corresponding estimated standard error. 
