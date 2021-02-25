@@ -32,7 +32,7 @@ The goal of the functions in this package is to adjust the raw effect estimates,
 
 
 
-**Simple Example:**
+### Simple Example
 
 We will now discuss a simple simulated data set, providing another way of comprehending the Winner's Curse with the assistance of a plot. However, remember throughout that this is very much a hypothetical data set used for demonstration purposes and does not resemble a true data set that one would obtain in a GWAS.  
 
