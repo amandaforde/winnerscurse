@@ -230,7 +230,6 @@ legend(-0.008, 77.5, legend=c("beta_naive", "true_beta","beta_FIQT","beta.cl1","
 
 
 
-
 $~$
 $~$
 

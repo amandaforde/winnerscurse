@@ -1,4 +1,4 @@
-#' Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary statistics
+#' Adaptation of BR-squared method - Faye *et al.* (2011) - suitable for summary statistics
 #'
 #' @param summary_data Data frame containing summary data, three columns: rsid, beta, se
 #'
