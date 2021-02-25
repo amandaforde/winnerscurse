@@ -1,4 +1,4 @@
-#' FDR Inverse Quantile Transformation method to correct for Winner’s Curse - Bigdeli *et al.* (2016)
+#' FDR Inverse Quantile Transformation method to correct for Winner’s Curse - Bigdeli et al. (2016)
 #'
 #' @param summary_data Data frame containing summary data, three columns: rsid, beta, se
 #' @param min_pval avoids zero p-values (in R) which gives trouble with qnorm(), also abs(z) > 8 is generally not biased

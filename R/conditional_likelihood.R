@@ -1,4 +1,4 @@
-#' Conditional likelihood methods to correct for Winner’s Curse - Ghosh *et al.* (2008)
+#' Conditional likelihood methods to correct for Winner’s Curse - Ghosh et al. (2008)
 #'
 #' @param summary_data Data frame containing summary data, three columns: rsid, beta, se
 #' @param alpha significance threshold used in discovery GWAS

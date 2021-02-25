@@ -37,6 +37,7 @@ In order to demonstrate how this package can be used to obtain new adjusted $\ha
   4. the minor allele frequency of each SNP 
   5. the variance explained in the trait by all SNPs, $h^2$ 
 
+
 - With these specifications, we can obtain quite realistic summary statistics as shown below.
 
 - The summary statistics have been arranged here in a suitable way for each method - in the form of a **data frame with columns `rsid`, `beta` and `se`.** 
