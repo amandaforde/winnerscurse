@@ -2,7 +2,7 @@
 % Please edit documentation in R/empirical_bayes.R
 \name{empirical_bayes}
 \alias{empirical_bayes}
-\title{Empirical Bayes correction method for Winner's Curse - Ferguson et al. (2013)}
+\title{Empirical Bayes correction method for Winner's Curse - Ferguson *et al.* (2013)}
 \usage{
 empirical_bayes(summary_data)
 }
@@ -13,5 +13,5 @@ empirical_bayes(summary_data)
 Data frame with summary data together with adjusted estimates
 }
 \description{
-Empirical Bayes correction method for Winner's Curse - Ferguson et al. (2013)
+Empirical Bayes correction method for Winner's Curse - Ferguson *et al.* (2013)
 }

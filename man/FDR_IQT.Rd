@@ -2,7 +2,7 @@
 % Please edit documentation in R/FDR_IQT.R
 \name{FDR_IQT}
 \alias{FDR_IQT}
-\title{FDR Inverse Quantile Transformation method to correct for Winner’s Curse - Bigdeli et al. (2016)}
+\title{FDR Inverse Quantile Transformation method to correct for Winner’s Curse - Bigdeli *et al.* (2016)}
 \usage{
 FDR_IQT(summary_data, min_pval = 1e-15)
 }
@@ -15,5 +15,5 @@ FDR_IQT(summary_data, min_pval = 1e-15)
 Data frame with summary data together with adjusted estimates
 }
 \description{
-FDR Inverse Quantile Transformation method to correct for Winner’s Curse - Bigdeli et al. (2016)
+FDR Inverse Quantile Transformation method to correct for Winner’s Curse - Bigdeli *et al.* (2016)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/conditional_likelihood.R
 \name{conditional_likelihood}
 \alias{conditional_likelihood}
-\title{Conditional likelihood methods to correct for Winner’s Curse - Ghosh et al. (2008)}
+\title{Conditional likelihood methods to correct for Winner’s Curse - Ghosh *et al.* (2008)}
 \usage{
 conditional_likelihood(summary_data, alpha)
 }
@@ -16,5 +16,5 @@ Data frame with summary data of only significant SNPs together with three correc
 or data frame with all summary data and corrected estimates of significant SNPs
 }
 \description{
-Conditional likelihood methods to correct for Winner’s Curse - Ghosh et al. (2008)
+Conditional likelihood methods to correct for Winner’s Curse - Ghosh *et al.* (2008)
 }

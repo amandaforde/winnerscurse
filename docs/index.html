@@ -96,7 +96,10 @@
 <p>However, the Winner’s Curse isn’t just a phenomenon related to GWAS. An understanding of Winner’s Curse may be gained through the following simple example. Consider rugby players who are ranked based on the number of points scored in one World Cup tournament. The top ranking players, the <em>‘winners’</em>, are most likely players who had an above average tournament, perhaps those who were at the peak of their career and fitness. However, across many tournaments, these highly ranked players may not score as many points nor be as outstanding consistently.</p>
 <p>Now, let us reframe this idea in the context of GWAS. The <em>‘winners’</em> here are SNPs whose effect sizes are <em>stochastically</em> higher in the discovery study than their true association values. Clearly, these raw effect estimates are therefore biased estimates of <code>beta</code>, especially for those SNPs who are ranked highly in the study - the most significant SNPs. SNPs are often ranked according to their <em>z</em>-statistics or corresponding <em>p</em>-values.</p>
 <p>The goal of the functions in this package is to adjust the raw effect estimates, <code>beta</code>, rendering them less biased. These adjustments are made using only the summary statistics obtained from the discovery study.</p>
-<p><strong>Simple Example:</strong></p>
+</div>
+<div id="simple-example" class="section level3">
+<h3 class="hasAnchor">
+<a href="#simple-example" class="anchor"></a>Simple Example</h3>
 <p>We will now discuss a simple simulated data set, providing another way of comprehending the Winner’s Curse with the assistance of a plot. However, remember throughout that this is very much a hypothetical data set used for demonstration purposes and does not resemble a true data set that one would obtain in a GWAS.</p>
 <p>Let us first generate 1000 values from a standard normal distribution, centred at 0 with standard deviation of 1. We allow these values to act as the <em>true</em> effect sizes of 1000 independent SNPs.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
