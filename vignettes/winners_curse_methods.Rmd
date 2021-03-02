@@ -23,8 +23,26 @@ In order to demonstrate how this package can be used to obtain new adjusted $\ha
 
 1. Conditional Likelihood methods - [Ghosh *et al.* (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/)
 2. Empirical Bayes method - [Ferguson *et al.* (2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/) 
-3. FDR Inverse Quantile transformation method - [Bigdeli *et al.* (2016)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/) 
+3. FDR Inverse Quantile Transformation method - [Bigdeli *et al.* (2016)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/) 
 4. Bootstrap method - adapted from [Faye *et al.* (2011)](https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4228)
+
+
+An important feature which distinguishes these four methods is detailed in the table below: 
+
+
++----------------------------------------------------+----------------------------------------------+
+| Adjusts $\beta$ estimate of *only* SNPs with       | Adjusts $\beta$ estimate of *all* SNPs       |
+| $p$-values less than specified threshold, $\alpha$ |                                              |
++====================================================+==============================================+
+| - Conditional Likelihood methods                   | - Empirical Bayes method                     |
+|                                                    | - FDR Inverse Quantile Transformation method |
+|                                                    | - Bootstrap method                           |
++----------------------------------------------------+----------------------------------------------+
+
+
+
+ 
+
 
 ### Creating a toy data set
 
