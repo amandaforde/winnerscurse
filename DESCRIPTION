@@ -10,6 +10,7 @@ Description: A package designed to provide easy access to published methods whic
   less biased estimates of the true beta values. These methods can be applied to data from both 
   quantitative and binary traits.
 License: MIT + file LICENSE
+URL: https://amandaforde.github.io/winnerscurse/
 Encoding: UTF-8
 LazyData: true
 Suggests: 
