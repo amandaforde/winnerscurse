@@ -2,7 +2,7 @@
 % Please edit documentation in R/se_adjust.R
 \name{se_adjust}
 \alias{se_adjust}
-\title{Obtaining standard errors of adjusted methods via parametric bootstrap}
+\title{Obtaining standard errors of adjusted estimates via parametric bootstrap}
 \usage{
 se_adjust(summary_data, method, n_boot = 100)
 }
@@ -17,5 +17,5 @@ se_adjust(summary_data, method, n_boot = 100)
 Data frame with summary data together with adjusted estimates
 }
 \description{
-Obtaining standard errors of adjusted methods via parametric bootstrap
+Obtaining standard errors of adjusted estimates via parametric bootstrap
 }
