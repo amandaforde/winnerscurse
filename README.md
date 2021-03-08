@@ -3,7 +3,6 @@
 
 <!-- badges: start -->
   [![R-CMD-check](https://github.com/amandaforde/winners_curse/workflows/R-CMD-check/badge.svg)](https://github.com/amandaforde/winners_curse/actions)
-  [![codecov](https://codecov.io/gh/amandaforde/winnerscurse/branch/main/graph/badge.svg?token=P5RVSVWEIM)](https://codecov.io/gh/amandaforde/winnerscurse)
   <!-- badges: end -->
 
 
