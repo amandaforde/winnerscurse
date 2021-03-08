@@ -22,7 +22,7 @@ devtools::install_github("amandaforde/winnerscurse")
 
 ### Winner's Curse 
 
-The Winner's Curse is a statistical effect resulting in the exaggeration of SNP-trait association estimates in the sample in which these associations were discovered. 
+The Winner's Curse is a statistical effect usually resulting in the exaggeration of SNP-trait association estimates in the sample in which these associations were discovered. 
 
 However, the Winner's Curse isn't just a phenomenon related to GWAS. An understanding of Winner's Curse may be gained through the following simple example. Consider rugby players who are ranked based on the number of points scored in one World Cup tournament. The top ranking players, the *'winners'*, are most likely players who had an above average tournament, perhaps those who were at the peak of their career and fitness. However, across many tournaments, these highly ranked players may not score as many points nor be as outstanding consistently. 
 
