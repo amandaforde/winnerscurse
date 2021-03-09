@@ -1,0 +1,84 @@
+---
+title: "Standard errors of adjusted estimates and confidence intervals"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Standard errors of adjusted estimates and confidence intervals}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(winnerscurse)
+```
+
+
+Using the same toy data set as was used to demonstrate the application of the adjustment functions, we will show how two other functions included in the package; `se_adjust` and `cl_interval`, may be implemented and discuss the properties of each.  
+
+Firstly, the toy data set is created as before - a data frame with columns `rsid`, `beta` and `se`:
+```{r}
+set.seed(1998)
+
+n_snps <- 10^6
+effect_snps <- 10000
+n_samples <- 30000
+maf <- runif(n_snps,0.01,0.5)
+se <- 1/sqrt(2*n_samples*maf*(1-maf))
+true_beta <- rnorm(effect_snps,0,1)
+h2 <- 0.7 # variance explained by effect SNPs
+var_y <- sum(2*maf[1:effect_snps]*(1-maf[1:effect_snps])*true_beta^2)/h2
+true_beta <- true_beta/sqrt(var_y) # scaling to represent a phenotype with variance 1
+true_beta <- c(true_beta, rep(0,n_snps-effect_snps))
+
+summary_stats <- data.frame(rsid=seq(1,n_snps),beta=rnorm(n=n_snps,mean=true_beta,sd=se),se=se)
+```
+
+
+
+### Obtaining standard errors of adjusted `beta` estimates using `se_adjust`
+
+- The function `se_adjust` has three parameters: 
+  1. `summary_data`: a data frame in the form as described previously, with columns `rsid`, `beta` and `se`
+  2. `method`: the user is required to specify which method they wish to implement in order to obtain standard errors; `"empirical_bayes"`, `"BR_ss"`, `"FDR_IQT"` 
+  3. `n_boot`: a numerical value which defines the number of bootstraps to be used, the default option is 100 bootstraps.
+
+
+-  form of data set outputted:  very similar to the functions for adjusting beta estimates but column is now included `se_adj` 
+- what does function do exactly? 
+-describe use of parametric bootstraps to create 100 individual data sets, for each bootstrap, we generate a bootstrap beta estimate from normal distribution centred at naive $\hat\beta$ and standard error, $\text{se}(\hat\beta)$ - math notation here to be clear
+-the specified method is implemented on each data set and so for each SNP, we now have 100 *adjusted* 'bootstrapped' estimates 
+- standard error obtained by applying `sd` to this set of adjusted estimates for each SNP
+
+- example of implementation, mention use of 10 bootstraps for ease of demonstration - why? 
+- on a personal computer, the use of 100 bootstraps can result in this function taking between 1 and 3 minutes to provide an output with a data set such as the one provided to it here, with `BR_ss` taking the longest of the three methods as would be expected 
+
+```{r}
+out_EB <- se_adjust(summary_data = summary_stats, method = "empirical_bayes", n_boot=10)
+#head(out_EB)
+
+out_BR_ss <- se_adjust(summary_data = summary_stats, method = "BR_ss", n_boot=10)
+
+out_FIQT <- se_adjust(summary_data = summary_stats, method = "FDR_IQT", n_boot=10)
+
+out <- cbind(out_EB,out_BR_ss[5],out_FIQT[5])
+head(out)
+```
+
+- **Note:** due to the nature of the conditional likelihood methods, we cannot obtain standard error of the `beta` estimate which have been adjusted using these methods. 
+
+### Obtaining confidence intervals for `beta` estimates adjusted by conditional likelihood methods 
+
+- discuss this method as detailed in Ghosh et al. (2008) and implementation in package 
+
+```{r}
+out <- cl_interval(summary_data=summary_stats, alpha = 5e-8, conf=0.95)
+head(out)
+```
+
+- *Note:* might not be wise to create confidence intervals for other estimates especially BR_ss as have noted that the adjusted estimates of this method are *not* normally distributed 
