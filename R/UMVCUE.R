@@ -1,4 +1,4 @@
-#' Winner's Curse adjustment method using both discovery and replication summary statistics - Bowden and Dudbridge (2009)
+#' Winner's Curse adjustment method using discovery and replication summary statistics - Bowden and Dudbridge (2009)
 #'
 #' @param summary_disc Data frame containing summary data from discovery GWAS, three columns: rsid, beta, se
 #' @param summary_rep Data frame containing summary data from replication GWAS, three columns: rsid, beta, se
