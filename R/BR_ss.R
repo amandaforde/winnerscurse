@@ -47,6 +47,10 @@ BR_ss <- function(summary_data){
 
     summary_data <- cbind(summary_data, beta_BR_ss)
 
+    for (i in 1:N){
+      if(abs(summary_data$beta[i]) < abs(summary_data$beta_BR_ss[i])){summary_data$beta_BR_ss[i] <- summary_data$beta[i]}
+    }
+
     summary_data <- dplyr::arrange(summary_data,dplyr::desc(abs(summary_data$beta/summary_data$se)))
 
     return(summary_data)
