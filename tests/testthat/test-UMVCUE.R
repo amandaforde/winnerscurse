@@ -29,7 +29,7 @@ test_that("testing if UMVCUE gives appropriate estimates when given two data set
 
             out <- UMVCUE(summary_disc, summary_rep, alpha=5e-8)
 
-            test <- sum(abs(round(out$disc_beta,6)) >= abs(round(out$beta_UMVCUE,6))) >= 0.75*length(out$disc_beta)
+            test <- sum(abs(round(max(out$disc_beta,out$rep_beta),6)) >= abs(round(out$beta_UMVCUE,6))) == length(out$disc_beta)
 
             expect_true(identical(test,TRUE) == 1)
 
