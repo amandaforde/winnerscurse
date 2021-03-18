@@ -254,7 +254,6 @@ $~$
 
 **TO DO:** 
 
-- *Estimation of variance/standard errors for the adjusted $\beta$ estimates given by all methods.*
 - *How to let data make decision on number of SNPs to use in the extremes for `empirical_bayes` and number of SNPs used in loess in `BR_ss`?*
 
 

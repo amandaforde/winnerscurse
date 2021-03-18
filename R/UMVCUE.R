@@ -26,10 +26,10 @@ UMVCUE <- function(summary_disc, summary_rep, alpha){
 
   mu_hat <- function(i){return((((rep_sig$se[i])^2)*(disc_sig$beta[i]) + ((disc_sig$se[i])^2)*(rep_sig$beta[i]))/((disc_sig$se[i])^2 + (rep_sig$se[i])^2))}
   w <- function(s,t,p){return(((sqrt((disc_sig$se[s])^2 + (rep_sig$se[s])^2))/((disc_sig$se[s])^2))*(mu_hat(s) -((-1)^p)*((disc_sig$se[s]*abs(disc_sig$beta[t]))/(disc_sig$se[t]))))}
-  beta_UMVCUE_i <- function(i){return(mu_hat(i) - (((rep_sig$se[i])^2)/(sqrt((disc_sig$se[i])^2 + (rep_sig$se[i])^2)))*((dnorm(w(i,i+1,0))-dnorm(w(i,i-1,0))-dnorm(w(i,i+1,1))+dnorm(w(i,i-1,1)))/(pnorm(w(i,i+1,0))-pnorm(w(i,i-1,0))-pnorm(w(i,i+1,1))+pnorm(w(i,i-1,1)))))}
+  beta_UMVCUE_i <- function(i){return(mu_hat(i) - (((rep_sig$se[i])^2)/(sqrt((disc_sig$se[i])^2 + (rep_sig$se[i])^2)))*((stats::dnorm(w(i,i+1,0))-stats::dnorm(w(i,i-1,0))-stats::dnorm(w(i,i+1,1))+stats::dnorm(w(i,i-1,1)))/(stats::pnorm(w(i,i+1,0))-stats::pnorm(w(i,i-1,0))-stats::pnorm(w(i,i+1,1))+stats::pnorm(w(i,i-1,1)))))}
   w_0 <- function(s,t,p){return(((sqrt((disc_sig$se[s])^2 + (rep_sig$se[s])^2))/((disc_sig$se[s])^2))*(mu_hat(s) -((-1)^p)*((disc_sig$se[s]*abs(Inf)))))}
-  beta_UMVCUE_1 <- function(i){return(mu_hat(i) - (((rep_sig$se[i])^2)/(sqrt((disc_sig$se[i])^2 + (rep_sig$se[i])^2)))*((dnorm(w(i,i+1,0)) - dnorm(w_0(i,i-1,0))-dnorm(w(i,i+1,1))+dnorm(w_0(i,i-1,1)))/(pnorm(w(i,i+1,0))-pnorm(w_0(i,i-1,0))-pnorm(w(i,i+1,1))+pnorm(w_0(i,i-1,1)))))}
-  beta_UMVCUE_N <- function(i){return(mu_hat(i) - (((rep_sig$se[i])^2)/(sqrt((disc_sig$se[i])^2 + (rep_sig$se[i])^2)))*((dnorm(w_0(i,i+1,0)) - dnorm(w(i,i-1,0))-dnorm(w_0(i,i+1,1))+dnorm(w(i,i-1,1)))/(pnorm(w_0(i,i+1,0))-pnorm(w(i,i-1,0))-pnorm(w_0(i,i+1,1))+pnorm(w(i,i-1,1)))))}
+  beta_UMVCUE_1 <- function(i){return(mu_hat(i) - (((rep_sig$se[i])^2)/(sqrt((disc_sig$se[i])^2 + (rep_sig$se[i])^2)))*((stats::dnorm(w(i,i+1,0)) - stats::dnorm(w_0(i,i-1,0))-stats::dnorm(w(i,i+1,1))+stats::dnorm(w_0(i,i-1,1)))/(stats::pnorm(w(i,i+1,0))-stats::pnorm(w_0(i,i-1,0))-stats::pnorm(w(i,i+1,1))+stats::pnorm(w_0(i,i-1,1)))))}
+  beta_UMVCUE_N <- function(i){return(mu_hat(i) - (((rep_sig$se[i])^2)/(sqrt((disc_sig$se[i])^2 + (rep_sig$se[i])^2)))*((stats::dnorm(w_0(i,i+1,0)) - stats::dnorm(w(i,i-1,0))-stats::dnorm(w_0(i,i+1,1))+stats::dnorm(w(i,i-1,1)))/(stats::pnorm(w_0(i,i+1,0))-stats::pnorm(w(i,i-1,0))-stats::pnorm(w_0(i,i+1,1))+stats::pnorm(w(i,i-1,1)))))}
 
   n_sig <- length(disc_z)
   beta_UMVCUE <- c(rep(0,n_sig))

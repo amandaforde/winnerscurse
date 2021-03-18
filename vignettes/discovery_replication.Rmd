@@ -1,0 +1,75 @@
+---
+title: "Estimate adjustment using discovery and replication summary statistics"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Estimate adjustment using discovery and replication summary statistics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(winnerscurse)
+```
+
+
+### Addition of toy replication data set 
+
+```{r}
+set.seed(1998)
+n_snps <- 10^6
+effect_snps <- 10000
+n_samples <- 30000
+maf <- runif(n_snps,0.01,0.5)
+se <- 1/sqrt(2*n_samples*maf*(1-maf))
+true_beta <- rnorm(effect_snps,0,1)
+h2 <- 0.7 # variance explained by effect SNPs
+var_y <- sum(2*maf[1:effect_snps]*(1-maf[1:effect_snps])*true_beta^2)/h2
+true_beta <- true_beta/sqrt(var_y) # scaling to represent a phenotype with variance 1
+true_beta <- c(true_beta, rep(0,n_snps-effect_snps))
+stats_disc <- data.frame(rsid=seq(1,n_snps),beta=rnorm(n=n_snps,mean=true_beta,sd=se),se=se)
+
+n_samples_rep <- 450000
+se_rep <- 1/sqrt(2*n_samples_rep*maf*(1-maf))
+stats_rep <- data.frame(rsid=seq(1,n_snps),beta=rnorm(n=n_snps,mean=true_beta,sd=se_rep),se=se_rep)
+
+head(stats_disc)
+head(stats_rep)
+```
+
+### UMVCUE - Bowden and Dudbridge (2009)
+
+```{r}
+out <- UMVCUE(summary_disc = stats_disc,summary_rep = stats_rep,alpha = 5e-8)
+head(out)
+```
+
+### Visualisation
+
+```{r}
+
+library("RColorBrewer")
+col <- brewer.pal(4,"Dark2")
+
+plot(density(abs(out$disc_beta)),ylim=c(0,62),xlim=c(-0.01,0.09),main="Comparing Winner's Curse Methods",col=col[1],lwd=2)
+lines(density(abs(true_beta[out$rsid])),col=col[2],lwd=2)
+lines(density(abs(out$rep_beta)),col=col[3],lwd=2)
+lines(density(abs(out$beta_UMVCUE)),col=col[4],lwd=2)
+legend(-0.006, 60.5, legend=c("beta_naive_disc", "true_beta","beta_naive_rep","beta_UMVCUE"),
+       col=col,lty=1,lwd=2)
+```
+
+```{r}
+sq_diff <- data.frame(disc_naive = sum((true_beta[out$rsid] - out$disc_beta)^2), rep_naive = sum((true_beta[out$rsid] - out$rep_beta)^2),  beta_UMVCUE = sum((true_beta[out$rsid] - out$beta_UMVCUE)^2))
+sq_diff
+
+mean_abs_diff <- data.frame(disc_naive = mean(abs(true_beta[out$rsid] - out$disc_beta)), rep_naive = mean(abs(true_beta[out$rsid] - out$rep_beta)),  beta_UMVCUE = mean(abs(true_beta[out$rsid] - out$beta_UMVCUE)))
+mean_abs_diff
+```
+
