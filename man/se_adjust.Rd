@@ -14,7 +14,7 @@ se_adjust(summary_data, method, n_boot = 100)
 \item{n_boot}{number of bootstrap repetitions used - defaults to 100}
 }
 \value{
-Data frame with summary data together with adjusted estimates
+Data frame with summary data together with adjusted estimates and standard error: adj_se
 }
 \description{
 Obtaining standard errors of adjusted estimates via parametric bootstrap

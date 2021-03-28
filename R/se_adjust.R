@@ -4,7 +4,7 @@
 #' @param method User must specify "BR_ss", "empirical_bayes" or "FDR_IQT"
 #' @param n_boot number of bootstrap repetitions used - defaults to 100
 #'
-#' @return Data frame with summary data together with adjusted estimates
+#' @return Data frame with summary data together with adjusted estimates and standard error: adj_se
 #' @export
 #'
 se_adjust <- function(summary_data, method, n_boot = 100){

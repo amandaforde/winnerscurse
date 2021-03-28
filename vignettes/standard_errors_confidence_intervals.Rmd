@@ -49,36 +49,47 @@ summary_stats <- data.frame(rsid=seq(1,n_snps),beta=rnorm(n=n_snps,mean=true_bet
   3. `n_boot`: a numerical value which defines the number of bootstraps to be used, the default option is 100 bootstraps.
 
 
--  form of data set outputted:  very similar to the functions for adjusting beta estimates but column is now included `se_adj` 
-- what does function do exactly? 
--describe use of parametric bootstraps to create 100 individual data sets, for each bootstrap, we generate a bootstrap beta estimate from normal distribution centred at naive $\hat\beta$ and standard error, $\text{se}(\hat\beta)$ - math notation here to be clear
--the specified method is implemented on each data set and so for each SNP, we now have 100 *adjusted* 'bootstrapped' estimates 
-- standard error obtained by applying `sd` to this set of adjusted estimates for each SNP
+-  `se_adjust` outputs a data frame in a similar format to other functions included in the package. It includes the `beta` estimates obtained after adjustment using the specified method as well as an additional column `adj_se`. This column contains a value which approximates the standard error of the adjusted estimate of $\beta$.   
+ 
+- `se_adjust` uses a parametric bootstrap approach. Firstly, using the inputted data set, `n_boot` individual data sets are created as follows. For each bootstrap $\text{b} = 1, \dots$`n_boot`, a value for $\hat\beta^{(\text{b})}$ is generated for each SNP from a normal distribution centred at the naive $\hat\beta$ with standard error, $\text{se}(\hat\beta)$: $$\hat\beta^{(\text{b})} \sim N(\hat\beta, \text{se}(\hat\beta)).$$
 
-- example of implementation, mention use of 10 bootstraps for ease of demonstration - why? 
-- on a personal computer, the use of 100 bootstraps can result in this function taking between 1 and 3 minutes to provide an output with a data set such as the one provided to it here, with `BR_ss` taking the longest of the three methods as would be expected 
+- The specified method is then implemented on each of the `n_boot` data sets and so for each SNP, we now have `n_boot` *adjusted* 'bootstrapped' $\hat\beta$ estimates. The standard error is then easily obtained by applying `sd` to this set of adjusted estimates for each SNP.
+
+- It is important to note that the use of bootstrapping with large data sets can be quite computationally intensive. On a personal computer, executing 100 bootstraps can result in `se_adjust` taking between 1 and 3 minutes to provide an output with a data set such as the one described here. As expected, `BR_ss` tends to take the longest of the three methods.
+
+- An example of the implementation of this function for each of the three methods is given below. For ease of demonstration, a mere 10 bootstraps is used on all occasions. However, a value of `n_boot` as small as this is not advised in practice.
 
 ```{r}
 out_EB <- se_adjust(summary_data = summary_stats, method = "empirical_bayes", n_boot=10)
-#head(out_EB)
+head(out_EB)
 
 out_BR_ss <- se_adjust(summary_data = summary_stats, method = "BR_ss", n_boot=10)
+head(out_BR_ss)
 
 out_FIQT <- se_adjust(summary_data = summary_stats, method = "FDR_IQT", n_boot=10)
-
-out <- cbind(out_EB,out_BR_ss[5],out_FIQT[5])
-head(out)
+head(out_FIQT)
 ```
 
-- **Note:** due to the nature of the conditional likelihood methods, we cannot obtain standard error of the `beta` estimate which have been adjusted using these methods. 
+- Due to the nature of the conditional likelihood methods, we cannot obtain standard errors of the adjusted `beta` estimates in this manner. 
 
 ### Obtaining confidence intervals for `beta` estimates adjusted by conditional likelihood methods 
 
-- discuss this method as detailed in Ghosh et al. (2008) and implementation in package 
+- The function `cl_interval` implements the conditional likelihood methods described in [Ghosh *et al.* (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/) for each significant SNP and together with the three adjusted estimates, provides a single confidence interval for each SNP. As well as a data set in the form of a data frame with columns `rsid`, `beta` and `se`, `cl_interval` requires `alpha`, a value which specifies the significance threshold and `conf`, a value between 0 and 1 which determines the confidence interval. The default setting for `conf` is 0.95.
+
+- This confidence interval for the adjusted estimate is specified in [Ghosh *et al.* (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/). With $\mu = \frac{\beta}{\text{se}(\beta)}$ and $z = \frac{\hat\beta}{\hat{\text{se}(\hat\beta)}}$, consider the acceptance region $A(\mu,1-\eta)$, which is defined as the interval between the $\eta/2$ and $1-\eta/2$ quantiles of the conditional density, $p_{\mu}(z | \mid Z \mid > c )$. Having obtained the lower and upper boundaries of this acceptance region, the desired confidence interval is given as: $$(\mu_{\text{lower}}\hat{\text{se}(\hat\beta)}, \mu_{\text{upper}}\hat{\text{se}(\hat\beta)}).$$                           
+
+- In the output of `cl_interval`, the `lower` column holds the values of the lower confidence limit for each SNP while the `upper` column contains the upper confidence limit. 
+- `cl_interval` can be used in conjunction with the toy data set as shown below, in which `alpha` is specified as `5e-8` and a 95% confidence interval is desired: 
 
 ```{r}
 out <- cl_interval(summary_data=summary_stats, alpha = 5e-8, conf=0.95)
 head(out)
 ```
 
-- *Note:* might not be wise to create confidence intervals for other estimates especially BR_ss as have noted that the adjusted estimates of this method are *not* normally distributed 
+
+$~$
+$~$
+
+**TO DO:** 
+
+- *creating confidence intervals for other three methods but have noted that the adjusted estimates of `BR_ss` are not normally distributed - one option is obtain quantiles with parametric bootstrap, similar to implementation of `se_adjust` but very computationally intensive?*

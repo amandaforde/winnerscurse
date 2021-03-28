@@ -19,6 +19,13 @@ library(winnerscurse)
 ```
 
 
+This package also includes methods which use both a discovery data set and a replication data set in order to obtain a less biased estimate of $\beta$. Similar to the demonstration of methods which use just the discovery data set, we will first create two toy data sets and then, illustrate how a user may employ the package's functions to adjust for the bias imposed by winner's curse. The methods that are accessible at the moment include: 
+
+1. Conditional Likelihood method - adapted from [Zhong and Prentice (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2536726/)
+2. UMVCUE method - [Bowden and Dudbridge (2009)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2726957/)
+
+It is important to note that with both of these methods, adjustments are only made to SNPs that are deemed significant in the discovery data set, i.e. these SNPs have a $p$-value less than that of the specified threshold, $\alpha$. 
+
 ### Addition of toy replication data set 
 
 ```{r}
@@ -35,7 +42,7 @@ true_beta <- true_beta/sqrt(var_y) # scaling to represent a phenotype with varia
 true_beta <- c(true_beta, rep(0,n_snps-effect_snps))
 stats_disc <- data.frame(rsid=seq(1,n_snps),beta=rnorm(n=n_snps,mean=true_beta,sd=se),se=se)
 
-n_samples_rep <- 450000
+n_samples_rep <- 60000
 se_rep <- 1/sqrt(2*n_samples_rep*maf*(1-maf))
 stats_rep <- data.frame(rsid=seq(1,n_snps),beta=rnorm(n=n_snps,mean=true_beta,sd=se_rep),se=se_rep)
 
@@ -43,32 +50,88 @@ head(stats_disc)
 head(stats_rep)
 ```
 
+
+### Conditional Likelihood - Zhong and Prentice (2008)
+
+- The function `condlike_rep` implements a version of the conditional likelihood method for obtaining bias-reduced estimates of $\beta$ described in [Zhong and Prentice (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2536726/). 
+
+- The function requires as inputs two independent data sets, one representing a discovery GWAS and the other a replication study with identical SNPs, as well as a specification of the significance threshold wished to be used. As before, the data sets must be in the form of data frames with columns `rsid`, `beta` and `se`. It is presumed that SNPs are in the exact same order in both data sets. 
+
+- In a similar manner to other functions included in the package, `condlike_rep` returns a single data frame with SNPs reordered based on signficance. The first 5 columns of the data frame details the inputted information; `rsid`, `beta_disc`, `se_disc`, `beta_rep`, `se_rep`. Following this, `beta_com` is the inverse variance weighted estimate which is formally defined as:$$\hat\beta_{\text{com}} = \frac{\sigma_2^2 \hat\beta_1 + \sigma_1^2 \hat\beta_2}{\sigma_1^2 + \sigma_2^2},$$
+in which $\hat\beta_1$ = `beta_disc`, $\hat\beta_2$ = `beta_rep`, $\sigma_1$ = `se_disc` and $\sigma_2$ = `se_rep`.
+
+- The method implemented here uses just one selection cut-point at the first discovery stage as opposed to that described in [Zhong and Prentice (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2536726/) in which two separate selection thresholds are used. Thus, the maximum likelihood adjusted estimator, `beta_MLE` is defined to maximize the conditional likelihood at the observed $\hat\beta_{\text{com}}$:$$\hat\beta_{\text{MLE}} = \arg \max_{\beta} \log f(\hat\beta_{\text{com}}; \beta).$$
+The conditional sampling distribution, $f(x;\beta)$ is approximated by:
+$$f(x;\beta) = \frac{\frac{1}{\sigma_{\text{com}}} \phi\left(\frac{x-\beta}{\sigma_{\text{com}}}\right) \cdot \left[\Phi\left(\frac{x-c\sigma_1}{\frac{\sigma_1}{\sigma_2}\sigma_{\text{com}}}\right) + \Phi\left(\frac{-x-c\sigma_1}{\frac{\sigma_1}{\sigma_2}\sigma_{\text{com}}}\right)\right]}{\Phi\left(\frac{\beta}{\sigma_1} - c\right) + \Phi\left(- \frac{\beta}{\sigma_1} - c\right)}.$$
+
+- $c$ is the selection cut-point, i.e. all SNPs with $\mid \frac{\hat\beta_1}{\sigma_1}\mid \ge c$ are deemed as significant. The value of $c$ is easily obtained using the chosen `alpha`. In addition, $$\sigma^2_{\text{com}} = \frac{\sigma_1^2 \sigma_2^2}{\sigma_1^2 + \sigma_2^2}.$$
+ 
+- Note that this function, $f(x;\beta)$ is slightly different from that given in the paper as only one selection cut-point is imposed here. 
+
+- Finally, Zhong and Prectice (2008) noted that simulation studies showed that $\hat\beta_{\text{com}}$ tended to have upward bias while $\hat\beta_{\text{MLE}}$ overcorrected and therefore, a combination of the two in the following form was proposed: 
+$$\hat\beta_{\text{MSE}} = \frac{\hat\sigma^2_{\text{com}}\cdot \hat\beta_{\text{com}} + (\hat\beta_{\text{com}} - \hat\beta_{\text{MLE}})^2\cdot\hat\beta_{\text{MLE}}}{\sigma^2_{\text{com}}+(\hat\beta_{\text{com}} - \hat\beta_{\text{MLE}})^2}.$$
+This $\hat\beta_{\text{MSE}}$ holds the final column of the outputted data frame. 
+
+- The use of `condlike_rep` with our toy data sets is demonstrated below, with a significance threshold value of `10e-6`:
+```{r}
+out1 <- condlike_rep(summary_disc=stats_disc, summary_rep=stats_rep, alpha=10e-6)
+head(out1)
+```
+
+
+
 ### UMVCUE - Bowden and Dudbridge (2009)
 
+- The implementation of `UMVCUE` is very similar to the function described above in the sense that `UMVCUE` requires the same inputs; discovery and replication data sets in the form of three-columned data frames together with a threshold value, `alpha`. Furthermore, the outputted data frame is in the same form with just one extra column providing the adjusted estimate, `beta_UMVCUE`.
+
+- Selection also occurs here at just one stage - SNPs are deemed as significant if their $p$-values corresponding to $\mid \frac{\hat\beta_1}{\sigma_1}\mid$ are smaller than the given threshold. 
+
+- The function `UMVCUE` executes the method detailed in [Bowden and Dudbridge (2009)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2726957/). No adaptations have been made to the method described. 
+
+- It is worth noting that, as with all conditional likelihood methods, the method used in `condlike_rep` makes adjustments to each SNP one at a time with no information relating to other SNPs required for this adjustment. However, after ordering SNPs based on signficance, for a single SNP, `UMVCUE` also uses the data of SNPs on either side of it to assist with the adjustment.
+
+- `UMVCUE` can be applied to the toy data sets as followed, with the `alpha` again specified as `10e-6`:
 ```{r}
-out <- UMVCUE(summary_disc = stats_disc,summary_rep = stats_rep,alpha = 5e-8)
-head(out)
+out2 <- UMVCUE(summary_disc = stats_disc, summary_rep = stats_rep, alpha = 10e-6)
+head(out2)
 ```
+
 
 ### Visualisation
 
-```{r}
-library("RColorBrewer")
-col <- brewer.pal(4,"Dark2")
 
-plot(density(abs(out$disc_beta)),ylim=c(0,62),xlim=c(-0.01,0.09),main="Comparing Winner's Curse Methods",col=col[1],lwd=2)
-lines(density(abs(true_beta[out$rsid])),col=col[2],lwd=2)
-lines(density(abs(out$rep_beta)),col=col[3],lwd=2)
-lines(density(abs(out$beta_UMVCUE)),col=col[4],lwd=2)
-legend(-0.006, 60.5, legend=c("beta_naive_disc", "true_beta","beta_naive_rep","beta_UMVCUE"),
+- We can illustrate the performance of these two functions; `condlike_rep` and `UMVCUE`, as follows. It is clear that all methods show an improvement on the estimates obtained from the discovery data set. However, the plots show that a further investigation will be required in order to evaluate if the adjusted estimates are less biased than the mere use of replication estimates. 
+
+- In the second graph, it can be seen that there must be very little difference between the replication estimates and those obtained using `UMVCUE` as the density curves of `beta_rep` and `beta_UMVCUE` nearly overlap completely.  
+
+```{r, warning = FALSE}
+library("RColorBrewer")
+col <- brewer.pal(8,"Dark2")
+
+plot(density(abs(out1$beta_disc)),ylim=c(0,68),xlim=c(-0.01,0.08),main="Conditional Likelihood Winner's Curse Adjustment",col=col[1],lwd=2)
+lines(density(abs(true_beta[out1$rsid])),col=col[2],lwd=2)
+lines(density(abs(out1$beta_rep)),col=col[3],lwd=2)
+lines(density(abs(out1$beta_com)),col=col[4],lwd=2)
+lines(density(abs(out1$beta_MLE)),col=col[5],lwd=2)
+lines(density(abs(out1$beta_MSE)),col=col[8],lwd=2)
+legend(-0.01, 67.5, legend=c("beta_disc", "true_beta","beta_rep","beta_com", "beta_MLE", "beta_MSE"),col=c(col[1:5],col[8]),lty=1,lwd=2)
+
+plot(density(abs(out2$beta_disc)),ylim=c(0,72),xlim=c(-0.01,0.08),main="UMVCUE Winner's Curse Adjustment",col=col[1],lwd=2)
+lines(density(abs(true_beta[out2$rsid])),col=col[2],lwd=2)
+lines(density(abs(out2$beta_rep)),col=col[3],lwd=2)
+lines(density(abs(out2$beta_UMVCUE)),col=col[4],lwd=2)
+legend(-0.01, 70.5, legend=c("beta_disc", "true_beta","beta_rep","beta_UMVCUE"),
        col=col,lty=1,lwd=2)
 ```
 
+- In addition, as the data sets are simulated, we obtain measures such as sum of squared differences and mean of absolute differences for the various estimates as follows: 
+
+
 ```{r}
-sq_diff <- data.frame(disc_naive = sum((true_beta[out$rsid] - out$disc_beta)^2), rep_naive = sum((true_beta[out$rsid] - out$rep_beta)^2),  beta_UMVCUE = sum((true_beta[out$rsid] - out$beta_UMVCUE)^2))
+sq_diff <- data.frame(disc_naive = sum((true_beta[out2$rsid] - out2$beta_disc)^2), rep_naive = sum((true_beta[out2$rsid] - out2$beta_rep)^2),  beta_UMVCUE = sum((true_beta[out2$rsid] - out2$beta_UMVCUE)^2), beta_com = sum((true_beta[out1$rsid] - out1$beta_com)^2), beta_MLE = sum((true_beta[out1$rsid] - out1$beta_MLE)^2), beta_MSE = sum((true_beta[out1$rsid] - out1$beta_MSE)^2))
 sq_diff
 
-mean_abs_diff <- data.frame(disc_naive = mean(abs(true_beta[out$rsid] - out$disc_beta)), rep_naive = mean(abs(true_beta[out$rsid] - out$rep_beta)),  beta_UMVCUE = mean(abs(true_beta[out$rsid] - out$beta_UMVCUE)))
+mean_abs_diff <- data.frame(disc_naive = mean(abs(true_beta[out2$rsid] - out2$beta_disc)), rep_naive = mean(abs(true_beta[out2$rsid] - out2$beta_rep)),  beta_UMVCUE = mean(abs(true_beta[out2$rsid] - out2$beta_UMVCUE)), beta_com = mean(abs(true_beta[out1$rsid] - out1$beta_com)),beta_MLE = mean(abs(true_beta[out1$rsid] - out1$beta_MLE)), beta_MSE = mean(abs(true_beta[out1$rsid] - out1$beta_MSE)))
 mean_abs_diff
 ```
 

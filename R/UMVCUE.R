@@ -43,10 +43,10 @@ UMVCUE <- function(summary_disc, summary_rep, alpha){
   }
 
   summary_data_sig <- cbind(disc_sig[1:3],rep_sig[2:3],beta_UMVCUE)
-  names(summary_data_sig)[2] <- "disc_beta"
-  names(summary_data_sig)[3] <- "disc_se"
-  names(summary_data_sig)[4] <- "rep_beta"
-  names(summary_data_sig)[5] <- "rep_se"
+  names(summary_data_sig)[2] <- "beta_disc"
+  names(summary_data_sig)[3] <- "se_disc"
+  names(summary_data_sig)[4] <- "beta_rep"
+  names(summary_data_sig)[5] <- "se_rep"
 
   return(summary_data_sig)
 

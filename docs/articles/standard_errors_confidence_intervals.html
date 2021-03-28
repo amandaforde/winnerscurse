@@ -125,39 +125,54 @@
 <code>n_boot</code>: a numerical value which defines the number of bootstraps to be used, the default option is 100 bootstraps.</li>
 </ol>
 </li>
-<li><p>form of data set outputted: very similar to the functions for adjusting beta estimates but column is now included <code>se_adj</code></p></li>
-<li><p>what does function do exactly? -describe use of parametric bootstraps to create 100 individual data sets, for each bootstrap, we generate a bootstrap beta estimate from normal distribution centred at naive <span class="math inline">\(\hat\beta\)</span> and standard error, <span class="math inline">\(\text{se}(\hat\beta)\)</span> - math notation here to be clear -the specified method is implemented on each data set and so for each SNP, we now have 100 <em>adjusted</em> ‘bootstrapped’ estimates</p></li>
-<li><p>standard error obtained by applying <code>sd</code> to this set of adjusted estimates for each SNP</p></li>
-<li><p>example of implementation, mention use of 10 bootstraps for ease of demonstration - why?</p></li>
-<li><p>on a personal computer, the use of 100 bootstraps can result in this function taking between 1 and 3 minutes to provide an output with a data set such as the one provided to it here, with <code>BR_ss</code> taking the longest of the three methods as would be expected</p></li>
+<li><p><code>se_adjust</code> outputs a data frame in a similar format to other functions included in the package. It includes the <code>beta</code> estimates obtained after adjustment using the specified method as well as an additional column <code>adj_se</code>. This column contains a value which approximates the standard error of the adjusted estimate of <span class="math inline">\(\beta\)</span>.</p></li>
+<li><p><code>se_adjust</code> uses a parametric bootstrap approach. Firstly, using the inputted data set, <code>n_boot</code> individual data sets are created as follows. For each bootstrap <span class="math inline">\(\text{b} = 1, \dots\)</span><code>n_boot</code>, a value for <span class="math inline">\(\hat\beta^{(\text{b})}\)</span> is generated for each SNP from a normal distribution centred at the naive <span class="math inline">\(\hat\beta\)</span> with standard error, <span class="math inline">\(\text{se}(\hat\beta)\)</span>: <span class="math display">\[\hat\beta^{(\text{b})} \sim N(\hat\beta, \text{se}(\hat\beta)).\]</span></p></li>
+<li><p>The specified method is then implemented on each of the <code>n_boot</code> data sets and so for each SNP, we now have <code>n_boot</code> <em>adjusted</em> ‘bootstrapped’ <span class="math inline">\(\hat\beta\)</span> estimates. The standard error is then easily obtained by applying <code>sd</code> to this set of adjusted estimates for each SNP.</p></li>
+<li><p>It is important to note that the use of bootstrapping with large data sets can be quite computationally intensive. On a personal computer, executing 100 bootstraps can result in <code>se_adjust</code> taking between 1 and 3 minutes to provide an output with a data set such as the one described here. As expected, <code>BR_ss</code> tends to take the longest of the three methods.</p></li>
+<li><p>An example of the implementation of this function for each of the three methods is given below. For ease of demonstration, a mere 10 bootstraps is used on all occasions. However, a value of <code>n_boot</code> as small as this is not advised in practice.</p></li>
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">out_EB</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/se_adjust.html">se_adjust</a></span><span class="op">(</span>summary_data <span class="op">=</span> <span class="va">summary_stats</span>, method <span class="op">=</span> <span class="st">"empirical_bayes"</span>, n_boot<span class="op">=</span><span class="fl">10</span><span class="op">)</span>
-<span class="co">#head(out_EB)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">out_EB</span><span class="op">)</span>
+<span class="co">#&gt;   rsid        beta          se     beta_EB      adj_se</span>
+<span class="co">#&gt; 1 3965  0.06065460 0.008195368  0.05127859 0.011184788</span>
+<span class="co">#&gt; 2 7815  0.06273957 0.008481947  0.05307172 0.011817408</span>
+<span class="co">#&gt; 3 4998 -0.05957379 0.008340589 -0.05054678 0.012849880</span>
+<span class="co">#&gt; 4 7261  0.05510613 0.008192669  0.04623384 0.011959984</span>
+<span class="co">#&gt; 5 6510  0.05623502 0.008394748  0.04714389 0.013464123</span>
+<span class="co">#&gt; 6 9917  0.05466573 0.008178854  0.04580840 0.008089869</span>
 
 <span class="va">out_BR_ss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/se_adjust.html">se_adjust</a></span><span class="op">(</span>summary_data <span class="op">=</span> <span class="va">summary_stats</span>, method <span class="op">=</span> <span class="st">"BR_ss"</span>, n_boot<span class="op">=</span><span class="fl">10</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">out_BR_ss</span><span class="op">)</span>
+<span class="co">#&gt;   rsid        beta          se  beta_BR_ss      adj_se</span>
+<span class="co">#&gt; 1 3965  0.06065460 0.008195368  0.04682949 0.012574319</span>
+<span class="co">#&gt; 2 7815  0.06273957 0.008481947  0.04842467 0.014817383</span>
+<span class="co">#&gt; 3 4998 -0.05957379 0.008340589 -0.04108356 0.005054173</span>
+<span class="co">#&gt; 4 7261  0.05510613 0.008192669  0.04009102 0.008175508</span>
+<span class="co">#&gt; 5 6510  0.05623502 0.008394748  0.04079217 0.008938939</span>
+<span class="co">#&gt; 6 9917  0.05466573 0.008178854  0.03958922 0.008000943</span>
 
 <span class="va">out_FIQT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/se_adjust.html">se_adjust</a></span><span class="op">(</span>summary_data <span class="op">=</span> <span class="va">summary_stats</span>, method <span class="op">=</span> <span class="st">"FDR_IQT"</span>, n_boot<span class="op">=</span><span class="fl">10</span><span class="op">)</span>
-
-<span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span><span class="va">out_EB</span>,<span class="va">out_BR_ss</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span>,<span class="va">out_FIQT</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span>
-<span class="co">#&gt;   rsid        beta          se     beta_EB      adj_se      adj_se      adj_se</span>
-<span class="co">#&gt; 1 3965  0.06065460 0.008195368  0.05127859 0.011184788 0.012574319 0.015094735</span>
-<span class="co">#&gt; 2 7815  0.06273957 0.008481947  0.05307172 0.011817408 0.014817383 0.017759898</span>
-<span class="co">#&gt; 3 4998 -0.05957379 0.008340589 -0.05054678 0.012849880 0.005054173 0.019359251</span>
-<span class="co">#&gt; 4 7261  0.05510613 0.008192669  0.04623384 0.011959984 0.008175508 0.008401186</span>
-<span class="co">#&gt; 5 6510  0.05623502 0.008394748  0.04714389 0.013464123 0.008938939 0.006041825</span>
-<span class="co">#&gt; 6 9917  0.05466573 0.008178854  0.04580840 0.008089869 0.008000943 0.013884552</span></code></pre></div>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">out_FIQT</span><span class="op">)</span>
+<span class="co">#&gt;   rsid        beta          se   beta_FIQT      adj_se</span>
+<span class="co">#&gt; 1 3965  0.06065460 0.008195368  0.04418849 0.015094735</span>
+<span class="co">#&gt; 2 7815  0.06273957 0.008481947  0.04573369 0.017759898</span>
+<span class="co">#&gt; 3 4998 -0.05957379 0.008340589 -0.04270573 0.019359251</span>
+<span class="co">#&gt; 4 7261  0.05510613 0.008192669  0.03783105 0.008401186</span>
+<span class="co">#&gt; 5 6510  0.05623502 0.008394748  0.03876418 0.006041825</span>
+<span class="co">#&gt; 6 9917  0.05466573 0.008178854  0.03776726 0.013884552</span></code></pre></div>
 <ul>
-<li>
-<strong>Note:</strong> due to the nature of the conditional likelihood methods, we cannot obtain standard error of the <code>beta</code> estimate which have been adjusted using these methods.</li>
+<li>Due to the nature of the conditional likelihood methods, we cannot obtain standard errors of the adjusted <code>beta</code> estimates in this manner.</li>
 </ul>
 </div>
 <div id="obtaining-confidence-intervals-for-beta-estimates-adjusted-by-conditional-likelihood-methods" class="section level3">
 <h3 class="hasAnchor">
 <a href="#obtaining-confidence-intervals-for-beta-estimates-adjusted-by-conditional-likelihood-methods" class="anchor"></a>Obtaining confidence intervals for <code>beta</code> estimates adjusted by conditional likelihood methods</h3>
 <ul>
-<li>discuss this method as detailed in Ghosh et al. (2008) and implementation in package</li>
+<li><p>The function <code>cl_interval</code> implements the conditional likelihood methods described in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/">Ghosh <em>et al.</em> (2008)</a> for each significant SNP and together with the three adjusted estimates, provides a single confidence interval for each SNP. As well as a data set in the form of a data frame with columns <code>rsid</code>, <code>beta</code> and <code>se</code>, <code>cl_interval</code> requires <code>alpha</code>, a value which specifies the significance threshold and <code>conf</code>, a value between 0 and 1 which determines the confidence interval. The default setting for <code>conf</code> is 0.95.</p></li>
+<li><p>This confidence interval for the adjusted estimate is specified in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/">Ghosh <em>et al.</em> (2008)</a>. With <span class="math inline">\(\mu = \frac{\beta}{\text{se}(\beta)}\)</span> and <span class="math inline">\(z = \frac{\hat\beta}{\hat{\text{se}(\hat\beta)}}\)</span>, consider the acceptance region <span class="math inline">\(A(\mu,1-\eta)\)</span>, which is defined as the interval between the <span class="math inline">\(\eta/2\)</span> and <span class="math inline">\(1-\eta/2\)</span> quantiles of the conditional density, <span class="math inline">\(p_{\mu}(z | \mid Z \mid &gt; c )\)</span>. Having obtained the lower and upper boundaries of this acceptance region, the desired confidence interval is given as: <span class="math display">\[(\mu_{\text{lower}}\hat{\text{se}(\hat\beta)}, \mu_{\text{upper}}\hat{\text{se}(\hat\beta)}).\]</span></p></li>
+<li><p>In the output of <code>cl_interval</code>, the <code>lower</code> column holds the values of the lower confidence limit for each SNP while the <code>upper</code> column contains the upper confidence limit.</p></li>
+<li><p><code>cl_interval</code> can be used in conjunction with the toy data set as shown below, in which <code>alpha</code> is specified as <code>5e-8</code> and a 95% confidence interval is desired:</p></li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cl_interval.html">cl_interval</a></span><span class="op">(</span>summary_data<span class="op">=</span><span class="va">summary_stats</span>, alpha <span class="op">=</span> <span class="fl">5e-8</span>, conf<span class="op">=</span><span class="fl">0.95</span><span class="op">)</span>
@@ -176,9 +191,10 @@
 <span class="co">#&gt; 4  0.06958836</span>
 <span class="co">#&gt; 5  0.07099831</span>
 <span class="co">#&gt; 6  0.06900707</span></code></pre></div>
+<p><span class="math inline">\(~\)</span> <span class="math inline">\(~\)</span></p>
+<p><strong>TO DO:</strong></p>
 <ul>
-<li>
-<em>Note:</em> might not be wise to create confidence intervals for other estimates especially BR_ss as have noted that the adjusted estimates of this method are <em>not</em> normally distributed</li>
+<li><em>creating confidence intervals for other three methods but have noted that the adjusted estimates of <code>BR_ss</code> are not normally distributed - one option is obtain quantiles with parametric bootstrap, similar to implementation of <code>se_adjust</code> but very computationally intensive?</em></li>
 </ul>
 </div>
   </div>

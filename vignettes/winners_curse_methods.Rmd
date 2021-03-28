@@ -255,6 +255,7 @@ $~$
 **TO DO:** 
 
 - *How to let data make decision on number of SNPs to use in the extremes for `empirical_bayes` and number of SNPs used in loess in `BR_ss`?*
+- *Use of splines instead of loess perhaps in `BR_ss` - but how to choose appropriate value for df? Currently df=10 seems comparable to current implementation of `BR_ss`*
 
 
 

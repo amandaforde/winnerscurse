@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Function reference • winnerscurse</title>
+<title>Conditional likelihood method for Winner's Curse adjustment using discovery and replication summary statistics - Zhong and Prentice (2008) — condlike_rep • winnerscurse</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,8 @@
 
 
 
-<meta property="og:title" content="Function reference" />
+<meta property="og:title" content="Conditional likelihood method for Winner's Curse adjustment using discovery and replication summary statistics - Zhong and Prentice (2008) — condlike_rep" />
+<meta property="og:description" content="Conditional likelihood method for Winner's Curse adjustment using discovery and replication summary statistics - Zhong and Prentice (2008)" />
 
 
 
@@ -58,7 +59,7 @@
   </head>
 
   <body data-spy="scroll" data-target="#toc">
-    <div class="container template-reference-index">
+    <div class="container template-reference-topic">
       <header>
       <div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -118,84 +119,42 @@
       </header>
 
 <div class="row">
-  <div class="contents col-md-9">
+  <div class="col-md-9 contents">
     <div class="page-header">
-      <h1>Reference</h1>
+    <h1>Conditional likelihood method for Winner's Curse adjustment using discovery and replication summary statistics - Zhong and Prentice (2008)</h1>
+    
+    <div class="hidden name"><code>condlike_rep.Rd</code></div>
     </div>
 
-    <table class="ref-index">
+    <div class="ref-description">
+    <p>Conditional likelihood method for Winner's Curse adjustment using discovery and replication summary statistics - Zhong and Prentice (2008)</p>
+    </div>
 
-    <colgroup>
-      
-      <col class="alias" />
-      <col class="title" />
-    </colgroup>
+    <pre class="usage"><span class='fu'>condlike_rep</span><span class='op'>(</span><span class='va'>summary_disc</span>, <span class='va'>summary_rep</span>, <span class='va'>alpha</span><span class='op'>)</span></pre>
 
-    <tbody>
-      <tr>
-        <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
-        </th>
-      </tr>
-      
-      
-    </tbody><tbody>
-      
-      
-      <tr>
-        
-        <td>
-          <p><code><a href="BR_ss.html">BR_ss()</a></code> </p>
-        </td>
-        <td><p>Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary statistics</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="cl_interval.html">cl_interval()</a></code> </p>
-        </td>
-        <td><p>Confidence interval for conditional likelihood methods - Ghosh et al. (2008)</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="conditional_likelihood.html">conditional_likelihood()</a></code> </p>
-        </td>
-        <td><p>Conditional likelihood methods to correct for Winner’s Curse - Ghosh et al. (2008)</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="condlike_rep.html">condlike_rep()</a></code> </p>
-        </td>
-        <td><p>Conditional likelihood method for Winner's Curse adjustment using discovery and replication summary statistics - Zhong and Prentice (2008)</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="empirical_bayes.html">empirical_bayes()</a></code> </p>
-        </td>
-        <td><p>Empirical Bayes correction method for Winner's Curse - Ferguson et al. (2013)</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="FDR_IQT.html">FDR_IQT()</a></code> </p>
-        </td>
-        <td><p>FDR Inverse Quantile Transformation method to correct for Winner’s Curse - Bigdeli et al. (2016)</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="se_adjust.html">se_adjust()</a></code> </p>
-        </td>
-        <td><p>Obtaining standard errors of adjusted estimates via parametric bootstrap</p></td>
-      </tr><tr>
-        
-        <td>
-          <p><code><a href="UMVCUE.html">UMVCUE()</a></code> </p>
-        </td>
-        <td><p>Winner's Curse adjustment method using discovery and replication summary statistics - Bowden and Dudbridge (2009)</p></td>
-      </tr>
-    </tbody>
+    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
+    <table class="ref-arguments">
+    <colgroup><col class="name" /><col class="desc" /></colgroup>
+    <tr>
+      <th>summary_disc</th>
+      <td><p>Data frame containing summary data from discovery GWAS, three columns: rsid, beta, se</p></td>
+    </tr>
+    <tr>
+      <th>summary_rep</th>
+      <td><p>Data frame containing summary data from replication GWAS, three columns: rsid, beta, se</p></td>
+    </tr>
+    <tr>
+      <th>alpha</th>
+      <td><p>significance threshold used in discovery GWAS</p></td>
+    </tr>
     </table>
-  </div>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>Data frame with only SNPs deemed significance in discovery GWAS, contains their beta and se values from both discovery and replication GWAS
+as well as the combined unadjusted estimate, the conditional likelihood MLE and the weighted average for each SNP</p>
+
+  </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
       <h2 data-toc-skip>Contents</h2>
