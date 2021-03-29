@@ -133,5 +133,8 @@ sq_diff
 
 mean_abs_diff <- data.frame(disc_naive = mean(abs(true_beta[out2$rsid] - out2$beta_disc)), rep_naive = mean(abs(true_beta[out2$rsid] - out2$beta_rep)),  beta_UMVCUE = mean(abs(true_beta[out2$rsid] - out2$beta_UMVCUE)), beta_com = mean(abs(true_beta[out1$rsid] - out1$beta_com)),beta_MLE = mean(abs(true_beta[out1$rsid] - out1$beta_MLE)), beta_MSE = mean(abs(true_beta[out1$rsid] - out1$beta_MSE)))
 mean_abs_diff
+
+frac_less_bias <- data.frame(beta_UMVCUE = (sum(abs(true_beta[out2$rsid] - out2$beta_rep) > abs(true_beta[out2$rsid] - out2$beta_UMVCUE)))/nrow(out2), beta_com = (sum(abs(true_beta[out1$rsid] - out1$beta_rep) > abs(true_beta[out1$rsid] - out1$beta_com)))/nrow(out1), beta_MLE = (sum(abs(true_beta[out1$rsid] - out1$beta_rep) > abs(true_beta[out1$rsid] - out1$beta_MLE)))/nrow(out1), beta_MSE = (sum(abs(true_beta[out1$rsid] - out1$beta_rep) > abs(true_beta[out1$rsid] - out1$beta_MSE)))/nrow(out1))
+frac_less_bias  # comparison with naive replication estimate
 ```
 

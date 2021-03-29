@@ -184,7 +184,7 @@ head(out_BR_ss)
 
 ### Comparing Results
 
-As we have simulated our data set, we have the ability to quantify the amount of bias present in the original naive $\beta$ estimates and also, in our adjusted estimates for each method. We can use measures such as the sum of squared differences and mean of absolute differences to assess this bias. First, we take a look at the conditional likelihood method as follows, in which only SNPs that are originally deemed significant are included: 
+As we have simulated our data set, we have the ability to quantify the amount of bias present in the original naive $\beta$ estimates and also, in our adjusted estimates for each method. We can use measures such as the sum of squared differences and mean of absolute differences to assess this bias. Furthermore, we can also simply obtain the fraction of SNPs which are now *less* biased after adjustment. First, we take a look at the conditional likelihood method as follows, in which only SNPs that are originally deemed significant are included: 
 
 ```{r}
 sq_diff_1 <- data.frame(naive = sum((true_beta[out_CL$rsid] - out_CL$beta)^2), beta.cl1 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl1)^2),  beta.cl2 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl2)^2),  beta.cl3 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl3)^2))
@@ -192,9 +192,12 @@ sq_diff_1
 
 mean_abs_diff_1 <- data.frame(naive = mean(abs(true_beta[out_CL$rsid] - out_CL$beta)), beta.cl1 = mean(abs(true_beta[out_CL$rsid] - out_CL$beta.cl1)),  beta.cl2 = mean(abs(true_beta[out_CL$rsid] - out_CL$beta.cl2)),  beta.cl3 = mean(abs(true_beta[out_CL$rsid] - out_CL$beta.cl3)))
 mean_abs_diff_1
+
+frac_less_bias_1 <- data.frame(beta.cl1 = (sum(abs(true_beta[out_CL$rsid] - out_CL$beta) > abs(true_beta[out_CL$rsid] - out_CL$beta.cl1)))/nrow(out_CL), beta.cl2 = (sum(abs(true_beta[out_CL$rsid] - out_CL$beta) > abs(true_beta[out_CL$rsid] - out_CL$beta.cl2)))/nrow(out_CL), beta.cl3 = (sum(abs(true_beta[out_CL$rsid] - out_CL$beta) > abs(true_beta[out_CL$rsid] - out_CL$beta.cl3)))/nrow(out_CL))
+frac_less_bias_1
 ```
 
-For both quantities, the values for all three conditional likelihood methods are less than that of the naive estimate. 
+For the first two quantities, the values for all three conditional likelihood methods are less than that of the naive estimate and we find that at least `r round(frac_less_bias_1[1,1],2)*100`% of the significant SNPs are now less biased.
 
 
 Next, we investigate the other three methods described above which take into account all SNPs, not just those with $p$-values less than a specified threshold. 
@@ -206,8 +209,10 @@ sq_diff_2
 mean_abs_diff_2 <- data.frame(naive = mean(abs(true_beta[out_EB$rsid] - out_EB$beta)), beta_EB = mean(abs(true_beta[out_EB$rsid] - out_EB$beta_EB)), beta_FIQT = mean(abs(true_beta[out_FIQT$rsid] - out_FIQT$beta_FIQT)), beta_BR_ss = mean(abs(true_beta[out_BR_ss$rsid] - out_BR_ss$beta_BR_ss)))
 mean_abs_diff_2
 
+frac_less_bias_2 <- data.frame(beta_EB = (sum(abs(true_beta[out_EB$rsid] - out_EB$beta) > abs(true_beta[out_EB$rsid] - out_EB$beta_EB)))/nrow(out_EB), beta_FIQT = (sum(abs(true_beta[out_FIQT$rsid] - out_FIQT$beta) > abs(true_beta[out_FIQT$rsid] - out_FIQT$beta_FIQT)))/nrow(out_FIQT), beta_BR_ss = (sum(abs(true_beta[out_BR_ss$rsid] - out_BR_ss$beta) > abs(true_beta[out_BR_ss$rsid] - out_BR_ss$beta_BR_ss)))/nrow(out_BR_ss))
+frac_less_bias_2
 ```
-Again, we see that in both cases, the value associated with the naive estimate is greatest. This assures us that the new adjusted estimates provided by each method are indeed less biased than the original $\beta$ estimate. 
+Again, we see that in the top two cases, the value associated with the naive estimate is greatest. This assures us that the new adjusted estimates provided by each method are indeed less biased than the original $\beta$ estimate. In fact, for each method, at least `r round(min(frac_less_bias_2[1,]),2)*100`% of the association estimates of all SNPs are now less biased. 
 
 
 Finally, we can compare the performance of all methods for the SNPs with raw $p$-values less than `5e-8`.
@@ -222,6 +227,9 @@ sq_diff_3
 
 mean_abs_diff_3 <- data.frame(naive = mean(abs(true_beta[out_CL$rsid] - out_CL$beta)), beta.cl1 = mean(abs(true_beta[out_CL$rsid] - out_CL$beta.cl1)),  beta.cl2 = mean(abs(true_beta[out_CL$rsid] - out_CL$beta.cl2)),  beta.cl3 = mean(abs(true_beta[out_CL$rsid] - out_CL$beta.cl3)), beta_EB = mean(abs(true_beta[out_EB_sig$rsid] - out_EB_sig$beta_EB)), beta_FIQT = mean(abs(true_beta[out_FIQT_sig$rsid] - out_FIQT_sig$beta_FIQT)), beta_BR_ss = mean(abs(true_beta[out_BR_ss_sig$rsid] - out_BR_ss_sig$beta_BR_ss)))
 mean_abs_diff_3
+
+frac_less_bias_3 <- data.frame(beta.cl1 = (sum(abs(true_beta[out_CL$rsid] - out_CL$beta) > abs(true_beta[out_CL$rsid] - out_CL$beta.cl1)))/nrow(out_CL), beta.cl2 = (sum(abs(true_beta[out_CL$rsid] - out_CL$beta) > abs(true_beta[out_CL$rsid] - out_CL$beta.cl2)))/nrow(out_CL), beta.cl3 = (sum(abs(true_beta[out_CL$rsid] - out_CL$beta) > abs(true_beta[out_CL$rsid] - out_CL$beta.cl3)))/nrow(out_CL), beta_EB = (sum(abs(true_beta[out_EB_sig$rsid] - out_EB_sig$beta) > abs(true_beta[out_EB_sig$rsid] - out_EB_sig$beta_EB)))/nrow(out_EB_sig), beta_FIQT = (sum(abs(true_beta[out_FIQT_sig$rsid] - out_FIQT_sig$beta) > abs(true_beta[out_FIQT_sig$rsid] - out_FIQT_sig$beta_FIQT)))/nrow(out_FIQT_sig), beta_BR_ss = (sum(abs(true_beta[out_BR_ss_sig$rsid] - out_BR_ss_sig$beta) > abs(true_beta[out_BR_ss_sig$rsid] - out_BR_ss_sig$beta_BR_ss)))/nrow(out_BR_ss_sig))
+frac_less_bias_3
 ```
 
 
