@@ -19,12 +19,16 @@ library(winnerscurse)
 ```
 
 
-This package also includes methods which use both a discovery data set and a replication data set in order to obtain a less biased estimate of $\beta$. Similar to the demonstration of methods which use just the discovery data set, we will first create two toy data sets and then, illustrate how a user may employ the package's functions to adjust for the bias imposed by winner's curse. The methods that are accessible at the moment include: 
+This package also includes methods which use both a discovery data set and a replication data set in order to obtain a less biased estimate of $\beta$. Similar to the demonstration of methods which use just the discovery data set, we will first create two toy data sets and then, illustrate how a user may employ the package's functions to adjust for the bias imposed by winner's curse. The methods that are currently accessible include: 
 
 1. Conditional Likelihood method - adapted from [Zhong and Prentice (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2536726/)
 2. UMVCUE method - [Bowden and Dudbridge (2009)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2726957/)
 
 It is important to note that with both of these methods, adjustments are only made to SNPs that are deemed significant in the discovery data set, i.e. these SNPs have a $p$-value less than that of the specified threshold, $\alpha$. 
+
+A third method has been added which obtains a new association estimate for each significant SNP in the data set using a combination of the discovery and replication estimates:
+
+3. MSE minimization method - based on [Ferguson et al. (2017)](https://journals.sagepub.com/doi/full/10.1177/0962280217720854)
 
 ### Addition of toy replication data set 
 
@@ -96,6 +100,28 @@ out2 <- UMVCUE(summary_disc = stats_disc, summary_rep = stats_rep, alpha = 10e-6
 head(out2)
 ```
 
+### MSE minimization method
+
+- The function `MSE_minimizer` implements a combination method which closely follows that described in [Ferguson *et al.* (2017)](https://journals.sagepub.com/doi/full/10.1177/0962280217720854). The function parameters used here; `summary_disc`, `summary_rep` and `alpha`, are precisely of the same form as those previously detailed in this vignette. In addition, `MSE_minimizer` has a logical parameter, namely `spline` which defaults as `spline=FALSE`.
+
+- An adjusted estimate is computed for each SNP which has been classified as significant based on the given threshold. Thus, similar to the above method, `MSE_minimizer` returns a data frame containing these significant SNPs with 6 columns in which the final column contains the new estimate, `beta_joint`.
+
+- Following the approach detailed in [Ferguson *et al.* (2017)](https://journals.sagepub.com/doi/full/10.1177/0962280217720854), we define the adjusted linear combination estimator as: $$\hat\beta_{\text{joint}} = \omega(\hat{B}) \cdot \hat\beta_{\text{rep}} + (1-\omega(\hat{B}))\cdot \hat\beta_{\text{disc}}$$ in which $$ \omega(\hat{B}) = \frac{\frac{1}{\sigma^2_{\text{rep}}}}{\frac{1}{\sigma^2_{\text{rep}}}+\frac{1}{\sigma^2_{\text{rep}}+ \hat{B}^2}}.$$ Using the default setting for `spline`, i.e. `spline=FALSE`, we simply let $\hat{B} = \hat\beta_{\text{disc}} - \hat\beta_{\text{rep}}$. We make the assumptions that $\beta_{\text{rep}}$ is unbiased for $\beta$, but $\beta_{\text{disc}}$ is quite likely to be biased and that $\beta_{\text{rep}}$ and $\beta_{\text{disc}}$ are independent. 
+
+- For `spline=TRUE`, a cubic smoothing spline is applied in which the values of $z_{\text{disc}} = \frac{\hat\beta_{\text{disc}}}{\sigma_{\text{disc}}} $ are considered as inputs and $\hat{B} = \hat\beta_{\text{disc}} - \hat\beta_{\text{rep}}$, the corresponding outputs. The predicted values for $\hat{B}$ from this process, $hat{B}^*$ say, are then used instead of $\hat{B}$ when computing $\hat\beta_{\text{joint}}$ for each SNP.
+
+- We apply `MSE_minimizer` to our toy data sets, once with the default setting for `spline` and once with `spline=TRUE`. Again for convenient demonstration purposes, we specify the significance threshold as `10e-6`.
+```{r}
+out3 <- MSE_minimizer(summary_disc = stats_disc, summary_rep = stats_rep, alpha=10e-6)
+out4 <- MSE_minimizer(summary_disc = stats_disc, summary_rep = stats_rep, alpha=10e-6,spline=TRUE)
+
+head(out3)
+head(out4)
+```
+
+
+
+
 
 ### Visualisation
 
@@ -116,11 +142,13 @@ lines(density(abs(out1$beta_MLE)),col=col[5],lwd=2)
 lines(density(abs(out1$beta_MSE)),col=col[8],lwd=2)
 legend(-0.01, 67.5, legend=c("beta_disc", "true_beta","beta_rep","beta_com", "beta_MLE", "beta_MSE"),col=c(col[1:5],col[8]),lty=1,lwd=2)
 
-plot(density(abs(out2$beta_disc)),ylim=c(0,72),xlim=c(-0.01,0.08),main="UMVCUE Winner's Curse Adjustment",col=col[1],lwd=2)
+plot(density(abs(out2$beta_disc)),ylim=c(0,72),xlim=c(-0.01,0.08),main="UMVCUE and MSE-minimizer Winner's Curse Adjustment",col=col[1],lwd=2)
 lines(density(abs(true_beta[out2$rsid])),col=col[2],lwd=2)
 lines(density(abs(out2$beta_rep)),col=col[3],lwd=2)
 lines(density(abs(out2$beta_UMVCUE)),col=col[4],lwd=2)
-legend(-0.01, 70.5, legend=c("beta_disc", "true_beta","beta_rep","beta_UMVCUE"),
+lines(density(abs(out3$beta_joint)),col=col[5],lwd=2)
+lines(density(abs(out4$beta_joint)),col=col[6],lwd=2)
+legend(-0.01, 70.5, legend=c("beta_disc", "true_beta","beta_rep","beta_UMVCUE", "beta_joint", "beta_joint_sp"),
        col=col,lty=1,lwd=2)
 ```
 
@@ -128,13 +156,13 @@ legend(-0.01, 70.5, legend=c("beta_disc", "true_beta","beta_rep","beta_UMVCUE"),
 
 
 ```{r}
-sq_diff <- data.frame(disc_naive = sum((true_beta[out2$rsid] - out2$beta_disc)^2), rep_naive = sum((true_beta[out2$rsid] - out2$beta_rep)^2),  beta_UMVCUE = sum((true_beta[out2$rsid] - out2$beta_UMVCUE)^2), beta_com = sum((true_beta[out1$rsid] - out1$beta_com)^2), beta_MLE = sum((true_beta[out1$rsid] - out1$beta_MLE)^2), beta_MSE = sum((true_beta[out1$rsid] - out1$beta_MSE)^2))
+sq_diff <- data.frame(disc_naive = sum((true_beta[out2$rsid] - out2$beta_disc)^2), rep_naive = sum((true_beta[out2$rsid] - out2$beta_rep)^2),  beta_UMVCUE = sum((true_beta[out2$rsid] - out2$beta_UMVCUE)^2), beta_com = sum((true_beta[out1$rsid] - out1$beta_com)^2), beta_MLE = sum((true_beta[out1$rsid] - out1$beta_MLE)^2), beta_MSE = sum((true_beta[out1$rsid] - out1$beta_MSE)^2), beta_joint = sum((true_beta[out3$rsid] - out3$beta_joint)^2), beta_joint_sp = sum((true_beta[out4$rsid] - out4$beta_joint)^2))
 sq_diff
 
-mean_abs_diff <- data.frame(disc_naive = mean(abs(true_beta[out2$rsid] - out2$beta_disc)), rep_naive = mean(abs(true_beta[out2$rsid] - out2$beta_rep)),  beta_UMVCUE = mean(abs(true_beta[out2$rsid] - out2$beta_UMVCUE)), beta_com = mean(abs(true_beta[out1$rsid] - out1$beta_com)),beta_MLE = mean(abs(true_beta[out1$rsid] - out1$beta_MLE)), beta_MSE = mean(abs(true_beta[out1$rsid] - out1$beta_MSE)))
+mean_abs_diff <- data.frame(disc_naive = mean(abs(true_beta[out2$rsid] - out2$beta_disc)), rep_naive = mean(abs(true_beta[out2$rsid] - out2$beta_rep)),  beta_UMVCUE = mean(abs(true_beta[out2$rsid] - out2$beta_UMVCUE)), beta_com = mean(abs(true_beta[out1$rsid] - out1$beta_com)),beta_MLE = mean(abs(true_beta[out1$rsid] - out1$beta_MLE)), beta_MSE = mean(abs(true_beta[out1$rsid] - out1$beta_MSE)), beta_joint = mean(abs(true_beta[out3$rsid] - out3$beta_joint)), beta_joint_sp = mean(abs(true_beta[out4$rsid] - out4$beta_joint)))
 mean_abs_diff
 
-frac_less_bias <- data.frame(beta_UMVCUE = (sum(abs(true_beta[out2$rsid] - out2$beta_rep) > abs(true_beta[out2$rsid] - out2$beta_UMVCUE)))/nrow(out2), beta_com = (sum(abs(true_beta[out1$rsid] - out1$beta_rep) > abs(true_beta[out1$rsid] - out1$beta_com)))/nrow(out1), beta_MLE = (sum(abs(true_beta[out1$rsid] - out1$beta_rep) > abs(true_beta[out1$rsid] - out1$beta_MLE)))/nrow(out1), beta_MSE = (sum(abs(true_beta[out1$rsid] - out1$beta_rep) > abs(true_beta[out1$rsid] - out1$beta_MSE)))/nrow(out1))
+frac_less_bias <- data.frame(beta_UMVCUE = (sum(abs(true_beta[out2$rsid] - out2$beta_rep) > abs(true_beta[out2$rsid] - out2$beta_UMVCUE)))/nrow(out2), beta_com = (sum(abs(true_beta[out1$rsid] - out1$beta_rep) > abs(true_beta[out1$rsid] - out1$beta_com)))/nrow(out1), beta_MLE = (sum(abs(true_beta[out1$rsid] - out1$beta_rep) > abs(true_beta[out1$rsid] - out1$beta_MLE)))/nrow(out1), beta_MSE = (sum(abs(true_beta[out1$rsid] - out1$beta_rep) > abs(true_beta[out1$rsid] - out1$beta_MSE)))/nrow(out1), beta_joint = (sum(abs(true_beta[out3$rsid] - out3$beta_rep) > abs(true_beta[out3$rsid] - out3$beta_joint)))/nrow(out3), beta_joint_sp = (sum(abs(true_beta[out4$rsid] - out4$beta_rep) > abs(true_beta[out4$rsid] - out4$beta_joint)))/nrow(out4))
 frac_less_bias  # comparison with naive replication estimate
 ```
 

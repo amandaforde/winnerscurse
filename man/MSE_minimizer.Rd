@@ -4,7 +4,7 @@
 \alias{MSE_minimizer}
 \title{Approach to combine association estimates from discovery and replication data sets}
 \usage{
-MSE_minimizer(summary_disc, summary_rep, spline = FALSE)
+MSE_minimizer(summary_disc, summary_rep, alpha, spline = FALSE)
 }
 \arguments{
 \item{summary_disc}{Data frame containing summary data from discovery GWAS, three columns: rsid, beta, se}

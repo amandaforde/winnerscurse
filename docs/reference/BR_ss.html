@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary statistics — BR_ss • winnerscurse</title>
+<title>Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary
+statistics — BR_ss • winnerscurse</title>
 
 
 <!-- jquery -->
@@ -39,8 +40,10 @@
 
 
 
-<meta property="og:title" content="Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary statistics — BR_ss" />
-<meta property="og:description" content="Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary statistics" />
+<meta property="og:title" content="Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary
+statistics — BR_ss" />
+<meta property="og:description" content="Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary
+statistics" />
 
 
 
@@ -95,7 +98,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/discovery_replication.html">Estimate adjustment using discovery and replication summary statistics</a>
+      <a href="../articles/discovery_replication.html">Using discovery and replication summary statistics for adjusting association estimates</a>
     </li>
     <li>
       <a href="../articles/standard_errors_confidence_intervals.html">Standard errors of adjusted estimates and confidence intervals</a>
@@ -121,23 +124,31 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary statistics</h1>
+    <h1>Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary
+statistics</h1>
     
     <div class="hidden name"><code>BR_ss.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary statistics</p>
+    <p>Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary
+statistics</p>
     </div>
 
-    <pre class="usage"><span class='fu'>BR_ss</span><span class='op'>(</span><span class='va'>summary_data</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>BR_ss</span><span class='op'>(</span><span class='va'>summary_data</span>, seed <span class='op'>=</span> <span class='fl'>1998</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>summary_data</th>
-      <td><p>Data frame containing summary data, three columns: rsid, beta, se</p></td>
+      <td><p>Data frame containing summary data, three columns: rsid,
+beta, se</p></td>
+    </tr>
+    <tr>
+      <th>seed</th>
+      <td><p>Allows reproducibility of adjusted estimates as variances can
+occur due to bootstrap, default is seed=1998</p></td>
     </tr>
     </table>
 

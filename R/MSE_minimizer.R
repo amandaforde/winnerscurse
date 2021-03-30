@@ -9,20 +9,24 @@
 #' as well as the combined estimate, beta_joint
 #' @export
 #'
-#' @examples
-MSE_minimizer <- function(summary_disc, summary_rep, spline=FALSE){
-  B <- summary_disc$beta - summary_rep$beta
+MSE_minimizer <- function(summary_disc, summary_rep, alpha, spline=FALSE){
+
+  c <- stats::qnorm(1-(alpha)/2)
+  summary_disc_sig <- summary_disc[abs(summary_disc$beta/summary_disc$se) > c,]
+  summary_rep_sig <- summary_rep[abs(summary_disc$beta/summary_disc$se) > c,]
+
+  B <- summary_disc_sig$beta - summary_rep_sig$beta
 
   if (spline == FALSE){
-    w <- ((summary_rep$se^2)^-1)/(((summary_rep$se^2)^-1) + ((summary_rep$se^2 + B^2)^-1))
+    w <- ((summary_rep_sig$se^2)^-1)/(((summary_rep_sig$se^2)^-1) + ((summary_rep_sig$se^2 + B^2)^-1))
   }else{
-    z <- summary_disc$beta/summary_disc$se
+    z <- summary_disc_sig$beta/summary_disc_sig$se
     B1 <- predict(smooth.spline(x=z,y=B)$fit, z)$y
-    w <- ((summary_rep$se^2)^-1)/(((summary_rep$se^2)^-1) + ((summary_rep$se^2 + B1^2)^-1))
+    w <- ((summary_rep_sig$se^2)^-1)/(((summary_rep_sig$se^2)^-1) + ((summary_rep_sig$se^2 + B1^2)^-1))
   }
 
-  beta_joint <- w*summary_rep$beta + (1-w)*summary_disc$beta
-  betas <- data.frame(rsid = summary_disc$rsid, beta_disc = summary_disc$beta, se_disc  = summary_disc$se, beta_rep = summary_rep$beta, se_rep = summary_rep$se, beta_joint=beta_joint)
+  beta_joint <- w*summary_rep_sig$beta + (1-w)*summary_disc_sig$beta
+  betas <- data.frame(rsid = summary_disc_sig$rsid, beta_disc = summary_disc_sig$beta, se_disc  = summary_disc_sig$se, beta_rep = summary_rep_sig$beta, se_rep = summary_rep_sig$se, beta_joint=beta_joint)
 
   ## reorder based on significance in first set up!
   out <- dplyr::arrange(betas, dplyr::desc(abs(betas$beta_disc/betas$se_disc)))

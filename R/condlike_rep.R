@@ -13,7 +13,7 @@ condlike_rep <- function(summary_disc,summary_rep,alpha){
 
   se_com <- sqrt((((summary_disc$se)^2)*((summary_rep$se)^2))/(((summary_disc$se)^2) + ((summary_rep$se)^2)))
   beta_com <- ((((summary_rep$se)^2)*(summary_disc$beta))+(((summary_disc$se)^2)*(summary_rep$beta)))/(((summary_disc$se)^2) + ((summary_rep$se)^2))
-  summary_com <- data.frame(rsid=seq(1,nrow(summary_disc)),beta=beta_com,se=se_com)
+  summary_com <- data.frame(rsid=summary_disc$rsid,beta=beta_com,se=se_com)
   c_1 <- stats::qnorm(1-(alpha)/2)
 
 
