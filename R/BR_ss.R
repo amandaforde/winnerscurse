@@ -1,14 +1,19 @@
-#' Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary statistics
+#' Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary
+#' statistics
 #'
-#' @param summary_data Data frame containing summary data, three columns: rsid, beta, se
+#' @param summary_data Data frame containing summary data, three columns: rsid,
+#'   beta, se
+#' @param seed Allows reproducibility of adjusted estimates as variances can
+#'   occur due to bootstrap, default is seed=1998
 #'
 #' @return Data frame with summary data together with adjusted estimates
 #' @export
 
-BR_ss <- function(summary_data){
+BR_ss <- function(summary_data,seed=1998){
     summary_data <- dplyr::arrange(summary_data, dplyr::desc((summary_data$beta/summary_data$se)))
 
     N <- nrow(summary_data)
+    set.seed(seed)
     beta_boot <- matrix(stats::rnorm(1*N, mean = rep(summary_data$beta,1), sd = rep(summary_data$se,1)), nrow=N, ncol=1, byrow=FALSE)
 
     beta_mat <- matrix(rep(summary_data$beta,1), nrow=N, ncol=1, byrow=FALSE)
@@ -25,22 +30,7 @@ BR_ss <- function(summary_data){
 
     z <- summary_data$beta/summary_data$se
 
-    index_1 <- 0.01*N
-    index_2 <- N-index_1+1
-    index_3 <- index_1+1
-    index_4 <- N-index_1
-
-    data_up <- data.frame(x = z[1:index_1], y = bias_correct[1:index_1])
-    loess_up <- stats::predict(stats::loess(y ~ x, data = data_up, span=0.1))
-
-    data_down <- data.frame(x = z[index_2:N], y = bias_correct[index_2:N])
-    loess_down <- stats::predict(stats::loess(y ~ x, data = data_down, span=0.1))
-
-    data <- data.frame(x = z[index_3:index_4], y = bias_correct[index_3:index_4])
-    linear <- stats::predict(stats::lm(y~x,data=data))
-
-    bias_correct <- c(loess_up,linear,loess_down)
-
+    bias_correct <- stats::predict(stats::smooth.spline(z,bias_correct)$fit, z)$y
 
     beta_BR_ss <- summary_data$beta - summary_data$se*bias_correct[rank(-1*summary_data$beta/summary_data$se)]
     beta_BR_ss[sign(beta_BR_ss) != sign(summary_data$beta)] <- 0

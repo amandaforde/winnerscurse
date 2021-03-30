@@ -153,7 +153,7 @@ head(out_FIQT)
 
 - Inspired by the winner's curse adjustment method detailed in [Faye *et al.* (2011)](https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4228), the function `BR_ss` implements a computationally efficient bootstrap method which is suitable for use with summary statistics. 
 
-- `BR_ss` takes a data frame `summary_data` with three columns: `rsid`, `beta`, `se`, and returns the inputted data frame along with the adjusted estimate for $\beta$, `beta_BR_ss`.
+- `BR_ss` takes a data frame `summary_data` with three columns: `rsid`, `beta`, `se`, and returns the inputted data frame along with the adjusted estimate for $\beta$, `beta_BR_ss`. The function also has a parameter `seed` which can be set to a specific numeric value by the user to permit reproducibility. This is required as this method involves bootstrap implementation and therefore, the use of a seed allows the user to obtain the exact same results for `beta_BR_ss` when running the function many times on the same dataset. The default value for `seed` is `1998`. 
 
 $~$
 
@@ -167,14 +167,14 @@ $$\hat\beta^{\text{b}}_{(k)} \sim N(\hat\beta_{(k)}, \text{se}(\hat\beta_{(k)}))
 - An estimate for the bias correction value of SNP $k$ is given as:
 $$\text{bias}_{(k)} = \frac{\hat\beta^{\text{b}}_{A(k)} - \hat\beta^{\text{oob}}_{A(k)}}{\text{se}(\hat\beta_{A(k)})} = \frac{\hat\beta^{\text{b}}_{A(k)} - \hat\beta_{A(k)}}{\text{se}(\hat\beta_{A(k)})}, $$in which $\hat\beta^{\text{b}}_{A(k)}$ is the bootstrap value of the SNP ranked in position $k$ in the second ordering, $\hat\beta^{\text{oob}}_{A(k)} = \hat\beta_{A(k)}$ is that same SNP's naive $\beta$ estimate and $\text{se}(\hat\beta_{A(k)})$ it's standard error. 
 
-- Next, a LOESS curve is fitted to the data in which $z_{(k)}$-statistics are considered as the inputs and $\text{bias}_{(k)}$, their corresponding outputs. As we are often dealing with very large numbers of SNPs, a LOESS curve is only fitted for the most significant SNPs. The `BR_ss` function currently fits one LOESS curve for the SNPs ranked in the top $1\%$ of positions and another one for those ranked in the bottom $1\%$. A linear regression is used for all other SNPs. The predicted values from this process provides $\text{bias}^{*}_{(k)}$ for each SNP. Using $\text{bias}^{*}_{(k)}$ instead of $\text{bias}_{(k)}$ results in a faster approach with increased accuracy as only one bootstrap iteration for each SNP is sufficient for competitive performance. 
+- Next, a cubic smoothing spline is fitted to the data using `stats::smooth.spline` in which $z_{(k)}$-statistics are considered as the inputs and $\text{bias}_{(k)}$, their corresponding outputs. The predicted values from this process provides $\text{bias}^{*}_{(k)}$ for each SNP. Using $\text{bias}^{*}_{(k)}$ instead of $\text{bias}_{(k)}$ results in a faster approach with increased accuracy as only one bootstrap iteration for each SNP is sufficient for competitive performance. 
 
 - Finally, the new estimate for $\beta$ for SNP $k$ is defined as follows:
 $$\hat\beta_{(k)}^{*} = \hat\beta_{(k)} - \text{se}(\hat\beta_{(k)}) \cdot  \text{bias}^{*}_{(k)}.$$
 
 
 ```{r}
-out_BR_ss <- BR_ss(summary_data = summary_stats)
+out_BR_ss <- BR_ss(summary_data = summary_stats, seed=2020)
 head(out_BR_ss)
 ```
 

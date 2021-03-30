@@ -2,16 +2,22 @@
 % Please edit documentation in R/BR_ss.R
 \name{BR_ss}
 \alias{BR_ss}
-\title{Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary statistics}
+\title{Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary
+statistics}
 \usage{
-BR_ss(summary_data)
+BR_ss(summary_data, seed = 1998)
 }
 \arguments{
-\item{summary_data}{Data frame containing summary data, three columns: rsid, beta, se}
+\item{summary_data}{Data frame containing summary data, three columns: rsid,
+beta, se}
+
+\item{seed}{Allows reproducibility of adjusted estimates as variances can
+occur due to bootstrap, default is seed=1998}
 }
 \value{
 Data frame with summary data together with adjusted estimates
 }
 \description{
-Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary statistics
+Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary
+statistics
 }

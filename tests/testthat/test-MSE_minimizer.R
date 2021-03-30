@@ -1,10 +1,10 @@
 library(winnerscurse)
 
-context("condlike_rep")
+context("MSE_minimizer")
 
 
 
-test_that("testing if conditional likelihood with replication data set gives appropriate estimates when given two data sets",
+test_that("testing if MSE minimization method gives appropriate estimates when given two data sets",
 
           {
             n_snps <- 10^6
@@ -27,12 +27,12 @@ test_that("testing if conditional likelihood with replication data set gives app
             se_rep <- 1/sqrt(2*n_samples_rep*maf*(1-maf))
             summary_rep <- data.frame(rsid=seq(1,n_snps),beta=rnorm(n=n_snps,mean=true_beta,sd=se_rep),se=se_rep)
 
-            out <- condlike_rep(summary_disc, summary_rep, alpha=5e-8)
-
-            test1 <- sum(round(max(abs(out$beta_disc),abs(out$beta_rep)),6) >= abs(round(out$beta_com,6))) == length(out$beta_disc)
-
+            out <- MSE_minimizer(summary_disc, summary_rep)
+            test1 <- sum(round(max(abs(out$beta_disc),abs(out$beta_rep)),6) >= abs(round(out$beta_joint,6))) == length(out$beta_disc)
             expect_true(identical(test1,TRUE) == 1)
 
+            out <- MSE_minimizer(summary_disc, summary_rep, spline=TRUE)
+            test2 <- sum(round(max(abs(out$beta_disc),abs(out$beta_rep)),6) >= abs(round(out$beta_joint,6))) == length(out$beta_disc)
+            expect_true(identical(test2,TRUE) == 1)
+
           })
-
-

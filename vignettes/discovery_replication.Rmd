@@ -1,8 +1,8 @@
 ---
-title: "Estimate adjustment using discovery and replication summary statistics"
+title: "Using discovery and replication summary statistics for adjusting association estimates"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Estimate adjustment using discovery and replication summary statistics}
+  %\VignetteIndexEntry{Using discovery and replication summary statistics for adjusting association estimates}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
