@@ -21,7 +21,7 @@ MSE_minimizer <- function(summary_disc, summary_rep, alpha, spline=FALSE){
     w <- ((summary_rep_sig$se^2)^-1)/(((summary_rep_sig$se^2)^-1) + ((summary_rep_sig$se^2 + B^2)^-1))
   }else{
     z <- summary_disc_sig$beta/summary_disc_sig$se
-    B1 <- predict(smooth.spline(x=z,y=B)$fit, z)$y
+    B1 <- stats::predict(stats::smooth.spline(x=z,y=B)$fit, z)$y
     w <- ((summary_rep_sig$se^2)^-1)/(((summary_rep_sig$se^2)^-1) + ((summary_rep_sig$se^2 + B1^2)^-1))
   }
 
