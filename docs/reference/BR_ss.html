@@ -6,8 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary
-statistics — BR_ss • winnerscurse</title>
+<title>Bootstrap method for use with discovery GWAS — BR_ss • winnerscurse</title>
 
 
 <!-- jquery -->
@@ -40,10 +39,13 @@ statistics — BR_ss • winnerscurse</title>
 
 
 
-<meta property="og:title" content="Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary
-statistics — BR_ss" />
-<meta property="og:description" content="Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary
-statistics" />
+<meta property="og:title" content="Bootstrap method for use with discovery GWAS — BR_ss" />
+<meta property="og:description" content="BR_ss is a function which aims to use summary statistics to alleviate
+Winner's Curse bias in SNP-trait association estimates, obtained from a
+discovery GWAS. The function implements an adaptation of a bootstrap
+resampling method known as BR-squared, detailed in
+Faye et
+al. (2011)." />
 
 
 
@@ -124,15 +126,18 @@ statistics" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary
-statistics</h1>
+    <h1>Bootstrap method for use with discovery GWAS</h1>
     
     <div class="hidden name"><code>BR_ss.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary
-statistics</p>
+    <p><code>BR_ss</code> is a function which aims to use summary statistics to alleviate
+Winner's Curse bias in SNP-trait association estimates, obtained from a
+discovery GWAS. The function implements an adaptation of a bootstrap
+resampling method known as BR-squared, detailed in
+<a href='https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4228'>Faye <em>et
+al.</em> (2011)</a>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>BR_ss</span><span class='op'>(</span><span class='va'>summary_data</span>, seed <span class='op'>=</span> <span class='fl'>1998</span><span class='op'>)</span></pre>
@@ -142,19 +147,35 @@ statistics</p>
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>summary_data</th>
-      <td><p>Data frame containing summary data, three columns: rsid,
-beta, se</p></td>
+      <td><p>A data frame containing summary statistics from the
+discovery GWAS. It must have three columns with column names <code>rsid</code>,
+<code>beta</code> and <code>se</code>, respectively, and all columns must contain
+numerical values.</p></td>
     </tr>
     <tr>
       <th>seed</th>
-      <td><p>Allows reproducibility of adjusted estimates as variances can
-occur due to bootstrap, default is seed=1998</p></td>
+      <td><p>A numerical value which is required to allow reproducibility of
+adjusted estimates. Small differences can occur between iterations of the
+function with the same data set due to the use of parametric bootstrapping.
+The default setting is the arbitrary value of <code>1998</code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Data frame with summary data together with adjusted estimates</p>
+    <p>A data frame with the inputted summary data occupying the first three
+ columns. The new adjusted association estimates for each SNP are returned in
+ the fourth column, namely <code>beta_BR_ss</code>. The SNPs are contained in this
+ data frame according to their significance, with the most significant SNP,
+ i.e. the SNP with the largest absolute \(z\)-statistic, now located in the
+ first row of the data frame.</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Faye, L. L., Sun, L., Dimitromanolakis, A., &amp; Bull, S. B. (2011).
+ A flexible genome-wide bootstrap method that accounts for ranking and
+ threshold-selection bias in GWAS interpretation and replication study
+ design. <em>Statistics in Medicine</em>, <strong>30(15)</strong>, 1898\(-\)1912.
+ <a href='https://doi.org/10.1002/sim.4228'>https://doi.org/10.1002/sim.4228</a></p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

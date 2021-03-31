@@ -1,4 +1,4 @@
-#'FDR IQT method for use with discovery data set
+#'FDR IQT method for use with discovery GWAS
 #'
 #'\code{FDR_IQT} is a function which uses summary statistics to reduce Winner's
 #'Curse bias in SNP-trait association estimates, obtained from a discovery GWAS.
@@ -6,9 +6,10 @@
 #'described in
 #'\href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/}{Bigdeli \emph{et
 #'al.} (2016)}, which was established for this purpose.
-#'@param summary_data A data frame containing the GWAS summary data. It must
-#'  have three columns with column names \code{rsid}, \code{beta} and \code{se},
-#'  respectively, and all columns must contain numerical values.
+#'@param summary_data A data frame containing summary statistics from the
+#'  discovery GWAS. It must have three columns with column names \code{rsid},
+#'  \code{beta} and \code{se}, respectively, and all columns must contain
+#'  numerical values.
 #'@param min_pval A numerical value whose purpose is to avoid zero
 #'  \eqn{p}-values as this introduces issues when \code{qnorm()} is applied. Any
 #'  SNP for which its computed \eqn{p}-value is found to be less than
@@ -27,10 +28,11 @@
 #'
 #'
 #'@references Bigdeli, T. B., Lee, D., Webb, B. T., Riley, B. P., Vladimirov, V.
-#'I., Fanous, A. H., Kendler, K. S., & Bacanu, S. A. (2016). A simple yet
-#'accurate correction for winner's curse can predict signals discovered in much
-#'larger genome scans. \emph{Bioinformatics (Oxford, England)}, \strong{32(17)},
-#'2598\eqn{-}2603. \url{https://doi.org/10.1093/bioinformatics/btw303}
+#'  I., Fanous, A. H., Kendler, K. S., & Bacanu, S. A. (2016). A simple yet
+#'  accurate correction for winner's curse can predict signals discovered in
+#'  much larger genome scans. \emph{Bioinformatics (Oxford, England)},
+#'  \strong{32(17)}, 2598\eqn{-}2603.
+#'  \url{https://doi.org/10.1093/bioinformatics/btw303}
 #'@export
 #'
 #'

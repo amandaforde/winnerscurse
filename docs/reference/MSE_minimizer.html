@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Approach to combine association estimates from discovery and replication data sets — MSE_minimizer • winnerscurse</title>
+<title>MSE minimization method for use with discovery and replication GWASs — MSE_minimizer • winnerscurse</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Approach to combine association estimates from discovery and replication data sets — MSE_minimizer" />
-<meta property="og:description" content="Approach to combine association estimates from discovery and replication data sets" />
+<meta property="og:title" content="MSE minimization method for use with discovery and replication GWASs — MSE_minimizer" />
+<meta property="og:description" content="Approach to combine association estimates from discovery and replication data
+sets" />
 
 
 
@@ -121,13 +122,14 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Approach to combine association estimates from discovery and replication data sets</h1>
+    <h1>MSE minimization method for use with discovery and replication GWASs</h1>
     
     <div class="hidden name"><code>MSE_minimizer.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Approach to combine association estimates from discovery and replication data sets</p>
+    <p>Approach to combine association estimates from discovery and replication data
+sets</p>
     </div>
 
     <pre class="usage"><span class='fu'>MSE_minimizer</span><span class='op'>(</span><span class='va'>summary_disc</span>, <span class='va'>summary_rep</span>, <span class='va'>alpha</span>, spline <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
@@ -137,23 +139,43 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>summary_disc</th>
-      <td><p>Data frame containing summary data from discovery GWAS, three columns: rsid, beta, se</p></td>
+      <td><p>A data frame containing summary statistics from the
+discovery GWAS. It must have three columns with column names <code>rsid</code>,
+<code>beta</code> and <code>se</code>, respectively, and all columns must contain
+numerical values.</p></td>
     </tr>
     <tr>
       <th>summary_rep</th>
-      <td><p>Data frame containing summary data from replication GWAS, three columns: rsid, beta, se</p></td>
+      <td><p>A data frame containing summary statistics from the
+replication GWAS. It must have three columns with column names <code>rsid</code>,
+<code>beta</code> and <code>se</code>, respectively, and all columns must contain
+numerical values.</p></td>
+    </tr>
+    <tr>
+      <th>alpha</th>
+      <td><p>A numerical value which specifies the desired genome-wide
+significance threshold for the discovery GWAS.</p></td>
     </tr>
     <tr>
       <th>spline</th>
-      <td><p>Logical parameter, default is spline=FALSE, spline=TRUE uses a cubic smoothing spline to predict value of B=summary_disc$beta - summary_rep$beta,
-spline=FALSE just uses this raw value for B</p></td>
+      <td><p>Logical parameter, default is spline=FALSE, spline=TRUE uses a
+cubic smoothing spline to predict value of B=summary_disc$beta -
+summary_rep$beta, spline=FALSE just uses this raw value for B</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Data frame with only SNPs deemed significance in discovery GWAS, contains their beta and se values from both discovery and replication GWAS
-as well as the combined estimate, beta_joint</p>
+    <p>Data frame with only SNPs deemed significance in discovery GWAS,
+  contains their beta and se values from both discovery and replication GWAS
+  as well as the combined estimate, beta_joint</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Ferguson, J., Alvarez-Iglesias, A., Newell, J., Hinde, J., &amp;
+  O'Donnell, M. (2017).  Joint incorporation of randomised and observational
+  evidence in estimating treatment effects. <em>Statistical Methods in
+  Medical Research</em>, <strong>28(1)</strong>, 235\(-\)247.
+  <a href='https://doi.org/10.1177/0962280217720854'>https://doi.org/10.1177/0962280217720854</a></p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

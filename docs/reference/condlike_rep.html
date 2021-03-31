@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Conditional likelihood method for Winner's Curse adjustment using discovery and replication summary statistics - Zhong and Prentice (2008) — condlike_rep • winnerscurse</title>
+<title>Conditional likelihood method for use with discovery and replication GWASs — condlike_rep • winnerscurse</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,9 @@
 
 
 
-<meta property="og:title" content="Conditional likelihood method for Winner's Curse adjustment using discovery and replication summary statistics - Zhong and Prentice (2008) — condlike_rep" />
-<meta property="og:description" content="Conditional likelihood method for Winner's Curse adjustment using discovery and replication summary statistics - Zhong and Prentice (2008)" />
+<meta property="og:title" content="Conditional likelihood method for use with discovery and replication GWASs — condlike_rep" />
+<meta property="og:description" content="Winner's Curse adjustment using discovery and replication summary statistics
+- Zhong and Prentice (2008)" />
 
 
 
@@ -121,38 +122,68 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Conditional likelihood method for Winner's Curse adjustment using discovery and replication summary statistics - Zhong and Prentice (2008)</h1>
+    <h1>Conditional likelihood method for use with discovery and replication GWASs</h1>
     
     <div class="hidden name"><code>condlike_rep.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Conditional likelihood method for Winner's Curse adjustment using discovery and replication summary statistics - Zhong and Prentice (2008)</p>
+    <p>Winner's Curse adjustment using discovery and replication summary statistics
+- Zhong and Prentice (2008)</p>
     </div>
 
-    <pre class="usage"><span class='fu'>condlike_rep</span><span class='op'>(</span><span class='va'>summary_disc</span>, <span class='va'>summary_rep</span>, <span class='va'>alpha</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>condlike_rep</span><span class='op'>(</span>
+  <span class='va'>summary_disc</span>,
+  <span class='va'>summary_rep</span>,
+  <span class='va'>alpha</span>,
+  conf_interval <span class='op'>=</span> <span class='cn'>FALSE</span>,
+  conf_level <span class='op'>=</span> <span class='fl'>0.95</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>summary_disc</th>
-      <td><p>Data frame containing summary data from discovery GWAS, three columns: rsid, beta, se</p></td>
+      <td><p>A data frame containing summary statistics from the
+discovery GWAS. It must have three columns with column names <code>rsid</code>,
+<code>beta</code> and <code>se</code>, respectively, and all columns must contain
+numerical values.</p></td>
     </tr>
     <tr>
       <th>summary_rep</th>
-      <td><p>Data frame containing summary data from replication GWAS, three columns: rsid, beta, se</p></td>
+      <td><p>A data frame containing summary statistics from the
+replication GWAS. It must have three columns with column names <code>rsid</code>,
+<code>beta</code> and <code>se</code>, respectively, and all columns must contain
+numerical values.</p></td>
     </tr>
     <tr>
       <th>alpha</th>
-      <td><p>significance threshold used in discovery GWAS</p></td>
+      <td><p>A numerical value which specifies the desired genome-wide
+significance threshold for the discovery GWAS.</p></td>
+    </tr>
+    <tr>
+      <th>conf_interval</th>
+      <td><p>A logical value.</p></td>
+    </tr>
+    <tr>
+      <th>conf_level</th>
+      <td><p>A numerical value.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Data frame with only SNPs deemed significance in discovery GWAS, contains their beta and se values from both discovery and replication GWAS
-as well as the combined unadjusted estimate, the conditional likelihood MLE and the weighted average for each SNP</p>
+    <p>Data frame with only SNPs deemed significance in discovery GWAS,
+  contains their beta and se values from both discovery and replication GWAS
+  as well as the combined unadjusted estimate, the conditional likelihood MLE
+  and the weighted average for each SNP</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Zhong, H., &amp; Prentice, R. L. (2008). Bias-reduced estimators and
+  confidence intervals for odds ratios in genome-wide association studies.
+  <em>Biostatistics (Oxford, England)</em>, <strong>9(4)</strong>, 621\(-\)634.
+  <a href='https://doi.org/10.1093/biostatistics/kxn001'>https://doi.org/10.1093/biostatistics/kxn001</a></p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

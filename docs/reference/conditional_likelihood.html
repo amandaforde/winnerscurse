@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Conditional likelihood methods to correct for Winner’s Curse - Ghosh et al. (2008) — conditional_likelihood • winnerscurse</title>
+<title>Conditional likelihood methods for use with discovery GWAS — conditional_likelihood • winnerscurse</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,15 @@
 
 
 
-<meta property="og:title" content="Conditional likelihood methods to correct for Winner’s Curse - Ghosh et al. (2008) — conditional_likelihood" />
-<meta property="og:description" content="Conditional likelihood methods to correct for Winner’s Curse - Ghosh et al. (2008)" />
+<meta property="og:title" content="Conditional likelihood methods for use with discovery GWAS — conditional_likelihood" />
+<meta property="og:description" content="conditional_likelihood is a function which uses summary statistics to
+correct bias created by the Winner's Curse phenomenon in the SNP-trait
+association estimates, obtained from a discovery GWAS, of SNPs which are
+considered significant. The function implements the approximate conditional
+likelihood approach, discussed in
+Ghosh et
+al. (2008), which suggests three different forms of a less biased
+association estimate." />
 
 
 
@@ -121,13 +128,20 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Conditional likelihood methods to correct for Winner’s Curse - Ghosh et al. (2008)</h1>
+    <h1>Conditional likelihood methods for use with discovery GWAS</h1>
     
     <div class="hidden name"><code>conditional_likelihood.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Conditional likelihood methods to correct for Winner’s Curse - Ghosh et al. (2008)</p>
+    <p><code>conditional_likelihood</code> is a function which uses summary statistics to
+correct bias created by the Winner's Curse phenomenon in the SNP-trait
+association estimates, obtained from a discovery GWAS, of SNPs which are
+considered significant. The function implements the approximate conditional
+likelihood approach, discussed in
+<a href='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/'>Ghosh <em>et
+al.</em> (2008)</a>, which suggests three different forms of a less biased
+association estimate.</p>
     </div>
 
     <pre class="usage"><span class='fu'>conditional_likelihood</span><span class='op'>(</span><span class='va'>summary_data</span>, <span class='va'>alpha</span><span class='op'>)</span></pre>
@@ -137,18 +151,38 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>summary_data</th>
-      <td><p>Data frame containing summary data, three columns: rsid, beta, se</p></td>
+      <td><p>A data frame containing summary statistics from the
+discovery GWAS. It must have three columns with column names <code>rsid</code>,
+<code>beta</code> and <code>se</code>, respectively, and all columns must contain
+numerical values.</p></td>
     </tr>
     <tr>
       <th>alpha</th>
-      <td><p>significance threshold used in discovery GWAS</p></td>
+      <td><p>A numerical value which specifies the desired genome-wide
+significance threshold.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Data frame with summary data of only significant SNPs together with three corrected estimates
-or data frame with all summary data and corrected estimates of significant SNPs</p>
+    <p>A data frame with summary statistics and adjusted association
+  estimates of only those SNPs which have been deemed significant according
+  to the specified threshold, <code>alpha</code>, i.e. SNPs with \(p\)-values
+  less than <code>alpha</code>. The inputted summary data occupies the first three
+  columns. The new adjusted association estimates for each SNP, as defined in
+  the aforementioned paper, are contained in the next three columns, namely
+  <code>beta.cl1</code>, <code>beta.cl2</code> and <code>beta.cl3</code>. The SNPs are
+  contained in this data frame according to their significance, with the most
+  significant SNP, i.e. the SNP with the largest absolute \(z\)-statistic,
+  now located in the first row of the data frame. If no SNPs are detected as
+  significant in the data set, <code>conditional_likelihood</code> merely returns
+  the inputted data frame, <code>summary_data</code>.</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Ghosh, A., Zou, F., &amp; Wright, F. A. (2008). Estimating odds
+  ratios in genome scans: an approximate conditional likelihood approach.
+  <em>American journal of human genetics</em>, <strong>82(5)</strong>, 1064\(-\)1074.
+  <a href='https://doi.org/10.1016/j.ajhg.2008.03.002'>https://doi.org/10.1016/j.ajhg.2008.03.002</a></p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

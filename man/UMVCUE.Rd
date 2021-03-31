@@ -2,21 +2,36 @@
 % Please edit documentation in R/UMVCUE.R
 \name{UMVCUE}
 \alias{UMVCUE}
-\title{Winner's Curse adjustment method using discovery and replication summary statistics - Bowden and Dudbridge (2009)}
+\title{UMVCUE method for use with discovery and replication GWASs}
 \usage{
 UMVCUE(summary_disc, summary_rep, alpha)
 }
 \arguments{
-\item{summary_disc}{Data frame containing summary data from discovery GWAS, three columns: rsid, beta, se}
+\item{summary_disc}{A data frame containing summary statistics from the
+discovery GWAS. It must have three columns with column names \code{rsid},
+\code{beta} and \code{se}, respectively, and all columns must contain
+numerical values.}
 
-\item{summary_rep}{Data frame containing summary data from replication GWAS, three columns: rsid, beta, se}
+\item{summary_rep}{A data frame containing summary statistics from the
+replication GWAS. It must have three columns with column names \code{rsid},
+\code{beta} and \code{se}, respectively, and all columns must contain
+numerical values.}
 
-\item{alpha}{significance threshold used in discovery GWAS}
+\item{alpha}{A numerical value which specifies the desired genome-wide
+significance threshold for the discovery GWAS.}
 }
 \value{
-Data frame with only SNPs deemed significance in discovery GWAS, contains their beta and se values from both discovery and replication GWAS
-as well as the UMVCUE for each SNP
+Data frame with only SNPs deemed significance in discovery GWAS,
+  contains their beta and se values from both discovery and replication GWAS
+  as well as the UMVCUE for each SNP
 }
 \description{
-Winner's Curse adjustment method using discovery and replication summary statistics - Bowden and Dudbridge (2009)
+Winner's Curse adjustment method using discovery and replication summary
+statistics - Bowden and Dudbridge (2009)
+}
+\references{
+Bowden, J., & Dudbridge, F. (2009). Unbiased estimation of odds
+  ratios: combining genomewide association scans with replication studies.
+  \emph{Genetic epidemiology}, \strong{33(5)}, 406\eqn{-}418.
+  \url{https://doi.org/10.1002/gepi.20394}
 }

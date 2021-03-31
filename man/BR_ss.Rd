@@ -2,19 +2,20 @@
 % Please edit documentation in R/BR_ss.R
 \name{BR_ss}
 \alias{BR_ss}
-\title{Bootstrap method for use with discovery data set}
+\title{Bootstrap method for use with discovery GWAS}
 \usage{
 BR_ss(summary_data, seed = 1998)
 }
 \arguments{
-\item{summary_data}{A data frame containing the GWAS summary data. It must
-have three columns with column names \code{rsid}, \code{beta} and \code{se},
-respectively, and all columns must contain numerical values.}
+\item{summary_data}{A data frame containing summary statistics from the
+discovery GWAS. It must have three columns with column names \code{rsid},
+\code{beta} and \code{se}, respectively, and all columns must contain
+numerical values.}
 
 \item{seed}{A numerical value which is required to allow reproducibility of
-adjusted estimates. Small differences can occur between iterations of the function
-with the same data set due to the use of parametric bootstrapping. The default setting
-is the arbitrary value of \code{1998}.}
+adjusted estimates. Small differences can occur between iterations of the
+function with the same data set due to the use of parametric bootstrapping.
+The default setting is the arbitrary value of \code{1998}.}
 }
 \value{
 A data frame with the inputted summary data occupying the first three
@@ -33,9 +34,9 @@ resampling method known as BR-squared, detailed in
 al.} (2011)}.
 }
 \references{
-Faye, L. L., Sun, L., Dimitromanolakis, A., & Bull, S. B. (2011). A
-flexible genome-wide bootstrap method that accounts for ranking and threshold-selection
-bias in GWAS interpretation and replication study design.
-\emph{Statistics in Medicine}, \strong{30(15)}, 1898\eqn{-}1912.
-\url{https://doi.org/10.1002/sim.4228}
+Faye, L. L., Sun, L., Dimitromanolakis, A., & Bull, S. B. (2011).
+ A flexible genome-wide bootstrap method that accounts for ranking and
+ threshold-selection bias in GWAS interpretation and replication study
+ design. \emph{Statistics in Medicine}, \strong{30(15)}, 1898\eqn{-}1912.
+ \url{https://doi.org/10.1002/sim.4228}
 }

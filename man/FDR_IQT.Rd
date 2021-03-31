@@ -2,14 +2,15 @@
 % Please edit documentation in R/FDR_IQT.R
 \name{FDR_IQT}
 \alias{FDR_IQT}
-\title{FDR IQT method for use with discovery data set}
+\title{FDR IQT method for use with discovery GWAS}
 \usage{
 FDR_IQT(summary_data, min_pval = 1e-15)
 }
 \arguments{
-\item{summary_data}{A data frame containing the GWAS summary data. It must
-have three columns with column names \code{rsid}, \code{beta} and \code{se},
-respectively, and all columns must contain numerical values.}
+\item{summary_data}{A data frame containing summary statistics from the
+discovery GWAS. It must have three columns with column names \code{rsid},
+\code{beta} and \code{se}, respectively, and all columns must contain
+numerical values.}
 
 \item{min_pval}{A numerical value whose purpose is to avoid zero
 \eqn{p}-values as this introduces issues when \code{qnorm()} is applied. Any
@@ -38,8 +39,9 @@ al.} (2016)}, which was established for this purpose.
 }
 \references{
 Bigdeli, T. B., Lee, D., Webb, B. T., Riley, B. P., Vladimirov, V.
-I., Fanous, A. H., Kendler, K. S., & Bacanu, S. A. (2016). A simple yet
-accurate correction for winner's curse can predict signals discovered in much
-larger genome scans. \emph{Bioinformatics (Oxford, England)}, \strong{32(17)},
-2598\eqn{-}2603. \url{https://doi.org/10.1093/bioinformatics/btw303}
+ I., Fanous, A. H., Kendler, K. S., & Bacanu, S. A. (2016). A simple yet
+ accurate correction for winner's curse can predict signals discovered in
+ much larger genome scans. \emph{Bioinformatics (Oxford, England)},
+ \strong{32(17)}, 2598\eqn{-}2603.
+ \url{https://doi.org/10.1093/bioinformatics/btw303}
 }

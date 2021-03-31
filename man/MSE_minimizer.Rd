@@ -2,22 +2,41 @@
 % Please edit documentation in R/MSE_minimizer.R
 \name{MSE_minimizer}
 \alias{MSE_minimizer}
-\title{Approach to combine association estimates from discovery and replication data sets}
+\title{MSE minimization method for use with discovery and replication GWASs}
 \usage{
 MSE_minimizer(summary_disc, summary_rep, alpha, spline = FALSE)
 }
 \arguments{
-\item{summary_disc}{Data frame containing summary data from discovery GWAS, three columns: rsid, beta, se}
+\item{summary_disc}{A data frame containing summary statistics from the
+discovery GWAS. It must have three columns with column names \code{rsid},
+\code{beta} and \code{se}, respectively, and all columns must contain
+numerical values.}
 
-\item{summary_rep}{Data frame containing summary data from replication GWAS, three columns: rsid, beta, se}
+\item{summary_rep}{A data frame containing summary statistics from the
+replication GWAS. It must have three columns with column names \code{rsid},
+\code{beta} and \code{se}, respectively, and all columns must contain
+numerical values.}
 
-\item{spline}{Logical parameter, default is spline=FALSE, spline=TRUE uses a cubic smoothing spline to predict value of B=summary_disc$beta - summary_rep$beta,
-spline=FALSE just uses this raw value for B}
+\item{alpha}{A numerical value which specifies the desired genome-wide
+significance threshold for the discovery GWAS.}
+
+\item{spline}{Logical parameter, default is spline=FALSE, spline=TRUE uses a
+cubic smoothing spline to predict value of B=summary_disc$beta -
+summary_rep$beta, spline=FALSE just uses this raw value for B}
 }
 \value{
-Data frame with only SNPs deemed significance in discovery GWAS, contains their beta and se values from both discovery and replication GWAS
-as well as the combined estimate, beta_joint
+Data frame with only SNPs deemed significance in discovery GWAS,
+  contains their beta and se values from both discovery and replication GWAS
+  as well as the combined estimate, beta_joint
 }
 \description{
-Approach to combine association estimates from discovery and replication data sets
+Approach to combine association estimates from discovery and replication data
+sets
+}
+\references{
+Ferguson, J., Alvarez-Iglesias, A., Newell, J., Hinde, J., &
+  O'Donnell, M. (2017).  Joint incorporation of randomised and observational
+  evidence in estimating treatment effects. \emph{Statistical Methods in
+  Medical Research}, \strong{28(1)}, 235\eqn{-}247.
+  \url{https://doi.org/10.1177/0962280217720854}
 }

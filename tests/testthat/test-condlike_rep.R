@@ -30,9 +30,15 @@ test_that("testing if conditional likelihood with replication data set gives app
             out <- condlike_rep(summary_disc, summary_rep, alpha=5e-8)
 
             test1 <- sum(round(max(abs(out$beta_disc),abs(out$beta_rep)),6) >= abs(round(out$beta_com,6))) == length(out$beta_disc)
-
             expect_true(identical(test1,TRUE) == 1)
 
+            out2 <- condlike_rep(summary_disc, summary_rep, alpha=5e-8, conf_interval=TRUE)
+            test2 <- sum(out2$beta_com_lower < out2$beta_com) + sum(out2$beta_com_upper > out2$beta_com) == 2*length(out2$rsid)
+            test3 <- sum(out2$beta_MLE_lower < out2$beta_MLE) + sum(out2$beta_MLE_upper > out2$beta_MLE) == 2*length(out2$rsid)
+            test4 <- sum(out2$beta_MSE_lower < out2$beta_MSE) + sum(out2$beta_MSE_upper > out2$beta_MSE) == 2*length(out2$rsid)
+            expect_true(identical(test2,TRUE) == 1)
+            expect_true(identical(test3,TRUE) == 1)
+            expect_true(identical(test4,TRUE) == 1)
           })
 
 

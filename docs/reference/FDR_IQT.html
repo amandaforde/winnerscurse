@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>FDR Inverse Quantile Transformation method to correct for Winner’s Curse - Bigdeli et al. (2016) — FDR_IQT • winnerscurse</title>
+<title>FDR IQT method for use with discovery GWAS — FDR_IQT • winnerscurse</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,13 @@
 
 
 
-<meta property="og:title" content="FDR Inverse Quantile Transformation method to correct for Winner’s Curse - Bigdeli et al. (2016) — FDR_IQT" />
-<meta property="og:description" content="FDR Inverse Quantile Transformation method to correct for Winner’s Curse - Bigdeli et al. (2016)" />
+<meta property="og:title" content="FDR IQT method for use with discovery GWAS — FDR_IQT" />
+<meta property="og:description" content="FDR_IQT is a function which uses summary statistics to reduce Winner's
+Curse bias in SNP-trait association estimates, obtained from a discovery GWAS.
+The function implements the FDR Inverse Quantile Transformation method
+described in
+Bigdeli et
+al. (2016), which was established for this purpose." />
 
 
 
@@ -121,13 +126,18 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>FDR Inverse Quantile Transformation method to correct for Winner’s Curse - Bigdeli et al. (2016)</h1>
+    <h1>FDR IQT method for use with discovery GWAS</h1>
     
     <div class="hidden name"><code>FDR_IQT.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>FDR Inverse Quantile Transformation method to correct for Winner’s Curse - Bigdeli et al. (2016)</p>
+    <p><code>FDR_IQT</code> is a function which uses summary statistics to reduce Winner's
+Curse bias in SNP-trait association estimates, obtained from a discovery GWAS.
+The function implements the FDR Inverse Quantile Transformation method
+described in
+<a href='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/'>Bigdeli <em>et
+al.</em> (2016)</a>, which was established for this purpose.</p>
     </div>
 
     <pre class="usage"><span class='fu'>FDR_IQT</span><span class='op'>(</span><span class='va'>summary_data</span>, min_pval <span class='op'>=</span> <span class='fl'>1e-15</span><span class='op'>)</span></pre>
@@ -137,17 +147,40 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>summary_data</th>
-      <td><p>Data frame containing summary data, three columns: rsid, beta, se</p></td>
+      <td><p>A data frame containing summary statistics from the
+discovery GWAS. It must have three columns with column names <code>rsid</code>,
+<code>beta</code> and <code>se</code>, respectively, and all columns must contain
+numerical values.</p></td>
     </tr>
     <tr>
       <th>min_pval</th>
-      <td><p>avoids zero p-values (in R) which gives trouble with qnorm(), also abs(z) &gt; 8 is generally not biased</p></td>
+      <td><p>A numerical value whose purpose is to avoid zero
+\(p\)-values as this introduces issues when <code><a href='https://rdrr.io/r/stats/Normal.html'>qnorm()</a></code> is applied. Any
+SNP for which its computed \(p\)-value is found to be less than
+<code>min_pval</code> is merely re-assigned <code>min_pval</code> as its \(p\)-value
+and the method proceeds. By definition, the method makes no adjustment to
+the association estimate of a SNP for which this has occurred with the
+presumption that in general, estimates of SNPs with \(z &gt; 8\) are not
+biased. The default value is <code>min_pval = 1e-15</code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Data frame with summary data together with adjusted estimates</p>
+    <p>A data frame with the inputted summary data occupying the first three
+ columns. The new adjusted association estimates for each SNP are returned in
+ the fourth column, namely <code>beta_FIQT</code>. The SNPs are contained in this
+ data frame according to their significance, with the most significant SNP,
+ i.e. the SNP with the largest absolute \(z\)-statistic, now located in the
+ first row of the data frame.</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Bigdeli, T. B., Lee, D., Webb, B. T., Riley, B. P., Vladimirov, V.
+ I., Fanous, A. H., Kendler, K. S., &amp; Bacanu, S. A. (2016). A simple yet
+ accurate correction for winner's curse can predict signals discovered in
+ much larger genome scans. <em>Bioinformatics (Oxford, England)</em>,
+ <strong>32(17)</strong>, 2598\(-\)2603.
+ <a href='https://doi.org/10.1093/bioinformatics/btw303'>https://doi.org/10.1093/bioinformatics/btw303</a></p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -2,12 +2,12 @@
 % Please edit documentation in R/empirical_bayes.R
 \name{empirical_bayes}
 \alias{empirical_bayes}
-\title{Empirical Bayes method for use with discovery data set}
+\title{Empirical Bayes method for use with discovery GWAS}
 \usage{
 empirical_bayes(summary_data)
 }
 \arguments{
-\item{summary_data}{A data frame containing the GWAS summary data. It must have three columns
+\item{summary_data}{A data frame containing summary statistics from the discovery GWAS. It must have three columns
 with column names \code{rsid}, \code{beta} and \code{se}, respectively, and all columns must contain
 numerical values.}
 }

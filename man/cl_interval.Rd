@@ -2,20 +2,37 @@
 % Please edit documentation in R/cl_interval.R
 \name{cl_interval}
 \alias{cl_interval}
-\title{Confidence interval for conditional likelihood methods - Ghosh et al. (2008)}
+\title{Confidence interval associated with discovery GWAS conditional likelihood
+methods}
 \usage{
 cl_interval(summary_data, alpha, conf = 0.95)
 }
 \arguments{
-\item{summary_data}{Data frame containing summary data, three columns: rsid, beta, se}
+\item{summary_data}{A data frame containing summary statistics from the
+discovery GWAS. It must have three columns with column names \code{rsid},
+\code{beta} and \code{se}, respectively, and all columns must contain
+numerical values.}
 
-\item{alpha}{significance threshold used in discovery GWAS}
+\item{alpha}{A numerical value which specifies the desired genome-wide
+significance threshold.}
 
-\item{conf}{specifies confidence level, takes a value between 0 and 1 - default is 0.95 corresponding to 95 per cent confidence interval}
+\item{conf}{A numerical value between 0 and 1 which determines the confidence
+interval to be computed. The default setting is \code{0.95} which results
+in the calculation of a 95\% confidence interval for the adjusted
+association estimate for each SNP.}
 }
 \value{
-Data frame which combines output from application of conditional likelihood methods, i.e. summary data of only significant SNPs together with three corrected estimates, with an upper and a lower bound on the required confidence interval for each SNP
+Data frame which combines output from application of conditional
+  likelihood methods, i.e. summary data of only significant SNPs together
+  with three corrected estimates, with an upper and a lower bound on the
+  required confidence interval for each SNP
 }
 \description{
-Confidence interval for conditional likelihood methods - Ghosh et al. (2008)
+- Ghosh et al. (2008)
+}
+\references{
+Ghosh, A., Zou, F., & Wright, F. A. (2008). Estimating odds
+  ratios in genome scans: an approximate conditional likelihood approach.
+  \emph{American journal of human genetics}, \strong{82(5)}, 1064\eqn{-}1074.
+  \url{https://doi.org/10.1016/j.ajhg.2008.03.002}
 }

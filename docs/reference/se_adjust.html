@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Obtaining standard errors of adjusted estimates via parametric bootstrap — se_adjust • winnerscurse</title>
+<title>Standard errors of adjusted discovery GWAS estimates via parametric bootstrap — se_adjust • winnerscurse</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,8 @@
 
 
 
-<meta property="og:title" content="Obtaining standard errors of adjusted estimates via parametric bootstrap — se_adjust" />
-<meta property="og:description" content="Obtaining standard errors of adjusted estimates via parametric bootstrap" />
+<meta property="og:title" content="Standard errors of adjusted discovery GWAS estimates via parametric bootstrap — se_adjust" />
+<meta property="og:description" content="Standard errors of adjusted discovery GWAS estimates via parametric bootstrap" />
 
 
 
@@ -121,13 +121,13 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Obtaining standard errors of adjusted estimates via parametric bootstrap</h1>
+    <h1>Standard errors of adjusted discovery GWAS estimates via parametric bootstrap</h1>
     
     <div class="hidden name"><code>se_adjust.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Obtaining standard errors of adjusted estimates via parametric bootstrap</p>
+    <p>Standard errors of adjusted discovery GWAS estimates via parametric bootstrap</p>
     </div>
 
     <pre class="usage"><span class='fu'>se_adjust</span><span class='op'>(</span><span class='va'>summary_data</span>, <span class='va'>method</span>, n_boot <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span></pre>
@@ -137,21 +137,27 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>summary_data</th>
-      <td><p>Data frame containing summary data, three columns: rsid, beta, se</p></td>
+      <td><p>A data frame containing summary statistics from the
+discovery GWAS. It must have three columns with column names <code>rsid</code>,
+<code>beta</code> and <code>se</code>, respectively, and all columns must contain
+numerical values.</p></td>
     </tr>
     <tr>
       <th>method</th>
-      <td><p>User must specify "BR_ss", "empirical_bayes" or "FDR_IQT"</p></td>
+      <td><p>A string which specifies the function to be implemented
+<code>"BR_ss"</code>, <code>"empirical_bayes"</code> <code>"FDR_IQT"</code></p></td>
     </tr>
     <tr>
       <th>n_boot</th>
-      <td><p>number of bootstrap repetitions used - defaults to 100</p></td>
+      <td><p>A numerical value - number of bootstrap repetitions used -
+defaults to 100</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Data frame with summary data together with adjusted estimates and standard error: adj_se</p>
+    <p>Data frame with summary data together with adjusted estimates and
+  standard error: adj_se</p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

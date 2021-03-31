@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Confidence interval for conditional likelihood methods - Ghosh et al. (2008) — cl_interval • winnerscurse</title>
+<title>Confidence interval associated with discovery GWAS conditional likelihood
+methods — cl_interval • winnerscurse</title>
 
 
 <!-- jquery -->
@@ -39,8 +40,9 @@
 
 
 
-<meta property="og:title" content="Confidence interval for conditional likelihood methods - Ghosh et al. (2008) — cl_interval" />
-<meta property="og:description" content="Confidence interval for conditional likelihood methods - Ghosh et al. (2008)" />
+<meta property="og:title" content="Confidence interval associated with discovery GWAS conditional likelihood
+methods — cl_interval" />
+<meta property="og:description" content="- Ghosh et al. (2008)" />
 
 
 
@@ -121,13 +123,14 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Confidence interval for conditional likelihood methods - Ghosh et al. (2008)</h1>
+    <h1>Confidence interval associated with discovery GWAS conditional likelihood
+methods</h1>
     
     <div class="hidden name"><code>cl_interval.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Confidence interval for conditional likelihood methods - Ghosh et al. (2008)</p>
+    <p>- Ghosh et al. (2008)</p>
     </div>
 
     <pre class="usage"><span class='fu'>cl_interval</span><span class='op'>(</span><span class='va'>summary_data</span>, <span class='va'>alpha</span>, conf <span class='op'>=</span> <span class='fl'>0.95</span><span class='op'>)</span></pre>
@@ -137,21 +140,37 @@
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>summary_data</th>
-      <td><p>Data frame containing summary data, three columns: rsid, beta, se</p></td>
+      <td><p>A data frame containing summary statistics from the
+discovery GWAS. It must have three columns with column names <code>rsid</code>,
+<code>beta</code> and <code>se</code>, respectively, and all columns must contain
+numerical values.</p></td>
     </tr>
     <tr>
       <th>alpha</th>
-      <td><p>significance threshold used in discovery GWAS</p></td>
+      <td><p>A numerical value which specifies the desired genome-wide
+significance threshold.</p></td>
     </tr>
     <tr>
       <th>conf</th>
-      <td><p>specifies confidence level, takes a value between 0 and 1 - default is 0.95 corresponding to 95 per cent confidence interval</p></td>
+      <td><p>A numerical value between 0 and 1 which determines the confidence
+interval to be computed. The default setting is <code>0.95</code> which results
+in the calculation of a 95% confidence interval for the adjusted
+association estimate for each SNP.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Data frame which combines output from application of conditional likelihood methods, i.e. summary data of only significant SNPs together with three corrected estimates, with an upper and a lower bound on the required confidence interval for each SNP</p>
+    <p>Data frame which combines output from application of conditional
+  likelihood methods, i.e. summary data of only significant SNPs together
+  with three corrected estimates, with an upper and a lower bound on the
+  required confidence interval for each SNP</p>
+    <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
+
+    <p>Ghosh, A., Zou, F., &amp; Wright, F. A. (2008). Estimating odds
+  ratios in genome scans: an approximate conditional likelihood approach.
+  <em>American journal of human genetics</em>, <strong>82(5)</strong>, 1064\(-\)1074.
+  <a href='https://doi.org/10.1016/j.ajhg.2008.03.002'>https://doi.org/10.1016/j.ajhg.2008.03.002</a></p>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

@@ -2,20 +2,26 @@
 % Please edit documentation in R/se_adjust.R
 \name{se_adjust}
 \alias{se_adjust}
-\title{Obtaining standard errors of adjusted estimates via parametric bootstrap}
+\title{Standard errors of adjusted discovery GWAS estimates via parametric bootstrap}
 \usage{
 se_adjust(summary_data, method, n_boot = 100)
 }
 \arguments{
-\item{summary_data}{Data frame containing summary data, three columns: rsid, beta, se}
+\item{summary_data}{A data frame containing summary statistics from the
+discovery GWAS. It must have three columns with column names \code{rsid},
+\code{beta} and \code{se}, respectively, and all columns must contain
+numerical values.}
 
-\item{method}{User must specify "BR_ss", "empirical_bayes" or "FDR_IQT"}
+\item{method}{A string which specifies the function to be implemented
+\code{"BR_ss"}, \code{"empirical_bayes"} \code{"FDR_IQT"}}
 
-\item{n_boot}{number of bootstrap repetitions used - defaults to 100}
+\item{n_boot}{A numerical value - number of bootstrap repetitions used -
+defaults to 100}
 }
 \value{
-Data frame with summary data together with adjusted estimates and standard error: adj_se
+Data frame with summary data together with adjusted estimates and
+  standard error: adj_se
 }
 \description{
-Obtaining standard errors of adjusted estimates via parametric bootstrap
+Standard errors of adjusted discovery GWAS estimates via parametric bootstrap
 }

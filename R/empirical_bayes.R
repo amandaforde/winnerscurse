@@ -1,10 +1,10 @@
-#' Empirical Bayes method for use with discovery data set
+#' Empirical Bayes method for use with discovery GWAS
 #'
 #' \code{empirical_bayes} is a function which uses summary statistics to correct for bias induced by
 #' Winner's Curse in SNP-trait association estimates, obtained from a discovery GWAS. The function
 #' is strongly based on the method detailed in
 #' \href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/}{Ferguson \emph{et al.} (2013)}.
-#' @param summary_data A data frame containing the GWAS summary data. It must have three columns
+#' @param summary_data A data frame containing summary statistics from the discovery GWAS. It must have three columns
 #' with column names \code{rsid}, \code{beta} and \code{se}, respectively, and all columns must contain
 #' numerical values.
 #'

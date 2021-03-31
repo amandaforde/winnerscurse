@@ -82,7 +82,13 @@ out1 <- condlike_rep(summary_disc=stats_disc, summary_rep=stats_rep, alpha=10e-6
 head(out1)
 ```
 
+$~$
+**TO DO:** 
 
+- *discuss option of obtaining confidence intervals, demonstrate in action and add short explanation along with mathematical notation for clarity*
+
+$~$
+$~$
 
 ### UMVCUE - Bowden and Dudbridge (2009)
 

@@ -2,21 +2,47 @@
 % Please edit documentation in R/condlike_rep.R
 \name{condlike_rep}
 \alias{condlike_rep}
-\title{Conditional likelihood method for Winner's Curse adjustment using discovery and replication summary statistics - Zhong and Prentice (2008)}
+\title{Conditional likelihood method for use with discovery and replication GWASs}
 \usage{
-condlike_rep(summary_disc, summary_rep, alpha)
+condlike_rep(
+  summary_disc,
+  summary_rep,
+  alpha,
+  conf_interval = FALSE,
+  conf_level = 0.95
+)
 }
 \arguments{
-\item{summary_disc}{Data frame containing summary data from discovery GWAS, three columns: rsid, beta, se}
+\item{summary_disc}{A data frame containing summary statistics from the
+discovery GWAS. It must have three columns with column names \code{rsid},
+\code{beta} and \code{se}, respectively, and all columns must contain
+numerical values.}
 
-\item{summary_rep}{Data frame containing summary data from replication GWAS, three columns: rsid, beta, se}
+\item{summary_rep}{A data frame containing summary statistics from the
+replication GWAS. It must have three columns with column names \code{rsid},
+\code{beta} and \code{se}, respectively, and all columns must contain
+numerical values.}
 
-\item{alpha}{significance threshold used in discovery GWAS}
+\item{alpha}{A numerical value which specifies the desired genome-wide
+significance threshold for the discovery GWAS.}
+
+\item{conf_interval}{A logical value.}
+
+\item{conf_level}{A numerical value.}
 }
 \value{
-Data frame with only SNPs deemed significance in discovery GWAS, contains their beta and se values from both discovery and replication GWAS
-as well as the combined unadjusted estimate, the conditional likelihood MLE and the weighted average for each SNP
+Data frame with only SNPs deemed significance in discovery GWAS,
+  contains their beta and se values from both discovery and replication GWAS
+  as well as the combined unadjusted estimate, the conditional likelihood MLE
+  and the weighted average for each SNP
 }
 \description{
-Conditional likelihood method for Winner's Curse adjustment using discovery and replication summary statistics - Zhong and Prentice (2008)
+Winner's Curse adjustment using discovery and replication summary statistics
+- Zhong and Prentice (2008)
+}
+\references{
+Zhong, H., & Prentice, R. L. (2008). Bias-reduced estimators and
+  confidence intervals for odds ratios in genome-wide association studies.
+  \emph{Biostatistics (Oxford, England)}, \strong{9(4)}, 621\eqn{-}634.
+  \url{https://doi.org/10.1093/biostatistics/kxn001}
 }
