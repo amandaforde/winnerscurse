@@ -1,13 +1,34 @@
-#' Adaptation of BR-squared method - Faye et al. (2011) - suitable for summary
-#' statistics
+#'Bootstrap method for use with discovery data set
 #'
-#' @param summary_data Data frame containing summary data, three columns: rsid,
-#'   beta, se
-#' @param seed Allows reproducibility of adjusted estimates as variances can
-#'   occur due to bootstrap, default is seed=1998
+#'\code{BR_ss} is a function which aims to use summary statistics to alleviate
+#'Winner's Curse bias in SNP-trait association estimates, obtained from a
+#'discovery GWAS. The function implements an adaptation of a bootstrap
+#'resampling method known as BR-squared, detailed in
+#'\href{https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4228}{Faye \emph{et
+#'al.} (2011)}.
 #'
-#' @return Data frame with summary data together with adjusted estimates
-#' @export
+#'@param summary_data A data frame containing the GWAS summary data. It must
+#'  have three columns with column names \code{rsid}, \code{beta} and \code{se},
+#'  respectively, and all columns must contain numerical values.
+#'@param seed A numerical value which is required to allow reproducibility of
+#' adjusted estimates. Small differences can occur between iterations of the function
+#' with the same data set due to the use of parametric bootstrapping. The default setting
+#' is the arbitrary value of \code{1998}.
+#'
+#'@return A data frame with the inputted summary data occupying the first three
+#'  columns. The new adjusted association estimates for each SNP are returned in
+#'  the fourth column, namely \code{beta_BR_ss}. The SNPs are contained in this
+#'  data frame according to their significance, with the most significant SNP,
+#'  i.e. the SNP with the largest absolute \eqn{z}-statistic, now located in the
+#'  first row of the data frame.
+#'@references Faye, L. L., Sun, L., Dimitromanolakis, A., & Bull, S. B. (2011). A
+#'flexible genome-wide bootstrap method that accounts for ranking and threshold-selection
+#'bias in GWAS interpretation and replication study design.
+#'\emph{Statistics in Medicine}, \strong{30(15)}, 1898\eqn{-}1912.
+#'\url{https://doi.org/10.1002/sim.4228}
+#'
+#'
+#'@export
 
 BR_ss <- function(summary_data,seed=1998){
     summary_data <- dplyr::arrange(summary_data, dplyr::desc((summary_data$beta/summary_data$se)))

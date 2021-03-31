@@ -2,19 +2,37 @@
 % Please edit documentation in R/conditional_likelihood.R
 \name{conditional_likelihood}
 \alias{conditional_likelihood}
-\title{Conditional likelihood methods to correct for Winner’s Curse - Ghosh et al. (2008)}
+\title{Conditional likelihood methods for use with discovery data set}
 \usage{
 conditional_likelihood(summary_data, alpha)
 }
 \arguments{
-\item{summary_data}{Data frame containing summary data, three columns: rsid, beta, se}
+\item{summary_data}{A data frame containing the GWAS summary data. It must
+have three columns with column names \code{rsid}, \code{beta} and \code{se},
+respectively, and all columns must contain numerical values.}
 
-\item{alpha}{significance threshold used in discovery GWAS}
+\item{alpha}{A numerical value which specifies the desired genome-wide significance threshold.}
 }
 \value{
-Data frame with summary data of only significant SNPs together with three corrected estimates
-or data frame with all summary data and corrected estimates of significant SNPs
+A data frame with summary statistics and adjusted association estimates
+of only those SNPs which have been deemed significant
+according to the specified threshold, \code{alpha}, i.e. SNPs with \eqn{p}-values
+less than \code{alpha}. The inputted summary data occupies the first three
+ columns. The new adjusted association estimates for each SNP,
+ as defined in the aforementioned paper, are contained
+ in the next three columns, namely \code{beta.cl1}, \code{beta.cl2} and \code{beta.cl3}.
+  The SNPs are contained in this data frame according to their significance, with the most significant SNP,
+ i.e. the SNP with the largest absolute \eqn{z}-statistic, now located in the
+ first row of the data frame. If no SNPs are detected as significant in the data set,
+ \code{conditional_likelihood} merely returns the inputted data frame, \code{summary_data}.
 }
 \description{
-Conditional likelihood methods to correct for Winner’s Curse - Ghosh et al. (2008)
+\code{conditional_likelihood} is a function which uses summary statistics to correct
+bias created by the Winner's Curse phenomenon in the SNP-trait association estimates,
+obtained from a discovery GWAS, of SNPs which are considered significant. The function
+implements the approximate conditional likelihood approach, discussed in \href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/}{Ghosh \emph{et al.} (2008)}, which
+suggests three different forms of a less biased association estimate.
+}
+\references{
+Ghosh, A., Zou, F., & Wright, F. A. (2008). Estimating odds ratios in genome scans: an approximate conditional likelihood approach. \emph{American journal of human genetics}, \strong{82(5)}, 1064\eqn{-}1074. \url{https://doi.org/10.1016/j.ajhg.2008.03.002}
 }

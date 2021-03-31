@@ -26,7 +26,7 @@ This package also includes methods which use both a discovery data set and a rep
 
 It is important to note that with both of these methods, adjustments are only made to SNPs that are deemed significant in the discovery data set, i.e. these SNPs have a $p$-value less than that of the specified threshold, $\alpha$. 
 
-A third method has been added which obtains a new association estimate for each significant SNP in the data set using a combination of the discovery and replication estimates:
+A third method has been added which obtains a new association estimate for each significant SNP in the discovery data set using a combination of the discovery and replication estimates:
 
 3. MSE minimization method - based on [Ferguson et al. (2017)](https://journals.sagepub.com/doi/full/10.1177/0962280217720854)
 
@@ -104,11 +104,11 @@ head(out2)
 
 - The function `MSE_minimizer` implements a combination method which closely follows that described in [Ferguson *et al.* (2017)](https://journals.sagepub.com/doi/full/10.1177/0962280217720854). The function parameters used here; `summary_disc`, `summary_rep` and `alpha`, are precisely of the same form as those previously detailed in this vignette. In addition, `MSE_minimizer` has a logical parameter, namely `spline` which defaults as `spline=FALSE`.
 
-- An adjusted estimate is computed for each SNP which has been classified as significant based on the given threshold. Thus, similar to the above method, `MSE_minimizer` returns a data frame containing these significant SNPs with 6 columns in which the final column contains the new estimate, `beta_joint`.
+- An adjusted estimate is computed for each SNP which has been classified as significant in the discovery data set, based on the given threshold. Thus, similar to the above method, `MSE_minimizer` returns a data frame containing these significant SNPs with 6 columns in which the final column contains the new estimate, `beta_joint`.
 
 - Following the approach detailed in [Ferguson *et al.* (2017)](https://journals.sagepub.com/doi/full/10.1177/0962280217720854), we define the adjusted linear combination estimator as: $$\hat\beta_{\text{joint}} = \omega(\hat{B}) \cdot \hat\beta_{\text{rep}} + (1-\omega(\hat{B}))\cdot \hat\beta_{\text{disc}}$$ in which $$ \omega(\hat{B}) = \frac{\frac{1}{\sigma^2_{\text{rep}}}}{\frac{1}{\sigma^2_{\text{rep}}}+\frac{1}{\sigma^2_{\text{rep}}+ \hat{B}^2}}.$$ Using the default setting for `spline`, i.e. `spline=FALSE`, we simply let $\hat{B} = \hat\beta_{\text{disc}} - \hat\beta_{\text{rep}}$. We make the assumptions that $\beta_{\text{rep}}$ is unbiased for $\beta$, but $\beta_{\text{disc}}$ is quite likely to be biased and that $\beta_{\text{rep}}$ and $\beta_{\text{disc}}$ are independent. 
 
-- For `spline=TRUE`, a cubic smoothing spline is applied in which the values of $z_{\text{disc}} = \frac{\hat\beta_{\text{disc}}}{\sigma_{\text{disc}}} $ are considered as inputs and $\hat{B} = \hat\beta_{\text{disc}} - \hat\beta_{\text{rep}}$, the corresponding outputs. The predicted values for $\hat{B}$ from this process, $hat{B}^*$ say, are then used instead of $\hat{B}$ when computing $\hat\beta_{\text{joint}}$ for each SNP.
+- For `spline=TRUE`, a cubic smoothing spline is applied in which the values of $z_{\text{disc}} = \frac{\hat\beta_{\text{disc}}}{\sigma_{\text{disc}}}$ are considered as inputs and $\hat{B} = \hat\beta_{\text{disc}} - \hat\beta_{\text{rep}}$, the corresponding outputs. The predicted values for $\hat{B}$ from this process, $hat{B}^*$ say, are then used instead of $\hat{B}$ when computing $\hat\beta_{\text{joint}}$ for each SNP.
 
 - We apply `MSE_minimizer` to our toy data sets, once with the default setting for `spline` and once with `spline=TRUE`. Again for convenient demonstration purposes, we specify the significance threshold as `10e-6`.
 ```{r}
@@ -126,9 +126,9 @@ head(out4)
 ### Visualisation
 
 
-- We can illustrate the performance of these two functions; `condlike_rep` and `UMVCUE`, as follows. It is clear that all methods show an improvement on the estimates obtained from the discovery data set. However, the plots show that a further investigation will be required in order to evaluate if the adjusted estimates are less biased than the mere use of replication estimates. 
+- We can illustrate the performance of these three functions; `condlike_rep`, `UMVCUE` and `MSE_minimizer`, as follows. It is clear that all methods show an improvement on the estimates obtained from the discovery data set. However, the plots show that a further investigation will be required in order to evaluate if the adjusted estimates are less biased than the mere use of replication estimates. 
 
-- In the second graph, it can be seen that there must be very little difference between the replication estimates and those obtained using `UMVCUE` as the density curves of `beta_rep` and `beta_UMVCUE` nearly overlap completely.  
+- In the second graph, it can be seen that there must be very little difference between the replication estimates and those obtained using `UMVCUE` as the density curves of `beta_rep` and `beta_UMVCUE` nearly overlap completely. 
 
 ```{r, warning = FALSE}
 library("RColorBrewer")

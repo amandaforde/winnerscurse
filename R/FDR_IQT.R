@@ -1,10 +1,37 @@
-#' FDR Inverse Quantile Transformation method to correct for Winner’s Curse - Bigdeli et al. (2016)
+#'FDR IQT method for use with discovery data set
 #'
-#' @param summary_data Data frame containing summary data, three columns: rsid, beta, se
-#' @param min_pval avoids zero p-values (in R) which gives trouble with qnorm(), also abs(z) > 8 is generally not biased
+#'\code{FDR_IQT} is a function which uses summary statistics to reduce Winner's
+#'Curse bias in SNP-trait association estimates, obtained from a discovery GWAS.
+#'The function implements the FDR Inverse Quantile Transformation method
+#'described in
+#'\href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/}{Bigdeli \emph{et
+#'al.} (2016)}, which was established for this purpose.
+#'@param summary_data A data frame containing the GWAS summary data. It must
+#'  have three columns with column names \code{rsid}, \code{beta} and \code{se},
+#'  respectively, and all columns must contain numerical values.
+#'@param min_pval A numerical value whose purpose is to avoid zero
+#'  \eqn{p}-values as this introduces issues when \code{qnorm()} is applied. Any
+#'  SNP for which its computed \eqn{p}-value is found to be less than
+#'  \code{min_pval} is merely re-assigned \code{min_pval} as its \eqn{p}-value
+#'  and the method proceeds. By definition, the method makes no adjustment to
+#'  the association estimate of a SNP for which this has occurred with the
+#'  presumption that in general, estimates of SNPs with \eqn{z > 8} are not
+#'  biased. The default value is \code{min_pval = 1e-15}.
 #'
-#' @return Data frame with summary data together with adjusted estimates
-#' @export
+#'@return A data frame with the inputted summary data occupying the first three
+#'  columns. The new adjusted association estimates for each SNP are returned in
+#'  the fourth column, namely \code{beta_FIQT}. The SNPs are contained in this
+#'  data frame according to their significance, with the most significant SNP,
+#'  i.e. the SNP with the largest absolute \eqn{z}-statistic, now located in the
+#'  first row of the data frame.
+#'
+#'
+#'@references Bigdeli, T. B., Lee, D., Webb, B. T., Riley, B. P., Vladimirov, V.
+#'I., Fanous, A. H., Kendler, K. S., & Bacanu, S. A. (2016). A simple yet
+#'accurate correction for winner's curse can predict signals discovered in much
+#'larger genome scans. \emph{Bioinformatics (Oxford, England)}, \strong{32(17)},
+#'2598\eqn{-}2603. \url{https://doi.org/10.1093/bioinformatics/btw303}
+#'@export
 #'
 #'
 FDR_IQT <- function(summary_data, min_pval=1e-15)
