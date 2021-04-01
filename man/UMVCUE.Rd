@@ -8,24 +8,24 @@ UMVCUE(summary_disc, summary_rep, alpha)
 }
 \arguments{
 \item{summary_disc}{A data frame containing summary statistics from the
-\emph{discovery} GWAS. It must have three columns with column names \code{rsid},
-\code{beta} and \code{se}, respectively, and all columns must contain
-numerical values.}
+\emph{discovery} GWAS. It must have three columns with column names
+\code{rsid}, \code{beta} and \code{se}, respectively, and all columns must
+contain numerical values.}
 
 \item{summary_rep}{A data frame containing summary statistics from the
-\emph{replication} GWAS. It must have three columns with column names \code{rsid},
-\code{beta} and \code{se}, respectively, and all columns must contain
-numerical values.}
+\emph{replication} GWAS. It must have three columns with column names
+\code{rsid}, \code{beta} and \code{se}, respectively, and all columns must
+contain numerical values.}
 
 \item{alpha}{A numerical value which specifies the desired genome-wide
 significance threshold for the discovery GWAS.}
 }
 \value{
-A data frame with summary statistics and adjusted association
- estimate of only those SNPs which have been deemed significant in the
- discovery GWAS according to the specified threshold, \code{alpha}, i.e. SNPs
- with \eqn{p}-values less than \code{alpha}. The inputted summary data
- occupies the first five columns, in which the columns \code{beta_disc} and
+A data frame with summary statistics and adjusted association estimate
+ of only those SNPs which have been deemed significant in the discovery GWAS
+ according to the specified threshold, \code{alpha}, i.e. SNPs with
+ \eqn{p}-values less than \code{alpha}. The inputted summary data occupies
+ the first five columns, in which the columns \code{beta_disc} and
  \code{se_disc} contain the statistics from the discovery GWAS and columns
  \code{beta_rep} and \code{se_rep} hold the replication GWAS statistics. The
  new adjusted association estimate for each SNP, as defined in the

@@ -10,13 +10,13 @@
 #' association estimate, if desired by the user.
 #'
 #' @param summary_disc A data frame containing summary statistics from the
-#'   \emph{discovery} GWAS. It must have three columns with column names \code{rsid},
-#'   \code{beta} and \code{se}, respectively, and all columns must contain
-#'   numerical values.
+#'   \emph{discovery} GWAS. It must have three columns with column names
+#'   \code{rsid}, \code{beta} and \code{se}, respectively, and all columns must
+#'   contain numerical values.
 #' @param summary_rep A data frame containing summary statistics from the
-#'   \emph{replication} GWAS. It must have three columns with column names \code{rsid},
-#'   \code{beta} and \code{se}, respectively, and all columns must contain
-#'   numerical values.
+#'   \emph{replication} GWAS. It must have three columns with column names
+#'   \code{rsid}, \code{beta} and \code{se}, respectively, and all columns must
+#'   contain numerical values.
 #' @param alpha A numerical value which specifies the desired genome-wide
 #'   significance threshold for the discovery GWAS.
 #' @param conf_interval A logical value which determines whether or not
@@ -86,9 +86,9 @@ condlike_rep <- function(summary_disc,summary_rep,alpha, conf_interval=FALSE, co
 
     beta_MLE <- stats::optimize(f, c(sign(beta_com)*max(abs(beta_1),abs(beta_2)),-1*sign(beta_com)*max(abs(beta_1),abs(beta_2))), maximum=TRUE)$maximum
 
-    fun_CI <- function(beta){return(logf(beta) - logf(beta_MLE) + (qchisq(conf_level, df=1))/2)}
-    beta_MLE_lower <- uniroot(fun_CI, interval=c(beta_MLE+round(min(summary_disc$beta),1),beta_MLE))$root
-    beta_MLE_upper <- uniroot(fun_CI, interval=c(beta_MLE,beta_MLE+round(max(summary_disc$beta),1)))$root
+    fun_CI <- function(beta){return(logf(beta) - logf(beta_MLE) + (stats::qchisq(conf_level, df=1))/2)}
+    beta_MLE_lower <- stats::uniroot(fun_CI, interval=c(beta_MLE+round(min(summary_disc$beta),1),beta_MLE))$root
+    beta_MLE_upper <- stats::uniroot(fun_CI, interval=c(beta_MLE,beta_MLE+round(max(summary_disc$beta),1)))$root
     beta_adj <- data.frame(beta_MLE,beta_MLE_lower, beta_MLE_upper)
     return(beta_adj)
   }
@@ -107,8 +107,8 @@ condlike_rep <- function(summary_disc,summary_rep,alpha, conf_interval=FALSE, co
   out <- dplyr::arrange(betas, dplyr::desc(abs(betas$beta_disc/betas$se_disc)))
 
   if (conf_interval == FALSE){return(out)}else{
-    beta_com_lower <- summary_com_sig$beta - qnorm(1-(1-conf_level)/2)*summary_com_sig$se
-    beta_com_upper <- summary_com_sig$beta + qnorm(1-(1-conf_level)/2)*summary_com_sig$se
+    beta_com_lower <- summary_com_sig$beta - stats::qnorm(1-(1-conf_level)/2)*summary_com_sig$se
+    beta_com_upper <- summary_com_sig$beta + stats::qnorm(1-(1-conf_level)/2)*summary_com_sig$se
 
     beta_MLE_lower <- c(rep(0,length(summary_com_sig$beta)))
     beta_MLE_upper <- c(rep(0,length(summary_com_sig$beta)))

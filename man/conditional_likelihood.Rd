@@ -47,7 +47,7 @@ Ghosh, A., Zou, F., & Wright, F. A. (2008). Estimating odds
 }
 \seealso{
 \url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}
-for illustration of the use of \code{conditional_likelihood} with a toy data
-set and further information regarding the computation of the adjusted
-SNP-trait association estimates for significant SNPs.
+   for illustration of the use of \code{conditional_likelihood} with a toy
+  data set and further information regarding the computation of the adjusted
+  SNP-trait association estimates for significant SNPs.
 }

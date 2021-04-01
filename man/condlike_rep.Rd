@@ -14,14 +14,14 @@ condlike_rep(
 }
 \arguments{
 \item{summary_disc}{A data frame containing summary statistics from the
-\emph{discovery} GWAS. It must have three columns with column names \code{rsid},
-\code{beta} and \code{se}, respectively, and all columns must contain
-numerical values.}
+\emph{discovery} GWAS. It must have three columns with column names
+\code{rsid}, \code{beta} and \code{se}, respectively, and all columns must
+contain numerical values.}
 
 \item{summary_rep}{A data frame containing summary statistics from the
-\emph{replication} GWAS. It must have three columns with column names \code{rsid},
-\code{beta} and \code{se}, respectively, and all columns must contain
-numerical values.}
+\emph{replication} GWAS. It must have three columns with column names
+\code{rsid}, \code{beta} and \code{se}, respectively, and all columns must
+contain numerical values.}
 
 \item{alpha}{A numerical value which specifies the desired genome-wide
 significance threshold for the discovery GWAS.}

@@ -24,8 +24,9 @@ significance threshold for the discovery GWAS.}
 smoothing spline is to be used. When \code{spline=FALSE}, the value for
 \eqn{B} in the formula detailed in the aforementioned paper is merely
 calculated as \code{B=summary_disc$beta - summary_rep$beta} for each SNP.
-Alternatively, \code{spline=TRUE} applies a cubic smoothing spline to predict values for
-\eqn{B} when \code{B=summary_disc$beta - summary_rep$beta} is regressed on
+Alternatively, \code{spline=TRUE} applies a cubic smoothing spline to
+predict values for \eqn{B} when \code{B=summary_disc$beta -
+summary_rep$beta} is regressed on
 \code{z=summary_disc$beta/summary_disc$se}, and it is these predicted
 values that are then used for \eqn{B}.}
 }

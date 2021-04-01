@@ -36,10 +36,11 @@
 #'   \url{https://doi.org/10.1016/j.ajhg.2008.03.002}
 #'
 #'
-#' @seealso \url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}
-#' for illustration of the use of \code{conditional_likelihood} with a toy data
-#' set and further information regarding the computation of the adjusted
-#' SNP-trait association estimates for significant SNPs.
+#' @seealso
+#'   \url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}
+#'    for illustration of the use of \code{conditional_likelihood} with a toy
+#'   data set and further information regarding the computation of the adjusted
+#'   SNP-trait association estimates for significant SNPs.
 #' @export
 #'
 #'

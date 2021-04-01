@@ -34,7 +34,7 @@
 #'   conditional likelihood methods with summary statistics from discovery GWAS.
 #'
 #'   \url{https://amandaforde.github.io/winnerscurse/articles/standard_errors_confidence_intervals.html}
-#'   for illustration of the use of \code{cl_interval} with a toy data set and
+#'    for illustration of the use of \code{cl_interval} with a toy data set and
 #'   further information regarding the manner in which the confidence interval
 #'   is computed.
 #' @export
