@@ -1,30 +1,55 @@
 #' MSE minimization method for use with discovery and replication GWASs
 #'
-#' Approach to combine association estimates from discovery and replication data
-#' sets
+#' \code{MSE_minimizer} is a function which implements an approach that combines
+#' the association estimates obtained from discovery and replication GWASs to
+#' form a new combined estimate for each SNP. The method used by this function
+#' is inspired by that detailed in
+#' \href{https://journals.sagepub.com/doi/full/10.1177/0962280217720854}{Ferguson
+#' \emph{et al.} (2017)}.
 #'
 #' @param summary_disc A data frame containing summary statistics from the
-#'   discovery GWAS. It must have three columns with column names \code{rsid},
-#'   \code{beta} and \code{se}, respectively, and all columns must contain
-#'   numerical values.
+#'   \emph{discovery} GWAS. It must have three columns with column names
+#'   \code{rsid}, \code{beta} and \code{se}, respectively, and all columns must
+#'   contain numerical values.
 #' @param summary_rep A data frame containing summary statistics from the
-#'   replication GWAS. It must have three columns with column names \code{rsid},
-#'   \code{beta} and \code{se}, respectively, and all columns must contain
-#'   numerical values.
+#'   \emph{replication} GWAS. It must have three columns with column names
+#'   \code{rsid}, \code{beta} and \code{se}, respectively, and all columns must
+#'   contain numerical values.
 #' @param alpha A numerical value which specifies the desired genome-wide
 #'   significance threshold for the discovery GWAS.
-#' @param spline Logical parameter, default is spline=FALSE, spline=TRUE uses a
-#'   cubic smoothing spline to predict value of B=summary_disc$beta -
-#'   summary_rep$beta, spline=FALSE just uses this raw value for B
+#' @param spline A logical value which determines whether or not a cubic
+#'   smoothing spline is to be used. When \code{spline=FALSE}, the value for
+#'   \eqn{B} in the formula detailed in the aforementioned paper is merely
+#'   calculated as \code{B=summary_disc$beta - summary_rep$beta} for each SNP.
+#'   Alternatively, \code{spline=TRUE} applies a cubic smoothing spline to predict values for
+#'   \eqn{B} when \code{B=summary_disc$beta - summary_rep$beta} is regressed on
+#'   \code{z=summary_disc$beta/summary_disc$se}, and it is these predicted
+#'   values that are then used for \eqn{B}.
+
 #'
-#' @return Data frame with only SNPs deemed significance in discovery GWAS,
-#'   contains their beta and se values from both discovery and replication GWAS
-#'   as well as the combined estimate, beta_joint
+#' @return A data frame with summary statistics and adjusted association
+#'   estimate of only those SNPs which have been deemed significant in the
+#'   discovery GWAS according to the specified threshold, \code{alpha}, i.e.
+#'   SNPs with \eqn{p}-values less than \code{alpha}. The inputted summary data
+#'   occupies the first five columns, in which the columns \code{beta_disc} and
+#'   \code{se_disc} contain the statistics from the discovery GWAS and columns
+#'   \code{beta_rep} and \code{se_rep} hold the replication GWAS statistics. The
+#'   new combination estimate for each SNPis contained in the final column,
+#'   namely \code{beta_joint}. The SNPs are contained in this data frame
+#'   according to their significance, with the most significant SNP, i.e. the
+#'   SNP with the largest absolute \eqn{z}-statistic, now located in the first
+#'   row of the data frame.
 #' @references Ferguson, J., Alvarez-Iglesias, A., Newell, J., Hinde, J., &
 #'   O'Donnell, M. (2017).  Joint incorporation of randomised and observational
 #'   evidence in estimating treatment effects. \emph{Statistical Methods in
 #'   Medical Research}, \strong{28(1)}, 235\eqn{-}247.
 #'   \url{https://doi.org/10.1177/0962280217720854}
+#'
+#' @seealso
+#' \url{https://amandaforde.github.io/winnerscurse/articles/discovery_replication.html}
+#' for illustration of the use of \code{MSE_minimizer} with toy data sets and
+#' further information regarding computation of the combined SNP-trait
+#' association estimates for significant SNPs.
 #' @export
 #'
 MSE_minimizer <- function(summary_disc, summary_rep, alpha, spline=FALSE){

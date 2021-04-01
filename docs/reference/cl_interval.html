@@ -42,7 +42,13 @@ methods — cl_interval • winnerscurse</title>
 
 <meta property="og:title" content="Confidence interval associated with discovery GWAS conditional likelihood
 methods — cl_interval" />
-<meta property="og:description" content="- Ghosh et al. (2008)" />
+<meta property="og:description" content="cl_interval is a function that allows the user to obtain a confidence
+interval for the adjusted association estimates of significant SNPs, which
+have been obtained through the implementation of
+conditional_likelihood. This function produces one confidence
+interval for each significant SNP, based on the approach suggested in
+Ghosh et
+al. (2008)." />
 
 
 
@@ -130,10 +136,16 @@ methods</h1>
     </div>
 
     <div class="ref-description">
-    <p>- Ghosh et al. (2008)</p>
+    <p><code>cl_interval</code> is a function that allows the user to obtain a confidence
+interval for the adjusted association estimates of significant SNPs, which
+have been obtained through the implementation of
+<code><a href='conditional_likelihood.html'>conditional_likelihood</a></code>. This function produces one confidence
+interval for each significant SNP, based on the approach suggested in
+<a href='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/'>Ghosh <em>et
+al.</em> (2008)</a>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>cl_interval</span><span class='op'>(</span><span class='va'>summary_data</span>, <span class='va'>alpha</span>, conf <span class='op'>=</span> <span class='fl'>0.95</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>cl_interval</span><span class='op'>(</span><span class='va'>summary_data</span>, <span class='va'>alpha</span>, conf_level <span class='op'>=</span> <span class='fl'>0.95</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -151,26 +163,34 @@ numerical values.</p></td>
 significance threshold.</p></td>
     </tr>
     <tr>
-      <th>conf</th>
-      <td><p>A numerical value between 0 and 1 which determines the confidence
-interval to be computed. The default setting is <code>0.95</code> which results
-in the calculation of a 95% confidence interval for the adjusted
-association estimate for each SNP.</p></td>
+      <th>conf_level</th>
+      <td><p>A numerical value between 0 and 1 which determines the
+confidence interval to be computed. The default setting is <code>0.95</code>
+which results in the calculation of a 95% confidence interval for the
+adjusted association estimate for each SNP.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Data frame which combines output from application of conditional
-  likelihood methods, i.e. summary data of only significant SNPs together
-  with three corrected estimates, with an upper and a lower bound on the
-  required confidence interval for each SNP</p>
+    <p>A data frame which combines the output of
+  <code>conditional_likelihood</code> with two additional columns, namely
+  <code>lower</code> and <code>upper</code>, containing the lower and upper bounds of the
+  required confidence interval for each significant SNP, respectively.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Ghosh, A., Zou, F., &amp; Wright, F. A. (2008). Estimating odds
   ratios in genome scans: an approximate conditional likelihood approach.
   <em>American journal of human genetics</em>, <strong>82(5)</strong>, 1064\(-\)1074.
   <a href='https://doi.org/10.1016/j.ajhg.2008.03.002'>https://doi.org/10.1016/j.ajhg.2008.03.002</a></p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='conditional_likelihood.html'>conditional_likelihood</a></code> for details on operation of
+  conditional likelihood methods with summary statistics from discovery GWAS.</p>
+<p><a href='https://amandaforde.github.io/winnerscurse/articles/standard_errors_confidence_intervals.html'>https://amandaforde.github.io/winnerscurse/articles/standard_errors_confidence_intervals.html</a>
+  for illustration of the use of <code>cl_interval</code> with a toy data set and
+  further information regarding the manner in which the confidence interval
+  is computed.</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

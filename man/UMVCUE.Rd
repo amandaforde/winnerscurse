@@ -8,12 +8,12 @@ UMVCUE(summary_disc, summary_rep, alpha)
 }
 \arguments{
 \item{summary_disc}{A data frame containing summary statistics from the
-discovery GWAS. It must have three columns with column names \code{rsid},
+\emph{discovery} GWAS. It must have three columns with column names \code{rsid},
 \code{beta} and \code{se}, respectively, and all columns must contain
 numerical values.}
 
 \item{summary_rep}{A data frame containing summary statistics from the
-replication GWAS. It must have three columns with column names \code{rsid},
+\emph{replication} GWAS. It must have three columns with column names \code{rsid},
 \code{beta} and \code{se}, respectively, and all columns must contain
 numerical values.}
 
@@ -21,17 +21,37 @@ numerical values.}
 significance threshold for the discovery GWAS.}
 }
 \value{
-Data frame with only SNPs deemed significance in discovery GWAS,
-  contains their beta and se values from both discovery and replication GWAS
-  as well as the UMVCUE for each SNP
+A data frame with summary statistics and adjusted association
+ estimate of only those SNPs which have been deemed significant in the
+ discovery GWAS according to the specified threshold, \code{alpha}, i.e. SNPs
+ with \eqn{p}-values less than \code{alpha}. The inputted summary data
+ occupies the first five columns, in which the columns \code{beta_disc} and
+ \code{se_disc} contain the statistics from the discovery GWAS and columns
+ \code{beta_rep} and \code{se_rep} hold the replication GWAS statistics. The
+ new adjusted association estimate for each SNP, as defined in the
+ aforementioned paper, is contained in the final column, namely
+ \code{beta_UMVCUE}. The SNPs are contained in this data frame according to
+ their significance, with the most significant SNP, i.e. the SNP with the
+ largest absolute \eqn{z}-statistic, now located in the first row of the data
+ frame.
 }
 \description{
-Winner's Curse adjustment method using discovery and replication summary
-statistics - Bowden and Dudbridge (2009)
+\code{UMVCUE} is a function which aims to produce less biased SNP-trait
+association estimates for SNPs deemed significant in the discovery GWAS, using
+summary statistics from both discovery and replication GWASs. The function
+implements the method described in
+\href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2726957/}{Bowden and
+Dudbridge (2009)}, which was established for this purpose.
 }
 \references{
 Bowden, J., & Dudbridge, F. (2009). Unbiased estimation of odds
-  ratios: combining genomewide association scans with replication studies.
-  \emph{Genetic epidemiology}, \strong{33(5)}, 406\eqn{-}418.
-  \url{https://doi.org/10.1002/gepi.20394}
+ ratios: combining genomewide association scans with replication studies.
+ \emph{Genetic epidemiology}, \strong{33(5)}, 406\eqn{-}418.
+ \url{https://doi.org/10.1002/gepi.20394}
+}
+\seealso{
+\url{https://amandaforde.github.io/winnerscurse/articles/discovery_replication.html}
+for illustration of the use of \code{UMVCUE} with toy data sets and further
+information regarding computation of the adjusted SNP-trait association
+estimates for significant SNPs.
 }

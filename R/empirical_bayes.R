@@ -1,22 +1,35 @@
-#' Empirical Bayes method for use with discovery GWAS
+#'Empirical Bayes method for use with discovery GWAS
 #'
-#' \code{empirical_bayes} is a function which uses summary statistics to correct for bias induced by
-#' Winner's Curse in SNP-trait association estimates, obtained from a discovery GWAS. The function
-#' is strongly based on the method detailed in
-#' \href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/}{Ferguson \emph{et al.} (2013)}.
-#' @param summary_data A data frame containing summary statistics from the discovery GWAS. It must have three columns
-#' with column names \code{rsid}, \code{beta} and \code{se}, respectively, and all columns must contain
-#' numerical values.
+#'\code{empirical_bayes} is a function which uses summary statistics to correct
+#'for bias induced by Winner's Curse in SNP-trait association estimates,
+#'obtained from a discovery GWAS. The function is strongly based on the method
+#'detailed in
+#'\href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/}{Ferguson \emph{et
+#'al.} (2013)}.
+#'@param summary_data A data frame containing summary statistics from the
+#'  discovery GWAS. It must have three columns with column names \code{rsid},
+#'  \code{beta} and \code{se}, respectively, and all columns must contain
+#'  numerical values.
 #'
-#' @return A data frame with the inputted summary data occupying the first three columns. The new adjusted
-#' association estimates for each SNP are returned in the fourth column, namely \code{beta_EB}. The
-#' SNPs are contained in this data frame according to their significance, with the most significant SNP, i.e. the SNP with
-#' the largest absolute \eqn{z}-statistic, now located in the first row of the data frame.
+#'@return A data frame with the inputted summary data occupying the first three
+#'  columns. The new adjusted association estimates for each SNP are returned in
+#'  the fourth column, namely \code{beta_EB}. The SNPs are contained in this
+#'  data frame according to their significance, with the most significant SNP,
+#'  i.e. the SNP with the largest absolute \eqn{z}-statistic, now located in the
+#'  first row of the data frame.
 #'
 #'
-#'@references
-#'Ferguson, J. P., Cho, J. H., Yang, C., & Zhao, H. (2013). Empirical Bayes correction for the Winner's Curse in genetic association studies. \emph{Genetic epidemiology}, \strong{37(1)}, 60\eqn{-}68. \url{https://doi.org/10.1002/gepi.21683}
-#' @export
+#'@references Ferguson, J. P., Cho, J. H., Yang, C., & Zhao, H. (2013).
+#'Empirical Bayes correction for the Winner's Curse in genetic association
+#'studies. \emph{Genetic epidemiology}, \strong{37(1)}, 60\eqn{-}68.
+#'\url{https://doi.org/10.1002/gepi.21683}
+#'
+#'@seealso
+#'  \url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}
+#'   for illustration of the use of \code{empirical_bayes} with a toy data set
+#'  and further information regarding the computation of the adjusted SNP-trait
+#'  association estimates.
+#'@export
 #'
 #'
 empirical_bayes <- function(summary_data)

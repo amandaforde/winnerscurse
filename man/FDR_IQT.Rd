@@ -45,3 +45,9 @@ Bigdeli, T. B., Lee, D., Webb, B. T., Riley, B. P., Vladimirov, V.
  \strong{32(17)}, 2598\eqn{-}2603.
  \url{https://doi.org/10.1093/bioinformatics/btw303}
 }
+\seealso{
+\url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}
+for illustration of the use of \code{FDR_IQT} with a toy data
+set and further information regarding the computation of the adjusted
+SNP-trait association estimates.
+}

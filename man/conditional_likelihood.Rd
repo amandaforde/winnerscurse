@@ -45,3 +45,9 @@ Ghosh, A., Zou, F., & Wright, F. A. (2008). Estimating odds
   \emph{American journal of human genetics}, \strong{82(5)}, 1064\eqn{-}1074.
   \url{https://doi.org/10.1016/j.ajhg.2008.03.002}
 }
+\seealso{
+\url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}
+for illustration of the use of \code{conditional_likelihood} with a toy data
+set and further information regarding the computation of the adjusted
+SNP-trait association estimates for significant SNPs.
+}

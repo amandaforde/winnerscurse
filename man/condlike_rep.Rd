@@ -14,35 +14,66 @@ condlike_rep(
 }
 \arguments{
 \item{summary_disc}{A data frame containing summary statistics from the
-discovery GWAS. It must have three columns with column names \code{rsid},
+\emph{discovery} GWAS. It must have three columns with column names \code{rsid},
 \code{beta} and \code{se}, respectively, and all columns must contain
 numerical values.}
 
 \item{summary_rep}{A data frame containing summary statistics from the
-replication GWAS. It must have three columns with column names \code{rsid},
+\emph{replication} GWAS. It must have three columns with column names \code{rsid},
 \code{beta} and \code{se}, respectively, and all columns must contain
 numerical values.}
 
 \item{alpha}{A numerical value which specifies the desired genome-wide
 significance threshold for the discovery GWAS.}
 
-\item{conf_interval}{A logical value.}
+\item{conf_interval}{A logical value which determines whether or not
+confidence intervals for each form of adjusted association estimate is also
+to be computed and outputted. The default is \code{conf_interval=FALSE}.}
 
-\item{conf_level}{A numerical value.}
+\item{conf_level}{A numerical value between 0 and 1 which specifies the
+confidence interval to be computed. The default setting is \code{0.95}
+which results in the calculation of a 95\% confidence interval for the
+adjusted association estimate for each SNP.}
 }
 \value{
-Data frame with only SNPs deemed significance in discovery GWAS,
-  contains their beta and se values from both discovery and replication GWAS
-  as well as the combined unadjusted estimate, the conditional likelihood MLE
-  and the weighted average for each SNP
+A data frame with summary statistics and adjusted association
+  estimates of only those SNPs which have been deemed significant in the
+  discovery GWAS according to the specified threshold, \code{alpha}, i.e.
+  SNPs with \eqn{p}-values less than \code{alpha}. The inputted summary data
+  occupies the first five columns, in which the columns \code{beta_disc} and
+  \code{se_disc} contain the statistics from the discovery GWAS and columns
+  \code{beta_rep} and \code{se_rep} hold the replication GWAS statistics. For
+  the default setting of \code{conf_interval=FALSE}, the new adjusted
+  association estimates for each SNP, as defined in the aforementioned paper,
+  are contained in the next three columns, namely \code{beta_com},
+  \code{beta_MLE} and \code{beta_MSE}. For the case when
+  \code{conf_interval=TRUE}, the lower and upper boundaries of each
+  confidence interval for each form of adjusted estimate are included in the
+  data frame as well as the adjusted estimates for each SNP. The SNPs are
+  contained in this data frame according to their significance, with the most
+  significant SNP, i.e. the SNP with the largest absolute \eqn{z}-statistic,
+  now located in the first row of the data frame.
 }
 \description{
-Winner's Curse adjustment using discovery and replication summary statistics
-- Zhong and Prentice (2008)
+\code{condlike_rep} is a function which attempts to produce less biased
+SNP-trait association estimates for SNPs deemed significant in the discovery
+GWAS, using summary statistics from both discovery and replication GWASs. The
+function computes three new association estimates for each SNP in a manner
+based closely on the method described in
+\href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2536726/}{Zhong and
+Prentice (2008)}. It also returns confidence intervals for each new
+association estimate, if desired by the user.
 }
 \references{
 Zhong, H., & Prentice, R. L. (2008). Bias-reduced estimators and
   confidence intervals for odds ratios in genome-wide association studies.
   \emph{Biostatistics (Oxford, England)}, \strong{9(4)}, 621\eqn{-}634.
   \url{https://doi.org/10.1093/biostatistics/kxn001}
+}
+\seealso{
+\url{https://amandaforde.github.io/winnerscurse/articles/discovery_replication.html}
+for illustration of the use of \code{condlike_rep} with toy data sets and
+further information regarding computation of the adjusted SNP-trait
+association estimates and their corresponding confidence intervals for
+significant SNPs.
 }

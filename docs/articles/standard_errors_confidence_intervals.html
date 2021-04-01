@@ -175,7 +175,7 @@
 <li><p><code>cl_interval</code> can be used in conjunction with the toy data set as shown below, in which <code>alpha</code> is specified as <code>5e-8</code> and a 95% confidence interval is desired:</p></li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cl_interval.html">cl_interval</a></span><span class="op">(</span>summary_data<span class="op">=</span><span class="va">summary_stats</span>, alpha <span class="op">=</span> <span class="fl">5e-8</span>, conf<span class="op">=</span><span class="fl">0.95</span><span class="op">)</span>
+<code class="sourceCode R"><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cl_interval.html">cl_interval</a></span><span class="op">(</span>summary_data<span class="op">=</span><span class="va">summary_stats</span>, alpha <span class="op">=</span> <span class="fl">5e-8</span>, conf_level<span class="op">=</span><span class="fl">0.95</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span>
 <span class="co">#&gt;   rsid        beta          se    beta.cl1    beta.cl2    beta.cl3       lower</span>
 <span class="co">#&gt; 1 3965  0.06065460 0.008195368  0.06007821  0.05867879  0.05937850  0.03811493</span>

@@ -40,3 +40,9 @@ Faye, L. L., Sun, L., Dimitromanolakis, A., & Bull, S. B. (2011).
  design. \emph{Statistics in Medicine}, \strong{30(15)}, 1898\eqn{-}1912.
  \url{https://doi.org/10.1002/sim.4228}
 }
+\seealso{
+\url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}
+for illustration of the use of \code{BR_ss} with a toy data
+set and further information regarding the computation of the adjusted
+SNP-trait association estimates.
+}

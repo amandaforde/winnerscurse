@@ -40,7 +40,14 @@
 
 
 <meta property="og:title" content="Standard errors of adjusted discovery GWAS estimates via parametric bootstrap — se_adjust" />
-<meta property="og:description" content="Standard errors of adjusted discovery GWAS estimates via parametric bootstrap" />
+<meta property="og:description" content="se_adjust is a function which allows the user to obtain approximate
+standard errors of adjusted association estimates, by means of parametric
+bootstrapping. Standard errors can be evaluated for estimates which have been
+corrected with the Empirical Bayes method, FDR Inverse Quantile
+Transformation method or the bootstrap method. Note that in comparison to the
+other functions in this package, this function can be computationally
+intensive and take a several minutes to run, depending on the size of the
+data set and the number of bootstraps chosen." />
 
 
 
@@ -127,7 +134,14 @@
     </div>
 
     <div class="ref-description">
-    <p>Standard errors of adjusted discovery GWAS estimates via parametric bootstrap</p>
+    <p><code>se_adjust</code> is a function which allows the user to obtain approximate
+standard errors of adjusted association estimates, by means of parametric
+bootstrapping. Standard errors can be evaluated for estimates which have been
+corrected with the Empirical Bayes method, FDR Inverse Quantile
+Transformation method or the bootstrap method. Note that in comparison to the
+other functions in this package, this function can be computationally
+intensive and take a several minutes to run, depending on the size of the
+data set and the number of bootstraps chosen.</p>
     </div>
 
     <pre class="usage"><span class='fu'>se_adjust</span><span class='op'>(</span><span class='va'>summary_data</span>, <span class='va'>method</span>, n_boot <span class='op'>=</span> <span class='fl'>100</span><span class='op'>)</span></pre>
@@ -144,20 +158,31 @@ numerical values.</p></td>
     </tr>
     <tr>
       <th>method</th>
-      <td><p>A string which specifies the function to be implemented
-<code>"BR_ss"</code>, <code>"empirical_bayes"</code> <code>"FDR_IQT"</code></p></td>
+      <td><p>A string specifying the function to be implemented on each of
+the bootstrap samples. It should take the form <code>"BR_ss"</code>,
+<code>"empirical_bayes"</code> or <code>"FDR_IQT"</code>.</p></td>
     </tr>
     <tr>
       <th>n_boot</th>
-      <td><p>A numerical value - number of bootstrap repetitions used -
-defaults to 100</p></td>
+      <td><p>A numerical value which determines the number of bootstrap
+repetitions to be used. The default value is <code>100</code>.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>Data frame with summary data together with adjusted estimates and
-  standard error: adj_se</p>
+    <p>A data frame which combines the output of the chosen method with an
+  additional column, namely <code>adj_se</code>. This column provides the standard
+  errors of the adjusted association estimates for each SNP.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p><code><a href='empirical_bayes.html'>empirical_bayes</a></code>, <code><a href='BR_ss.html'>BR_ss</a></code> and
+  <code><a href='FDR_IQT.html'>FDR_IQT</a></code> for details on operation of these methods with
+  summary statistics from discovery GWAS.</p>
+<p><a href='https://amandaforde.github.io/winnerscurse/articles/standard_errors_confidence_intervals.html'>https://amandaforde.github.io/winnerscurse/articles/standard_errors_confidence_intervals.html</a>
+   for illustration of the use of <code>se_adjust</code> with a toy data set and
+  further information regarding the manner in which the standard errors are
+  computed.</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
