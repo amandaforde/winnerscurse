@@ -1,8 +1,8 @@
 ---
-title: "Standard errors of adjusted estimates and confidence intervals"
+title: "Standard errors and confidence intervals of adjusted estimates"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Standard errors of adjusted estimates and confidence intervals}
+  %\VignetteIndexEntry{Standard errors and confidence intervals of adjusted estimates}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

@@ -1,8 +1,8 @@
 ---
-title: "Obtaining adjusted `beta` estimates"
+title: "Methods for use with discovery GWAS"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Obtaining adjusted `beta` estimates}
+  %\VignetteIndexEntry{Methods for use with discovery GWAS}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---

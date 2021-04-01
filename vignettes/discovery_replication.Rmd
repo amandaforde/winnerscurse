@@ -1,8 +1,8 @@
 ---
-title: "Using discovery and replication summary statistics for adjusting association estimates"
+title: "Methods for use with discovery and replication GWASs"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Using discovery and replication summary statistics for adjusting association estimates}
+  %\VignetteIndexEntry{Methods for use with discovery and replication GWASs}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
