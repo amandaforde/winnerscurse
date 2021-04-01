@@ -59,9 +59,11 @@ head(stats_rep)
 
 - The function `condlike_rep` implements a version of the conditional likelihood method for obtaining bias-reduced estimates of $\beta$ described in [Zhong and Prentice (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2536726/). 
 
-- The function requires as inputs two independent data sets, one representing a discovery GWAS and the other a replication study with identical SNPs, as well as a specification of the significance threshold wished to be used. As before, the data sets must be in the form of data frames with columns `rsid`, `beta` and `se`. It is presumed that SNPs are in the exact same order in both data sets. 
+- The function requires as inputs two independent data sets, one representing a discovery GWAS, `summary_disc`, and the other a replication study with identical SNPs, `summary_rep`, as well as a specification of the significance threshold, `alpha`, to be used. As before, the data sets must be in the form of data frames with columns `rsid`, `beta` and `se`. It is presumed that SNPs are in the exact same order in both data sets. 
 
-- In a similar manner to other functions included in the package, `condlike_rep` returns a single data frame with SNPs reordered based on signficance. The first 5 columns of the data frame details the inputted information; `rsid`, `beta_disc`, `se_disc`, `beta_rep`, `se_rep`. Following this, `beta_com` is the inverse variance weighted estimate which is formally defined as:$$\hat\beta_{\text{com}} = \frac{\sigma_2^2 \hat\beta_1 + \sigma_1^2 \hat\beta_2}{\sigma_1^2 + \sigma_2^2},$$
+- Furthermore, the parameter `conf_interval` in `condlike_rep` provides the user with the option to obtain confidence intervals for each of the adjusted association estimates. The default setting is `conf_interval=FALSE`. Inserting `conf_interval=TRUE` when using the function will return three sets of lower and upper confidence interval boundaries for each SNP, each set corresponding to a particular form of adjusted estimate. The final parameter `conf_level` takes a numerical value between 0 and 1 which specifies the confidence interval, with the default being `0.95`.
+
+- In a similar manner to other functions included in the package, `condlike_rep` returns a single data frame with SNPs reordered based on significance. However, it only contains SNPs which have been deemed significant in the discovery data set. The first 5 columns of the data frame details the inputted information; `rsid`, `beta_disc`, `se_disc`, `beta_rep`, `se_rep`. Following this, `beta_com` is the inverse variance weighted estimate which is formally defined as:$$\hat\beta_{\text{com}} = \frac{\sigma_2^2 \hat\beta_1 + \sigma_1^2 \hat\beta_2}{\sigma_1^2 + \sigma_2^2},$$
 in which $\hat\beta_1$ = `beta_disc`, $\hat\beta_2$ = `beta_rep`, $\sigma_1$ = `se_disc` and $\sigma_2$ = `se_rep`.
 
 - The method implemented here uses just one selection cut-point at the first discovery stage as opposed to that described in [Zhong and Prentice (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2536726/) in which two separate selection thresholds are used. Thus, the maximum likelihood adjusted estimator, `beta_MLE` is defined to maximize the conditional likelihood at the observed $\hat\beta_{\text{com}}$:$$\hat\beta_{\text{MLE}} = \arg \max_{\beta} \log f(\hat\beta_{\text{com}}; \beta).$$
@@ -72,23 +74,29 @@ $$f(x;\beta) = \frac{\frac{1}{\sigma_{\text{com}}} \phi\left(\frac{x-\beta}{\sig
  
 - Note that this function, $f(x;\beta)$ is slightly different from that given in the paper as only one selection cut-point is imposed here. 
 
-- Finally, Zhong and Prectice (2008) noted that simulation studies showed that $\hat\beta_{\text{com}}$ tended to have upward bias while $\hat\beta_{\text{MLE}}$ overcorrected and therefore, a combination of the two in the following form was proposed: 
+- Finally, Zhong and Prectice (2008) noted that simulation studies showed that $\hat\beta_{\text{com}}$ tended to have upward bias while $\hat\beta_{\text{MLE}}$ over-corrected and therefore, a combination of the two in the following form was proposed: 
 $$\hat\beta_{\text{MSE}} = \frac{\hat\sigma^2_{\text{com}}\cdot \hat\beta_{\text{com}} + (\hat\beta_{\text{com}} - \hat\beta_{\text{MLE}})^2\cdot\hat\beta_{\text{MLE}}}{\sigma^2_{\text{com}}+(\hat\beta_{\text{com}} - \hat\beta_{\text{MLE}})^2}.$$
-This $\hat\beta_{\text{MSE}}$ holds the final column of the outputted data frame. 
+This $\hat\beta_{\text{MSE}}$ holds the final column of the outputted data frame in the default setting. 
 
-- The use of `condlike_rep` with our toy data sets is demonstrated below, with a significance threshold value of `10e-6`:
+- The use of `condlike_rep` with our toy data sets in which `conf_interval=FALSE` is demonstrated below, with a significance threshold value of `10e-6`:
 ```{r}
 out1 <- condlike_rep(summary_disc=stats_disc, summary_rep=stats_rep, alpha=10e-6)
 head(out1)
 ```
 
 $~$
-**TO DO:** 
 
-- *discuss option of obtaining confidence intervals, demonstrate in action and add short explanation along with mathematical notation for clarity*
+**Confidence intervals:**
 
-$~$
-$~$
+- Firstly, the $(1-\alpha)\%$ confidence interval for $\hat\beta_{\text{com}}$ is simply calculated as: $$\hat\beta_{\text{com}} \pm \hat\sigma_{\text{com}}Z_{1-\frac{\alpha}{2}}.$$For $\hat\beta_{\text{MLE}}$, the profile confidence limits are the intersection of the log-likelihood curve with a horizontal line $\frac{\chi^2_{1,1-\alpha}}{2}$ units below its maximum. The MSE weighting method, as described above, can then be easily applied to the upper and lower boundaries of these two confidence intervals to obtain an appropriate confidence interval for $\hat\beta_{\text{MSE}}$. This gives: $$\hat\beta_{\text{MSE};\frac{\alpha}{2}} = \hat{K}_{\frac{\alpha}{2}} \hat\beta_{\text{com};\frac{\alpha}{2}} + \left(1-\hat{K}_{\frac{\alpha}{2}}\right) \hat\beta_{\text{MLE};\frac{\alpha}{2}}$$ $$\hat\beta_{\text{MSE};1-\frac{\alpha}{2}} = \hat{K}_{1-\frac{\alpha}{2}} \hat\beta_{\text{com};1-\frac{\alpha}{2}} + \left(1-\hat{K}_{1-\frac{\alpha}{2}}\right) \hat\beta_{\text{MLE};1-\frac{\alpha}{2}}$$ in which $\hat{K}_{\frac{\alpha}{2}} = \frac{\hat\sigma^2_{\text{com}}}{\hat\sigma^2_{\text{com}} + \left(\hat\beta_{\text{com};\frac{\alpha}{2}} - \hat\beta_{\text{MLE};\frac{\alpha}{2}}\right)^2} \;$ and $\;  \hat{K}_{1-\frac{\alpha}{2}} = \frac{\hat\sigma^2_{\text{com}}}{\hat\sigma^2_{\text{com}} + \left(\hat\beta_{\text{com};1-\frac{\alpha}{2}} - \hat\beta_{\text{MLE};1-\frac{\alpha}{2}}\right)^2}.$
+
+- We implement `condlike_rep` on our toy data sets with `conf_interval` now set to `TRUE` to show the form in which the output now takes. A similar data frame to that above is returned with 95% confidence intervals also included for each adjusted association estimate for each SNP.
+
+```{r}
+out1_conf <- condlike_rep(summary_disc=stats_disc, summary_rep=stats_rep, alpha=10e-6, conf_interval=TRUE, conf_level=0.95)
+head(out1_conf)
+```
+
 
 ### UMVCUE - Bowden and Dudbridge (2009)
 
