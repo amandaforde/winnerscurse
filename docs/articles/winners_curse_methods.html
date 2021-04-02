@@ -170,9 +170,9 @@
 <span class="co">#&gt; 5    5  0.028408413 0.008180033</span>
 <span class="co">#&gt; 6    6 -0.001962928 0.009936883</span></code></pre></div>
 </div>
-<div id="method-1-conditional-likelihood---ghosh-et-al--2008" class="section level3">
+<div id="method-1-conditional-likelihood" class="section level3">
 <h3 class="hasAnchor">
-<a href="#method-1-conditional-likelihood---ghosh-et-al--2008" class="anchor"></a>Method 1: Conditional Likelihood - Ghosh <em>et al.</em> (2008)</h3>
+<a href="#method-1-conditional-likelihood" class="anchor"></a>Method 1: Conditional Likelihood</h3>
 <ul>
 <li><p>The function <code>conditional_likelihood</code> requires a data frame, in the form described above, and a value for <code>alpha</code>, the significance threshold used in the GWAS.</p></li>
 <li><p>As the conditional likelihood methods have been designed to be only used for SNPs which are deemed significant, the data frame returned contains only SNPs that have <span class="math inline">\(p\)</span>-values below the inputted genome-wide significance threshold value, <code>alpha</code>.</p></li>
@@ -195,9 +195,9 @@
 <li><p>Ghosh <em>et al.</em> (2008) noted that for instances in which the true <span class="math inline">\(\beta\)</span> value is close to zero, <code>beta.cl2</code> often has greater mean squared error than <code>beta.cl1</code> but for true <span class="math inline">\(\beta\)</span> values further from zero, <code>beta.cl2</code> performs better. Thus, it was suggested that <code>beta.cl3</code> be used to combine the strengths of these two estimators. However, this function, <code>conditional_likelihood</code>, outputs values for all three estimators in order to allow the user to make their own decision on which they believe to be the most appropriate.</p></li>
 </ul>
 </div>
-<div id="method-2-empirical-bayes---ferguson-et-al--2013" class="section level3">
+<div id="method-2-empirical-bayes" class="section level3">
 <h3 class="hasAnchor">
-<a href="#method-2-empirical-bayes---ferguson-et-al--2013" class="anchor"></a>Method 2: Empirical Bayes - Ferguson <em>et al.</em> (2013)</h3>
+<a href="#method-2-empirical-bayes" class="anchor"></a>Method 2: Empirical Bayes</h3>
 <ul>
 <li><p>The function <code>empirical_bayes</code> implements the Empirical Bayes method for correcting for Winner’s Curse, detailed in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/">Ferguson <em>et al.</em> (2013)</a>, with a slight modification.</p></li>
 <li><p>The function has one argument, <code>summary_data</code>, which is the data frame containing <code>rsid</code>, <code>beta</code> and <code>se</code> columns.</p></li>
@@ -221,9 +221,9 @@
 <li><p>In order to ensure that shrinkage does occur for the <span class="math inline">\(\beta\)</span> values of these extreme SNPs, it was decided that the following modification would be added to the <code>empirical_bayes</code> function detailed here. The basis function of the natural cubic spline has been altered so that the boundary knots are no longer the most extreme <span class="math inline">\(z\)</span>-values. Instead, the lower boundary knot is defined as the <span class="math inline">\(10^{\text{th}}\)</span> <span class="math inline">\(z\)</span>-statistic when the <span class="math inline">\(z\)</span>-statistics lie in increasing order while the upper boundary knot is the <span class="math inline">\(10^{\text{th}}\)</span> <span class="math inline">\(z\)</span>-statistic when the <span class="math inline">\(z\)</span>-statistics have been arranged in decreasing order. The natural cubic spline is then merely linear beyond these boundary knots. This assists in fixing the ‘tails’ issue discussed above. We see that the reduction of the estimated <span class="math inline">\(\beta\)</span> values for all of the top 6 most significant SNPs has occurred.</p></li>
 </ul>
 </div>
-<div id="method-3-fdr-inverse-quantile-transformation---bigdeli-et-al--2016" class="section level3">
+<div id="method-3-fdr-inverse-quantile-transformation" class="section level3">
 <h3 class="hasAnchor">
-<a href="#method-3-fdr-inverse-quantile-transformation---bigdeli-et-al--2016" class="anchor"></a>Method 3: FDR Inverse Quantile Transformation - Bigdeli <em>et al.</em> (2016)</h3>
+<a href="#method-3-fdr-inverse-quantile-transformation" class="anchor"></a>Method 3: FDR Inverse Quantile Transformation</h3>
 <ul>
 <li><p>The function <code>FDR_IQT</code> implements the winner’s curse adjustment method detailed in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/">Bigdeli <em>et al.</em> (2016)</a>.</p></li>
 <li><p>Similar to the approaches above, the function requires a data frame with three columns <code>rsid</code>, <code>beta</code> and <code>se</code>.</p></li>
@@ -241,9 +241,9 @@
 <span class="co">#&gt; 5 6510  0.05623502 0.008394748  0.03876418</span>
 <span class="co">#&gt; 6 9917  0.05466573 0.008178854  0.03776726</span></code></pre></div>
 </div>
-<div id="method-4-bootstrap---adapted-from-faye-et-al--2011" class="section level3">
+<div id="method-4-bootstrap" class="section level3">
 <h3 class="hasAnchor">
-<a href="#method-4-bootstrap---adapted-from-faye-et-al--2011" class="anchor"></a>Method 4: Bootstrap - adapted from Faye <em>et al.</em> (2011)</h3>
+<a href="#method-4-bootstrap" class="anchor"></a>Method 4: Bootstrap</h3>
 <ul>
 <li><p>Inspired by the winner’s curse adjustment method detailed in <a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4228">Faye <em>et al.</em> (2011)</a>, the function <code>BR_ss</code> implements a computationally efficient bootstrap method which is suitable for use with summary statistics.</p></li>
 <li><p><code>BR_ss</code> takes a data frame <code>summary_data</code> with three columns: <code>rsid</code>, <code>beta</code>, <code>se</code>, and returns the inputted data frame along with the adjusted estimate for <span class="math inline">\(\beta\)</span>, <code>beta_BR_ss</code>. The function also has a parameter <code>seed</code> which can be set to a specific numeric value by the user to permit reproducibility. This is required as this method involves bootstrap implementation and therefore, the use of a seed allows the user to obtain the exact same results for <code>beta_BR_ss</code> when running the function many times on the same dataset. The default value for <code>seed</code> is <code>1998</code>.</p></li>

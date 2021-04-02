@@ -41,7 +41,7 @@ summary_stats <- data.frame(rsid=seq(1,n_snps),beta=rnorm(n=n_snps,mean=true_bet
 
 
 
-### Obtaining standard errors of adjusted `beta` estimates using `se_adjust`
+### Obtaining standard errors of adjusted estimates 
 
 - The function `se_adjust` has three parameters: 
   1. `summary_data`: a data frame in the form as described previously, with columns `rsid`, `beta` and `se`
@@ -74,7 +74,7 @@ head(out_FIQT)
 
 - Due to the nature of the conditional likelihood methods, we cannot obtain standard errors of the adjusted `beta` estimates in this manner. 
 
-### Obtaining confidence intervals for `beta` estimates adjusted by conditional likelihood methods 
+### Confidence intervals for estimates adjusted by conditional likelihood methods 
 
 - The function `cl_interval` implements the conditional likelihood methods described in [Ghosh *et al.* (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/) for each significant SNP and together with the three adjusted estimates, provides a single confidence interval for each SNP. As well as a data set in the form of a data frame with columns `rsid`, `beta` and `se`, `cl_interval` requires `alpha`, a value which specifies the significance threshold and `conf`, a value between 0 and 1 which determines the confidence interval. The default setting for `conf` is 0.95.
 

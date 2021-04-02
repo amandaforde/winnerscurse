@@ -82,7 +82,7 @@ summary_stats <- data.frame(rsid=seq(1,n_snps),beta=rnorm(n=n_snps,mean=true_bet
 head(summary_stats)
 ```
 
-### Method 1: Conditional Likelihood - Ghosh *et al.* (2008)
+### Method 1: Conditional Likelihood
 
 - The function `conditional_likelihood` requires a data frame, in the form described above, and a value for `alpha`, the significance threshold used in the GWAS. 
 
@@ -105,7 +105,7 @@ head(out_CL)
 - Ghosh *et al.* (2008) noted that for instances in which the true $\beta$ value is close to zero, `beta.cl2` often has greater mean squared error than `beta.cl1` but for true $\beta$ values further from zero, `beta.cl2` performs better. Thus, it was suggested that `beta.cl3` be used to combine the strengths of these two estimators. However, this function, `conditional_likelihood`, outputs values for all three estimators in order to allow the user to make their own decision on which they believe to be the most appropriate. 
 
 
-### Method 2: Empirical Bayes - Ferguson *et al.* (2013)
+### Method 2: Empirical Bayes 
 
 - The function `empirical_bayes` implements the Empirical Bayes method for correcting for Winner's Curse, detailed in [Ferguson *et al.* (2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/), with a slight modification. 
 
@@ -132,7 +132,7 @@ head(out_EB)
 
 
 
-### Method 3: FDR Inverse Quantile Transformation - Bigdeli *et al.* (2016)
+### Method 3: FDR Inverse Quantile Transformation 
 
 - The function `FDR_IQT` implements the winner's curse adjustment method detailed in [Bigdeli *et al.* (2016)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/). 
 
@@ -149,7 +149,7 @@ head(out_FIQT)
 ```
 
 
-### Method 4: Bootstrap - adapted from Faye *et al.* (2011)
+### Method 4: Bootstrap 
 
 - Inspired by the winner's curse adjustment method detailed in [Faye *et al.* (2011)](https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4228), the function `BR_ss` implements a computationally efficient bootstrap method which is suitable for use with summary statistics. 
 

@@ -107,10 +107,9 @@
 <span class="va">true_beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">true_beta</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="va">n_snps</span><span class="op">-</span><span class="va">effect_snps</span><span class="op">)</span><span class="op">)</span>
 
 <span class="va">summary_stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>rsid<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="va">n_snps</span><span class="op">)</span>,beta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n<span class="op">=</span><span class="va">n_snps</span>,mean<span class="op">=</span><span class="va">true_beta</span>,sd<span class="op">=</span><span class="va">se</span><span class="op">)</span>,se<span class="op">=</span><span class="va">se</span><span class="op">)</span></code></pre></div>
-<div id="obtaining-standard-errors-of-adjusted-beta-estimates-using-se_adjust" class="section level3">
+<div id="obtaining-standard-errors-of-adjusted-estimates" class="section level3">
 <h3 class="hasAnchor">
-<a href="#obtaining-standard-errors-of-adjusted-beta-estimates-using-se_adjust" class="anchor"></a>Obtaining standard errors of adjusted <code>beta</code> estimates using <code>se_adjust</code>
-</h3>
+<a href="#obtaining-standard-errors-of-adjusted-estimates" class="anchor"></a>Obtaining standard errors of adjusted estimates</h3>
 <ul>
 <li>
 <p>The function <code>se_adjust</code> has three parameters:</p>
@@ -165,9 +164,9 @@
 <li>Due to the nature of the conditional likelihood methods, we cannot obtain standard errors of the adjusted <code>beta</code> estimates in this manner.</li>
 </ul>
 </div>
-<div id="obtaining-confidence-intervals-for-beta-estimates-adjusted-by-conditional-likelihood-methods" class="section level3">
+<div id="confidence-intervals-for-estimates-adjusted-by-conditional-likelihood-methods" class="section level3">
 <h3 class="hasAnchor">
-<a href="#obtaining-confidence-intervals-for-beta-estimates-adjusted-by-conditional-likelihood-methods" class="anchor"></a>Obtaining confidence intervals for <code>beta</code> estimates adjusted by conditional likelihood methods</h3>
+<a href="#confidence-intervals-for-estimates-adjusted-by-conditional-likelihood-methods" class="anchor"></a>Confidence intervals for estimates adjusted by conditional likelihood methods</h3>
 <ul>
 <li><p>The function <code>cl_interval</code> implements the conditional likelihood methods described in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/">Ghosh <em>et al.</em> (2008)</a> for each significant SNP and together with the three adjusted estimates, provides a single confidence interval for each SNP. As well as a data set in the form of a data frame with columns <code>rsid</code>, <code>beta</code> and <code>se</code>, <code>cl_interval</code> requires <code>alpha</code>, a value which specifies the significance threshold and <code>conf</code>, a value between 0 and 1 which determines the confidence interval. The default setting for <code>conf</code> is 0.95.</p></li>
 <li><p>This confidence interval for the adjusted estimate is specified in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/">Ghosh <em>et al.</em> (2008)</a>. With <span class="math inline">\(\mu = \frac{\beta}{\text{se}(\beta)}\)</span> and <span class="math inline">\(z = \frac{\hat\beta}{\hat{\text{se}(\hat\beta)}}\)</span>, consider the acceptance region <span class="math inline">\(A(\mu,1-\eta)\)</span>, which is defined as the interval between the <span class="math inline">\(\eta/2\)</span> and <span class="math inline">\(1-\eta/2\)</span> quantiles of the conditional density, <span class="math inline">\(p_{\mu}(z | \mid Z \mid &gt; c )\)</span>. Having obtained the lower and upper boundaries of this acceptance region, the desired confidence interval is given as: <span class="math display">\[(\mu_{\text{lower}}\hat{\text{se}(\hat\beta)}, \mu_{\text{upper}}\hat{\text{se}(\hat\beta)}).\]</span></p></li>

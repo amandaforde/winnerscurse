@@ -141,9 +141,9 @@
 <span class="co">#&gt; 5    5  0.037116396 0.005784157</span>
 <span class="co">#&gt; 6    6  0.002843093 0.007026437</span></code></pre></div>
 </div>
-<div id="conditional-likelihood---zhong-and-prentice-2008" class="section level3">
+<div id="method-1-conditional-likelihood" class="section level3">
 <h3 class="hasAnchor">
-<a href="#conditional-likelihood---zhong-and-prentice-2008" class="anchor"></a>Conditional Likelihood - Zhong and Prentice (2008)</h3>
+<a href="#method-1-conditional-likelihood" class="anchor"></a>Method 1: Conditional Likelihood</h3>
 <ul>
 <li><p>The function <code>condlike_rep</code> implements a version of the conditional likelihood method for obtaining bias-reduced estimates of <span class="math inline">\(\beta\)</span> described in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2536726/">Zhong and Prentice (2008)</a>.</p></li>
 <li><p>The function requires as inputs two independent data sets, one representing a discovery GWAS, <code>summary_disc</code>, and the other a replication study with identical SNPs, <code>summary_rep</code>, as well as a specification of the significance threshold, <code>alpha</code>, to be used. As before, the data sets must be in the form of data frames with columns <code>rsid</code>, <code>beta</code> and <code>se</code>. It is presumed that SNPs are in the exact same order in both data sets.</p></li>
@@ -203,9 +203,9 @@
 <span class="co">#&gt; 5  0.05301073     0.04350294     0.06251036</span>
 <span class="co">#&gt; 6  0.05135428     0.04208963     0.06060966</span></code></pre></div>
 </div>
-<div id="umvcue---bowden-and-dudbridge-2009" class="section level3">
+<div id="method-2-umvcue" class="section level3">
 <h3 class="hasAnchor">
-<a href="#umvcue---bowden-and-dudbridge-2009" class="anchor"></a>UMVCUE - Bowden and Dudbridge (2009)</h3>
+<a href="#method-2-umvcue" class="anchor"></a>Method 2: UMVCUE</h3>
 <ul>
 <li><p>The implementation of <code>UMVCUE</code> is very similar to the function described above in the sense that <code>UMVCUE</code> requires the same inputs; discovery and replication data sets in the form of three-columned data frames together with a threshold value, <code>alpha</code>. Furthermore, the outputted data frame is in the same form with just one extra column providing the adjusted estimate, <code>beta_UMVCUE</code>.</p></li>
 <li><p>Selection also occurs here at just one stage - SNPs are deemed as significant if their <span class="math inline">\(p\)</span>-values corresponding to <span class="math inline">\(\mid \frac{\hat\beta_1}{\sigma_1}\mid\)</span> are smaller than the given threshold.</p></li>
@@ -224,9 +224,9 @@
 <span class="co">#&gt; 5 6510  0.05623502 0.008394748  0.05139900 0.005935983  0.05137336</span>
 <span class="co">#&gt; 6 9917  0.05466573 0.008178854  0.04969904 0.005783323  0.04976250</span></code></pre></div>
 </div>
-<div id="mse-minimization-method" class="section level3">
+<div id="method-3-mse-minimization" class="section level3">
 <h3 class="hasAnchor">
-<a href="#mse-minimization-method" class="anchor"></a>MSE minimization method</h3>
+<a href="#method-3-mse-minimization" class="anchor"></a>Method 3: MSE minimization</h3>
 <ul>
 <li><p>The function <code>MSE_minimizer</code> implements a combination method which closely follows that described in <a href="https://journals.sagepub.com/doi/full/10.1177/0962280217720854">Ferguson <em>et al.</em> (2017)</a>. The function parameters used here; <code>summary_disc</code>, <code>summary_rep</code> and <code>alpha</code>, are precisely of the same form as those previously detailed in this vignette. In addition, <code>MSE_minimizer</code> has a logical parameter, namely <code>spline</code> which defaults as <code>spline=FALSE</code>.</p></li>
 <li><p>An adjusted estimate is computed for each SNP which has been classified as significant in the discovery data set, based on the given threshold. Thus, similar to the above method, <code>MSE_minimizer</code> returns a data frame containing these significant SNPs with 6 columns in which the final column contains the new estimate, <code>beta_joint</code>.</p></li>

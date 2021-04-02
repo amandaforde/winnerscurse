@@ -55,7 +55,7 @@ head(stats_rep)
 ```
 
 
-### Conditional Likelihood - Zhong and Prentice (2008)
+### Method 1: Conditional Likelihood 
 
 - The function `condlike_rep` implements a version of the conditional likelihood method for obtaining bias-reduced estimates of $\beta$ described in [Zhong and Prentice (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2536726/). 
 
@@ -98,7 +98,7 @@ head(out1_conf)
 ```
 
 
-### UMVCUE - Bowden and Dudbridge (2009)
+### Method 2: UMVCUE
 
 - The implementation of `UMVCUE` is very similar to the function described above in the sense that `UMVCUE` requires the same inputs; discovery and replication data sets in the form of three-columned data frames together with a threshold value, `alpha`. Furthermore, the outputted data frame is in the same form with just one extra column providing the adjusted estimate, `beta_UMVCUE`.
 
@@ -114,7 +114,7 @@ out2 <- UMVCUE(summary_disc = stats_disc, summary_rep = stats_rep, alpha = 10e-6
 head(out2)
 ```
 
-### MSE minimization method
+### Method 3: MSE minimization 
 
 - The function `MSE_minimizer` implements a combination method which closely follows that described in [Ferguson *et al.* (2017)](https://journals.sagepub.com/doi/full/10.1177/0962280217720854). The function parameters used here; `summary_disc`, `summary_rep` and `alpha`, are precisely of the same form as those previously detailed in this vignette. In addition, `MSE_minimizer` has a logical parameter, namely `spline` which defaults as `spline=FALSE`.
 
