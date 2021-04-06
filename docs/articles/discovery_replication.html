@@ -112,34 +112,34 @@
 <span class="va">effect_snps</span> <span class="op">&lt;-</span> <span class="fl">10000</span>
 <span class="va">n_samples</span> <span class="op">&lt;-</span> <span class="fl">30000</span>
 <span class="va">maf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="va">n_snps</span>,<span class="fl">0.01</span>,<span class="fl">0.5</span><span class="op">)</span>
-<span class="va">se</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">n_samples</span><span class="op">*</span><span class="va">maf</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">maf</span><span class="op">)</span><span class="op">)</span>
 <span class="va">true_beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">effect_snps</span>,<span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>
 <span class="va">h2</span> <span class="op">&lt;-</span> <span class="fl">0.7</span> <span class="co"># variance explained by effect SNPs</span>
 <span class="va">var_y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">maf</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">effect_snps</span><span class="op">]</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">maf</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">effect_snps</span><span class="op">]</span><span class="op">)</span><span class="op">*</span><span class="va">true_beta</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">/</span><span class="va">h2</span>
 <span class="va">true_beta</span> <span class="op">&lt;-</span> <span class="va">true_beta</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="va">var_y</span><span class="op">)</span> <span class="co"># scaling to represent a phenotype with variance 1</span>
 <span class="va">true_beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">true_beta</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="va">n_snps</span><span class="op">-</span><span class="va">effect_snps</span><span class="op">)</span><span class="op">)</span>
+<span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="fl">2</span><span class="op">*</span><span class="va">maf</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">maf</span><span class="op">)</span><span class="op">*</span><span class="va">true_beta</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="op">(</span><span class="va">n_samples</span><span class="op">-</span><span class="fl">2</span><span class="op">)</span><span class="op">*</span><span class="va">maf</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">maf</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="va">stats_disc</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>rsid<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="va">n_snps</span><span class="op">)</span>,beta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n<span class="op">=</span><span class="va">n_snps</span>,mean<span class="op">=</span><span class="va">true_beta</span>,sd<span class="op">=</span><span class="va">se</span><span class="op">)</span>,se<span class="op">=</span><span class="va">se</span><span class="op">)</span>
 
 <span class="va">n_samples_rep</span> <span class="op">&lt;-</span> <span class="fl">60000</span>
-<span class="va">se_rep</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">n_samples_rep</span><span class="op">*</span><span class="va">maf</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">maf</span><span class="op">)</span><span class="op">)</span>
+<span class="va">se_rep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="fl">2</span><span class="op">*</span><span class="va">maf</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">maf</span><span class="op">)</span><span class="op">*</span><span class="va">true_beta</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="op">(</span><span class="va">n_samples_rep</span><span class="op">-</span><span class="fl">2</span><span class="op">)</span><span class="op">*</span><span class="va">maf</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">maf</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="va">stats_rep</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>rsid<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="va">n_snps</span><span class="op">)</span>,beta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n<span class="op">=</span><span class="va">n_snps</span>,mean<span class="op">=</span><span class="va">true_beta</span>,sd<span class="op">=</span><span class="va">se_rep</span><span class="op">)</span>,se<span class="op">=</span><span class="va">se_rep</span><span class="op">)</span>
 
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">stats_disc</span><span class="op">)</span>
 <span class="co">#&gt;   rsid         beta          se</span>
-<span class="co">#&gt; 1    1 -0.014621130 0.024815677</span>
-<span class="co">#&gt; 2    2  0.003692869 0.011860257</span>
-<span class="co">#&gt; 3    3 -0.056894722 0.021248309</span>
-<span class="co">#&gt; 4    4 -0.023764612 0.025252008</span>
-<span class="co">#&gt; 5    5  0.028408413 0.008180033</span>
-<span class="co">#&gt; 6    6 -0.001962928 0.009936883</span>
+<span class="co">#&gt; 1    1 -0.014621777 0.024816486</span>
+<span class="co">#&gt; 2    2  0.003693032 0.011860650</span>
+<span class="co">#&gt; 3    3 -0.056895857 0.021248869</span>
+<span class="co">#&gt; 4    4 -0.023764922 0.025252738</span>
+<span class="co">#&gt; 5    5  0.028410276 0.008177783</span>
+<span class="co">#&gt; 6    6 -0.001963061 0.009937206</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">stats_rep</span><span class="op">)</span>
 <span class="co">#&gt;   rsid         beta          se</span>
-<span class="co">#&gt; 1    1 -0.016591619 0.017547334</span>
-<span class="co">#&gt; 2    2  0.007640586 0.008386468</span>
-<span class="co">#&gt; 3    3 -0.026373311 0.015024824</span>
-<span class="co">#&gt; 4    4 -0.026828035 0.017855866</span>
-<span class="co">#&gt; 5    5  0.037116396 0.005784157</span>
-<span class="co">#&gt; 6    6  0.002843093 0.007026437</span></code></pre></div>
+<span class="co">#&gt; 1    1 -0.016591967 0.017547613</span>
+<span class="co">#&gt; 2    2  0.007640733 0.008386606</span>
+<span class="co">#&gt; 3    3 -0.026373432 0.015024969</span>
+<span class="co">#&gt; 4    4 -0.026828203 0.017856084</span>
+<span class="co">#&gt; 5    5  0.037115832 0.005782469</span>
+<span class="co">#&gt; 6    6  0.002843105 0.007026549</span></code></pre></div>
 </div>
 <div id="method-1-conditional-likelihood" class="section level3">
 <h3 class="hasAnchor">
@@ -159,19 +159,19 @@
 <code class="sourceCode R"><span class="va">out1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condlike_rep.html">condlike_rep</a></span><span class="op">(</span>summary_disc<span class="op">=</span><span class="va">stats_disc</span>, summary_rep<span class="op">=</span><span class="va">stats_rep</span>, alpha<span class="op">=</span><span class="fl">10e-6</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">out1</span><span class="op">)</span>
 <span class="co">#&gt;   rsid   beta_disc     se_disc    beta_rep      se_rep    beta_com    beta_MLE</span>
-<span class="co">#&gt; 1 3965  0.06065460 0.008195368  0.05432986 0.005795000  0.05643811  0.05640187</span>
-<span class="co">#&gt; 2 7815  0.06273957 0.008481947  0.04725788 0.005997643  0.05241845  0.05215818</span>
-<span class="co">#&gt; 3 4998 -0.05957379 0.008340589 -0.04999773 0.005897687 -0.05318975 -0.05302132</span>
-<span class="co">#&gt; 4 7261  0.05510613 0.008192669  0.05117266 0.005793092  0.05248381  0.05232114</span>
-<span class="co">#&gt; 5 6510  0.05623502 0.008394748  0.05139900 0.005935983  0.05301101  0.05282347</span>
-<span class="co">#&gt; 6 9917  0.05466573 0.008178854  0.04969904 0.005783323  0.05135460  0.05116159</span>
+<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.05432601 0.005791902  0.05643316  0.05639730</span>
+<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.04725775 0.005994673  0.05241573  0.05215697</span>
+<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.04999590 0.005894751 -0.05318634 -0.05301910</span>
+<span class="co">#&gt; 4 7261  0.05510736 0.008186396  0.05117699 0.005788560  0.05248709  0.05232632</span>
+<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.05140117 0.005931902  0.05301205  0.05282642</span>
+<span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.04969494 0.005781420  0.05135002  0.05115763</span>
 <span class="co">#&gt;      beta_MSE</span>
-<span class="co">#&gt; 1  0.05643811</span>
-<span class="co">#&gt; 2  0.05241771</span>
-<span class="co">#&gt; 3 -0.05318954</span>
-<span class="co">#&gt; 4  0.05248362</span>
-<span class="co">#&gt; 5  0.05301073</span>
-<span class="co">#&gt; 6  0.05135428</span></code></pre></div>
+<span class="co">#&gt; 1  0.05643316</span>
+<span class="co">#&gt; 2  0.05241501</span>
+<span class="co">#&gt; 3 -0.05318614</span>
+<span class="co">#&gt; 4  0.05248690</span>
+<span class="co">#&gt; 5  0.05301177</span>
+<span class="co">#&gt; 6  0.05134970</span></code></pre></div>
 <p><span class="math inline">\(~\)</span></p>
 <p><strong>Confidence intervals:</strong></p>
 <ul>
@@ -182,26 +182,26 @@
 <code class="sourceCode R"><span class="va">out1_conf</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/condlike_rep.html">condlike_rep</a></span><span class="op">(</span>summary_disc<span class="op">=</span><span class="va">stats_disc</span>, summary_rep<span class="op">=</span><span class="va">stats_rep</span>, alpha<span class="op">=</span><span class="fl">10e-6</span>, conf_interval<span class="op">=</span><span class="cn">TRUE</span>, conf_level<span class="op">=</span><span class="fl">0.95</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">out1_conf</span><span class="op">)</span>
 <span class="co">#&gt;   rsid   beta_disc     se_disc    beta_rep      se_rep    beta_com</span>
-<span class="co">#&gt; 1 3965  0.06065460 0.008195368  0.05432986 0.005795000  0.05643811</span>
-<span class="co">#&gt; 2 7815  0.06273957 0.008481947  0.04725788 0.005997643  0.05241845</span>
-<span class="co">#&gt; 3 4998 -0.05957379 0.008340589 -0.04999773 0.005897687 -0.05318975</span>
-<span class="co">#&gt; 4 7261  0.05510613 0.008192669  0.05117266 0.005793092  0.05248381</span>
-<span class="co">#&gt; 5 6510  0.05623502 0.008394748  0.05139900 0.005935983  0.05301101</span>
-<span class="co">#&gt; 6 9917  0.05466573 0.008178854  0.04969904 0.005783323  0.05135460</span>
+<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.05432601 0.005791902  0.05643316</span>
+<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.04725775 0.005994673  0.05241573</span>
+<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.04999590 0.005894751 -0.05318634</span>
+<span class="co">#&gt; 4 7261  0.05510736 0.008186396  0.05117699 0.005788560  0.05248709</span>
+<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.05140117 0.005931902  0.05301205</span>
+<span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.04969494 0.005781420  0.05135002</span>
 <span class="co">#&gt;   beta_com_lower beta_com_upper    beta_MLE beta_MLE_lower beta_MLE_upper</span>
-<span class="co">#&gt; 1     0.04716435     0.06571187  0.05640187     0.04695031     0.06569870</span>
-<span class="co">#&gt; 2     0.04282040     0.06201650  0.05215818     0.04208957     0.06190674</span>
-<span class="co">#&gt; 3    -0.06262784    -0.04375166 -0.05302132    -0.06256909    -0.04321813</span>
-<span class="co">#&gt; 4     0.04321311     0.06175452  0.05232114     0.04271322     0.06170120</span>
-<span class="co">#&gt; 5     0.04351163     0.06251038  0.05282347     0.04291989     0.06242668</span>
-<span class="co">#&gt; 6     0.04209953     0.06060968  0.05116159     0.04149192     0.06053692</span>
+<span class="co">#&gt; 1     0.04716431     0.06570202  0.05639730     0.04695166     0.06568900</span>
+<span class="co">#&gt; 2     0.04282238     0.06200909  0.05215697     0.04209473     0.06189992</span>
+<span class="co">#&gt; 3    -0.06261978    -0.04375289 -0.05301910    -0.06256146    -0.04322188</span>
+<span class="co">#&gt; 4     0.04322358     0.06175059  0.05232632     0.04272833     0.06169804</span>
+<span class="co">#&gt; 5     0.04351915     0.06250494  0.05282642     0.04293178     0.06242197</span>
+<span class="co">#&gt; 6     0.04209794     0.06060210  0.05115763     0.04149184     0.06052962</span>
 <span class="co">#&gt;      beta_MSE beta_MSE_lower beta_MSE_upper</span>
-<span class="co">#&gt; 1  0.05643811     0.04716391     0.06571187</span>
-<span class="co">#&gt; 2  0.05241771     0.04280447     0.06201644</span>
-<span class="co">#&gt; 3 -0.05318954    -0.06262783    -0.04374519</span>
-<span class="co">#&gt; 4  0.05248362     0.04320759     0.06175452</span>
-<span class="co">#&gt; 5  0.05301073     0.04350294     0.06251036</span>
-<span class="co">#&gt; 6  0.05135428     0.04208963     0.06060966</span></code></pre></div>
+<span class="co">#&gt; 1  0.05643316     0.04716388     0.06570202</span>
+<span class="co">#&gt; 2  0.05241501     0.04280665     0.06200903</span>
+<span class="co">#&gt; 3 -0.05318614    -0.06261978    -0.04374651</span>
+<span class="co">#&gt; 4  0.05248690     0.04321820     0.06175059</span>
+<span class="co">#&gt; 5  0.05301177     0.04351063     0.06250492</span>
+<span class="co">#&gt; 6  0.05134970     0.04208811     0.06060209</span></code></pre></div>
 </div>
 <div id="method-2-umvcue" class="section level3">
 <h3 class="hasAnchor">
@@ -217,12 +217,12 @@
 <code class="sourceCode R"><span class="va">out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/UMVCUE.html">UMVCUE</a></span><span class="op">(</span>summary_disc <span class="op">=</span> <span class="va">stats_disc</span>, summary_rep <span class="op">=</span> <span class="va">stats_rep</span>, alpha <span class="op">=</span> <span class="fl">10e-6</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">out2</span><span class="op">)</span>
 <span class="co">#&gt;   rsid   beta_disc     se_disc    beta_rep      se_rep beta_UMVCUE</span>
-<span class="co">#&gt; 1 3965  0.06065460 0.008195368  0.05432986 0.005795000  0.05231047</span>
-<span class="co">#&gt; 2 7815  0.06273957 0.008481947  0.04725788 0.005997643  0.04782633</span>
-<span class="co">#&gt; 3 4998 -0.05957379 0.008340589 -0.04999773 0.005897687 -0.05049152</span>
-<span class="co">#&gt; 4 7261  0.05510613 0.008192669  0.05117266 0.005793092  0.05042736</span>
-<span class="co">#&gt; 5 6510  0.05623502 0.008394748  0.05139900 0.005935983  0.05137336</span>
-<span class="co">#&gt; 6 9917  0.05466573 0.008178854  0.04969904 0.005783323  0.04976250</span></code></pre></div>
+<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.05432601 0.005791902  0.05230874</span>
+<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.04725775 0.005994673  0.04782526</span>
+<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.04999590 0.005894751 -0.05048310</span>
+<span class="co">#&gt; 4 7261  0.05510736 0.008186396  0.05117699 0.005788560  0.05043904</span>
+<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.05140117 0.005931902  0.05137981</span>
+<span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.04969494 0.005781420  0.04975190</span></code></pre></div>
 </div>
 <div id="method-3-mse-minimization" class="section level3">
 <h3 class="hasAnchor">
@@ -240,20 +240,20 @@
 
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">out3</span><span class="op">)</span>
 <span class="co">#&gt;   rsid   beta_disc     se_disc    beta_rep      se_rep  beta_joint</span>
-<span class="co">#&gt; 1 3965  0.06065460 0.008195368  0.05432986 0.005795000  0.05631181</span>
-<span class="co">#&gt; 2 7815  0.06273957 0.008481947  0.04725788 0.005997643  0.04904497</span>
-<span class="co">#&gt; 3 4998 -0.05957379 0.008340589 -0.04999773 0.005897687 -0.05206314</span>
-<span class="co">#&gt; 4 7261  0.05510613 0.008192669  0.05117266 0.005793092  0.05277096</span>
-<span class="co">#&gt; 5 6510  0.05623502 0.008394748  0.05139900 0.005935983  0.05321451</span>
-<span class="co">#&gt; 6 9917  0.05466573 0.008178854  0.04969904 0.005783323  0.05151334</span>
+<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.05432601 0.005791902  0.05630691</span>
+<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.04725775 0.005994673  0.04904394</span>
+<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.04999590 0.005894751 -0.05206028</span>
+<span class="co">#&gt; 4 7261  0.05510736 0.008186396  0.05117699 0.005788560  0.05277404</span>
+<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.05140117 0.005931902  0.05321544</span>
+<span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.04969494 0.005781420  0.05150869</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">out4</span><span class="op">)</span>
 <span class="co">#&gt;   rsid   beta_disc     se_disc    beta_rep      se_rep  beta_joint</span>
-<span class="co">#&gt; 1 3965  0.06065460 0.008195368  0.05432986 0.005795000  0.05506470</span>
-<span class="co">#&gt; 2 7815  0.06273957 0.008481947  0.04725788 0.005997643  0.04915112</span>
-<span class="co">#&gt; 3 4998 -0.05957379 0.008340589 -0.04999773 0.005897687 -0.05081015</span>
-<span class="co">#&gt; 4 7261  0.05510613 0.008192669  0.05117266 0.005793092  0.05155580</span>
-<span class="co">#&gt; 5 6510  0.05623502 0.008394748  0.05139900 0.005935983  0.05188553</span>
-<span class="co">#&gt; 6 9917  0.05466573 0.008178854  0.04969904 0.005783323  0.05017646</span></code></pre></div>
+<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.05432601 0.005791902  0.05506377</span>
+<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.04725775 0.005994673  0.04915834</span>
+<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.04999590 0.005894751 -0.05080864</span>
+<span class="co">#&gt; 4 7261  0.05510736 0.008186396  0.05117699 0.005788560  0.05156089</span>
+<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.05140117 0.005931902  0.05188862</span>
+<span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.04969494 0.005781420  0.05017338</span></code></pre></div>
 </div>
 <div id="visualisation" class="section level3">
 <h3 class="hasAnchor">
@@ -291,22 +291,22 @@
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sq_diff</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>disc_naive <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out2</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out2</span><span class="op">$</span><span class="va">beta_disc</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, rep_naive <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out2</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out2</span><span class="op">$</span><span class="va">beta_rep</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>,  beta_UMVCUE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out2</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out2</span><span class="op">$</span><span class="va">beta_UMVCUE</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, beta_com <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out1</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out1</span><span class="op">$</span><span class="va">beta_com</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, beta_MLE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out1</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out1</span><span class="op">$</span><span class="va">beta_MLE</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, beta_MSE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out1</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out1</span><span class="op">$</span><span class="va">beta_MSE</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, beta_joint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out3</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out3</span><span class="op">$</span><span class="va">beta_joint</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, beta_joint_sp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out4</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out4</span><span class="op">$</span><span class="va">beta_joint</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>
 <span class="va">sq_diff</span>
-<span class="co">#&gt;   disc_naive   rep_naive beta_UMVCUE   beta_com    beta_MLE    beta_MSE</span>
-<span class="co">#&gt; 1 0.06867705 0.006526171 0.006529195 0.01091025 0.006104528 0.006643147</span>
+<span class="co">#&gt;   disc_naive rep_naive beta_UMVCUE   beta_com    beta_MLE    beta_MSE</span>
+<span class="co">#&gt; 1 0.06867092 0.0065234 0.006525098 0.01090792 0.006100709 0.006639808</span>
 <span class="co">#&gt;    beta_joint beta_joint_sp</span>
-<span class="co">#&gt; 1 0.006455167     0.0073293</span>
+<span class="co">#&gt; 1 0.006452619   0.007327423</span>
 
 <span class="va">mean_abs_diff</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>disc_naive <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out2</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out2</span><span class="op">$</span><span class="va">beta_disc</span><span class="op">)</span><span class="op">)</span>, rep_naive <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out2</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out2</span><span class="op">$</span><span class="va">beta_rep</span><span class="op">)</span><span class="op">)</span>,  beta_UMVCUE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out2</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out2</span><span class="op">$</span><span class="va">beta_UMVCUE</span><span class="op">)</span><span class="op">)</span>, beta_com <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out1</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out1</span><span class="op">$</span><span class="va">beta_com</span><span class="op">)</span><span class="op">)</span>,beta_MLE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out1</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out1</span><span class="op">$</span><span class="va">beta_MLE</span><span class="op">)</span><span class="op">)</span>, beta_MSE <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out1</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out1</span><span class="op">$</span><span class="va">beta_MSE</span><span class="op">)</span><span class="op">)</span>, beta_joint <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out3</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out3</span><span class="op">$</span><span class="va">beta_joint</span><span class="op">)</span><span class="op">)</span>, beta_joint_sp <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out4</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out4</span><span class="op">$</span><span class="va">beta_joint</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="va">mean_abs_diff</span>
-<span class="co">#&gt;   disc_naive   rep_naive beta_UMVCUE    beta_com    beta_MLE    beta_MSE</span>
-<span class="co">#&gt; 1 0.01593653 0.005298076 0.005309406 0.006500761 0.005098465 0.005466144</span>
+<span class="co">#&gt;   disc_naive   rep_naive beta_UMVCUE    beta_com    beta_MLE   beta_MSE</span>
+<span class="co">#&gt; 1 0.01593473 0.005296956 0.005307531 0.006499719 0.005096908 0.00546465</span>
 <span class="co">#&gt;    beta_joint beta_joint_sp</span>
-<span class="co">#&gt; 1 0.005283655   0.005310635</span>
+<span class="co">#&gt; 1 0.005282592   0.005309933</span>
 
 <span class="va">frac_less_bias</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>beta_UMVCUE <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out2</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out2</span><span class="op">$</span><span class="va">beta_rep</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out2</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out2</span><span class="op">$</span><span class="va">beta_UMVCUE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">out2</span><span class="op">)</span>, beta_com <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out1</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out1</span><span class="op">$</span><span class="va">beta_rep</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out1</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out1</span><span class="op">$</span><span class="va">beta_com</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">out1</span><span class="op">)</span>, beta_MLE <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out1</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out1</span><span class="op">$</span><span class="va">beta_rep</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out1</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out1</span><span class="op">$</span><span class="va">beta_MLE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">out1</span><span class="op">)</span>, beta_MSE <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out1</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out1</span><span class="op">$</span><span class="va">beta_rep</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out1</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out1</span><span class="op">$</span><span class="va">beta_MSE</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">out1</span><span class="op">)</span>, beta_joint <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out3</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out3</span><span class="op">$</span><span class="va">beta_rep</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out3</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out3</span><span class="op">$</span><span class="va">beta_joint</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">out3</span><span class="op">)</span>, beta_joint_sp <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out4</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out4</span><span class="op">$</span><span class="va">beta_rep</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out4</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out4</span><span class="op">$</span><span class="va">beta_joint</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">out4</span><span class="op">)</span><span class="op">)</span>
 <span class="va">frac_less_bias</span>  <span class="co"># comparison with naive replication estimate</span>
 <span class="co">#&gt;   beta_UMVCUE  beta_com  beta_MLE  beta_MSE beta_joint beta_joint_sp</span>
-<span class="co">#&gt; 1   0.4473684 0.4276316 0.5723684 0.5263158  0.5394737     0.5328947</span></code></pre></div>
+<span class="co">#&gt; 1   0.4671053 0.4276316 0.5723684 0.5263158  0.5394737     0.5328947</span></code></pre></div>
 </div>
   </div>
 

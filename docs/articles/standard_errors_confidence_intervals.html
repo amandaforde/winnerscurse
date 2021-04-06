@@ -99,12 +99,12 @@
 <span class="va">effect_snps</span> <span class="op">&lt;-</span> <span class="fl">10000</span>
 <span class="va">n_samples</span> <span class="op">&lt;-</span> <span class="fl">30000</span>
 <span class="va">maf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="va">n_snps</span>,<span class="fl">0.01</span>,<span class="fl">0.5</span><span class="op">)</span>
-<span class="va">se</span> <span class="op">&lt;-</span> <span class="fl">1</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">n_samples</span><span class="op">*</span><span class="va">maf</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">maf</span><span class="op">)</span><span class="op">)</span>
 <span class="va">true_beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">effect_snps</span>,<span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>
 <span class="va">h2</span> <span class="op">&lt;-</span> <span class="fl">0.7</span> <span class="co"># variance explained by effect SNPs</span>
 <span class="va">var_y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">maf</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">effect_snps</span><span class="op">]</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">maf</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">effect_snps</span><span class="op">]</span><span class="op">)</span><span class="op">*</span><span class="va">true_beta</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">/</span><span class="va">h2</span>
 <span class="va">true_beta</span> <span class="op">&lt;-</span> <span class="va">true_beta</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="va">var_y</span><span class="op">)</span> <span class="co"># scaling to represent a phenotype with variance 1</span>
 <span class="va">true_beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">true_beta</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="va">n_snps</span><span class="op">-</span><span class="va">effect_snps</span><span class="op">)</span><span class="op">)</span>
+<span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="fl">2</span><span class="op">*</span><span class="va">maf</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">maf</span><span class="op">)</span><span class="op">*</span><span class="va">true_beta</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="op">(</span><span class="va">n_samples</span><span class="op">-</span><span class="fl">2</span><span class="op">)</span><span class="op">*</span><span class="va">maf</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">maf</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 
 <span class="va">summary_stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>rsid<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="va">n_snps</span><span class="op">)</span>,beta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n<span class="op">=</span><span class="va">n_snps</span>,mean<span class="op">=</span><span class="va">true_beta</span>,sd<span class="op">=</span><span class="va">se</span><span class="op">)</span>,se<span class="op">=</span><span class="va">se</span><span class="op">)</span></code></pre></div>
 <div id="obtaining-standard-errors-of-adjusted-estimates" class="section level3">
@@ -133,33 +133,33 @@
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">out_EB</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/se_adjust.html">se_adjust</a></span><span class="op">(</span>summary_data <span class="op">=</span> <span class="va">summary_stats</span>, method <span class="op">=</span> <span class="st">"empirical_bayes"</span>, n_boot<span class="op">=</span><span class="fl">10</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">out_EB</span><span class="op">)</span>
-<span class="co">#&gt;   rsid        beta          se     beta_EB      adj_se</span>
-<span class="co">#&gt; 1 3965  0.06065460 0.008195368  0.05127859 0.011184788</span>
-<span class="co">#&gt; 2 7815  0.06273957 0.008481947  0.05307172 0.011817408</span>
-<span class="co">#&gt; 3 4998 -0.05957379 0.008340589 -0.05054678 0.012849880</span>
-<span class="co">#&gt; 4 7261  0.05510613 0.008192669  0.04623384 0.011959984</span>
-<span class="co">#&gt; 5 6510  0.05623502 0.008394748  0.04714389 0.013464123</span>
-<span class="co">#&gt; 6 9917  0.05466573 0.008178854  0.04580840 0.008089869</span>
+<span class="co">#&gt;   rsid        beta          se     beta_EB     adj_se</span>
+<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.05127625 0.01191990</span>
+<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.05307140 0.01195209</span>
+<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.05057030 0.01372858</span>
+<span class="co">#&gt; 4 7261  0.05510736 0.008186396  0.04624187 0.01250742</span>
+<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.04714887 0.01358060</span>
+<span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.04580573 0.00847833</span>
 
 <span class="va">out_BR_ss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/se_adjust.html">se_adjust</a></span><span class="op">(</span>summary_data <span class="op">=</span> <span class="va">summary_stats</span>, method <span class="op">=</span> <span class="st">"BR_ss"</span>, n_boot<span class="op">=</span><span class="fl">10</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">out_BR_ss</span><span class="op">)</span>
 <span class="co">#&gt;   rsid        beta          se  beta_BR_ss      adj_se</span>
-<span class="co">#&gt; 1 3965  0.06065460 0.008195368  0.04154123 0.006896718</span>
-<span class="co">#&gt; 2 7815  0.06273957 0.008481947  0.04295798 0.007251816</span>
-<span class="co">#&gt; 3 4998 -0.05957379 0.008340589 -0.04234367 0.003934836</span>
-<span class="co">#&gt; 4 7261  0.05510613 0.008192669  0.03581542 0.004099935</span>
-<span class="co">#&gt; 5 6510  0.05623502 0.008394748  0.03645402 0.005145114</span>
-<span class="co">#&gt; 6 9917  0.05466573 0.008178854  0.03538558 0.004819819</span>
+<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.04154508 0.006898238</span>
+<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.04296091 0.007252698</span>
+<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.04235111 0.003932971</span>
+<span class="co">#&gt; 4 7261  0.05510736 0.008186396  0.03583453 0.004099183</span>
+<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.03646890 0.005144036</span>
+<span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.03538731 0.004819424</span>
 
 <span class="va">out_FIQT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/se_adjust.html">se_adjust</a></span><span class="op">(</span>summary_data <span class="op">=</span> <span class="va">summary_stats</span>, method <span class="op">=</span> <span class="st">"FDR_IQT"</span>, n_boot<span class="op">=</span><span class="fl">10</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">out_FIQT</span><span class="op">)</span>
 <span class="co">#&gt;   rsid        beta          se   beta_FIQT      adj_se</span>
-<span class="co">#&gt; 1 3965  0.06065460 0.008195368  0.04418849 0.015775859</span>
-<span class="co">#&gt; 2 7815  0.06273957 0.008481947  0.04573369 0.014746057</span>
-<span class="co">#&gt; 3 4998 -0.05957379 0.008340589 -0.04270573 0.011258732</span>
-<span class="co">#&gt; 4 7261  0.05510613 0.008192669  0.03783105 0.008779619</span>
-<span class="co">#&gt; 5 6510  0.05623502 0.008394748  0.03876418 0.013632446</span>
-<span class="co">#&gt; 6 9917  0.05466573 0.008178854  0.03776726 0.012326152</span></code></pre></div>
+<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.04419398 0.015769087</span>
+<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.04574119 0.014739413</span>
+<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.04271559 0.011254281</span>
+<span class="co">#&gt; 4 7261  0.05510736 0.008186396  0.03781859 0.008772664</span>
+<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.03875509 0.013621942</span>
+<span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.03777195 0.012322917</span></code></pre></div>
 <ul>
 <li>Due to the nature of the conditional likelihood methods, we cannot obtain standard errors of the adjusted <code>beta</code> estimates in this manner.</li>
 </ul>
@@ -177,19 +177,19 @@
 <code class="sourceCode R"><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cl_interval.html">cl_interval</a></span><span class="op">(</span>summary_data<span class="op">=</span><span class="va">summary_stats</span>, alpha <span class="op">=</span> <span class="fl">5e-8</span>, conf_level<span class="op">=</span><span class="fl">0.95</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span>
 <span class="co">#&gt;   rsid        beta          se    beta.cl1    beta.cl2    beta.cl3       lower</span>
-<span class="co">#&gt; 1 3965  0.06065460 0.008195368  0.06007821  0.05867879  0.05937850  0.03811493</span>
-<span class="co">#&gt; 2 7815  0.06273957 0.008481947  0.06213728  0.06068079  0.06140904  0.03937148</span>
-<span class="co">#&gt; 3 4998 -0.05957379 0.008340589 -0.05853882 -0.05654386 -0.05754134 -0.07512393</span>
-<span class="co">#&gt; 4 7261  0.05510613 0.008192669  0.05268826  0.04934930  0.05101878  0.02236253</span>
-<span class="co">#&gt; 5 6510  0.05623502 0.008394748  0.05361460  0.05007375  0.05184418  0.02203607</span>
-<span class="co">#&gt; 6 9917  0.05466573 0.008178854  0.05203302  0.04851799  0.05027550  0.02099331</span>
+<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.06007537  0.05868216  0.05937877  0.03814674</span>
+<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.06213363  0.06068292  0.06140827  0.03940027</span>
+<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.05853885 -0.05655174 -0.05754529 -0.07511367</span>
+<span class="co">#&gt; 4 7261  0.05510736 0.008186396  0.05271740  0.04940315  0.05106028  0.02250892</span>
+<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.05363848  0.05011923  0.05187885  0.02216198</span>
+<span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.05203604  0.04852832  0.05028218  0.02103198</span>
 <span class="co">#&gt;         upper</span>
-<span class="co">#&gt; 1  0.07621181</span>
-<span class="co">#&gt; 2  0.07883698</span>
-<span class="co">#&gt; 3 -0.03374346</span>
-<span class="co">#&gt; 4  0.06958836</span>
-<span class="co">#&gt; 5  0.07099831</span>
-<span class="co">#&gt; 6  0.06900707</span></code></pre></div>
+<span class="co">#&gt; 1  0.07619932</span>
+<span class="co">#&gt; 2  0.07882413</span>
+<span class="co">#&gt; 3 -0.03378470</span>
+<span class="co">#&gt; 4  0.06959246</span>
+<span class="co">#&gt; 5  0.07099962</span>
+<span class="co">#&gt; 6  0.06900119</span></code></pre></div>
 <p><span class="math inline">\(~\)</span> <span class="math inline">\(~\)</span></p>
 <p><strong>TO DO:</strong></p>
 <ul>
