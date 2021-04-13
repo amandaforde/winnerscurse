@@ -144,22 +144,22 @@
 <span class="va">out_BR_ss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/se_adjust.html">se_adjust</a></span><span class="op">(</span>summary_data <span class="op">=</span> <span class="va">summary_stats</span>, method <span class="op">=</span> <span class="st">"BR_ss"</span>, n_boot<span class="op">=</span><span class="fl">10</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">out_BR_ss</span><span class="op">)</span>
 <span class="co">#&gt;   rsid        beta          se  beta_BR_ss      adj_se</span>
-<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.04154508 0.006898238</span>
-<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.04296091 0.007252698</span>
-<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.04235111 0.003932971</span>
-<span class="co">#&gt; 4 7261  0.05510736 0.008186396  0.03583453 0.004099183</span>
-<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.03646890 0.005144036</span>
-<span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.03538731 0.004819424</span>
+<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.04608950 0.009319973</span>
+<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.04765488 0.009184917</span>
+<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.04363663 0.004012381</span>
+<span class="co">#&gt; 4 7261  0.05510736 0.008186396  0.03911355 0.005791631</span>
+<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.03977873 0.006310246</span>
+<span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.03858223 0.005714822</span>
 
 <span class="va">out_FIQT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/se_adjust.html">se_adjust</a></span><span class="op">(</span>summary_data <span class="op">=</span> <span class="va">summary_stats</span>, method <span class="op">=</span> <span class="st">"FDR_IQT"</span>, n_boot<span class="op">=</span><span class="fl">10</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">out_FIQT</span><span class="op">)</span>
 <span class="co">#&gt;   rsid        beta          se   beta_FIQT      adj_se</span>
-<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.04419398 0.015769087</span>
-<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.04574119 0.014739413</span>
-<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.04271559 0.011254281</span>
-<span class="co">#&gt; 4 7261  0.05510736 0.008186396  0.03781859 0.008772664</span>
-<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.03875509 0.013621942</span>
-<span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.03777195 0.012322917</span></code></pre></div>
+<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.04419398 0.015086292</span>
+<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.04574119 0.017748660</span>
+<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.04271559 0.019351045</span>
+<span class="co">#&gt; 4 7261  0.05510736 0.008186396  0.03781859 0.008410062</span>
+<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.03875509 0.006059352</span>
+<span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.03777195 0.013878633</span></code></pre></div>
 <ul>
 <li>Due to the nature of the conditional likelihood methods, we cannot obtain standard errors of the adjusted <code>beta</code> estimates in this manner.</li>
 </ul>

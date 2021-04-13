@@ -140,7 +140,7 @@ resampling method known as BR-squared, detailed in
 al.</em> (2011)</a>.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>BR_ss</span><span class='op'>(</span><span class='va'>summary_data</span>, seed <span class='op'>=</span> <span class='fl'>1998</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>BR_ss</span><span class='op'>(</span><span class='va'>summary_data</span>, seed_opt <span class='op'>=</span> <span class='cn'>FALSE</span>, seed <span class='op'>=</span> <span class='fl'>1998</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -153,11 +153,18 @@ discovery GWAS. It must have three columns with column names <code>rsid</code>,
 numerical values.</p></td>
     </tr>
     <tr>
+      <th>seed_opt</th>
+      <td><p>A logical value which allows the user to choose if they wish
+to set a seed, in order to ensure reproducibility of adjusted estimates.
+Small differences can occur between iterations of the function with the same
+data set due to the use of parametric bootstrapping. The default setting is
+<code>seed_opt=FALSE</code>.</p></td>
+    </tr>
+    <tr>
       <th>seed</th>
-      <td><p>A numerical value which is required to allow reproducibility of
-adjusted estimates. Small differences can occur between iterations of the
-function with the same data set due to the use of parametric bootstrapping.
-The default setting is the arbitrary value of <code>1998</code>.</p></td>
+      <td><p>A numerical value which specifies the seed used if
+<code>seed_opt=TRUE</code>. The default setting is the arbitrary value of
+<code>1998</code>.</p></td>
     </tr>
     </table>
 
@@ -179,9 +186,9 @@ The default setting is the arbitrary value of <code>1998</code>.</p></td>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><a href='https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html'>https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html</a>
-  for illustration of the use of <code>BR_ss</code> with a toy data set and further
- information regarding the computation of the adjusted SNP-trait association
- estimates.</p></div>
+for illustration of the use of <code>BR_ss</code> with a toy data set and further
+information regarding the computation of the adjusted SNP-trait association
+estimates.</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

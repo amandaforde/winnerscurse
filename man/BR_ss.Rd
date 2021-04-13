@@ -4,7 +4,7 @@
 \alias{BR_ss}
 \title{Bootstrap method for use with discovery GWAS}
 \usage{
-BR_ss(summary_data, seed = 1998)
+BR_ss(summary_data, seed_opt = FALSE, seed = 1998)
 }
 \arguments{
 \item{summary_data}{A data frame containing summary statistics from the
@@ -12,10 +12,15 @@ discovery GWAS. It must have three columns with column names \code{rsid},
 \code{beta} and \code{se}, respectively, and all columns must contain
 numerical values.}
 
-\item{seed}{A numerical value which is required to allow reproducibility of
-adjusted estimates. Small differences can occur between iterations of the
-function with the same data set due to the use of parametric bootstrapping.
-The default setting is the arbitrary value of \code{1998}.}
+\item{seed_opt}{A logical value which allows the user to choose if they wish
+to set a seed, in order to ensure reproducibility of adjusted estimates.
+Small differences can occur between iterations of the function with the same
+data set due to the use of parametric bootstrapping. The default setting is
+\code{seed_opt=FALSE}.}
+
+\item{seed}{A numerical value which specifies the seed used if
+\code{seed_opt=TRUE}. The default setting is the arbitrary value of
+\code{1998}.}
 }
 \value{
 A data frame with the inputted summary data occupying the first three
@@ -42,7 +47,7 @@ Faye, L. L., Sun, L., Dimitromanolakis, A., & Bull, S. B. (2011).
 }
 \seealso{
 \url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}
-  for illustration of the use of \code{BR_ss} with a toy data set and further
- information regarding the computation of the adjusted SNP-trait association
- estimates.
+for illustration of the use of \code{BR_ss} with a toy data set and further
+information regarding the computation of the adjusted SNP-trait association
+estimates.
 }

@@ -11,10 +11,14 @@
 #'  discovery GWAS. It must have three columns with column names \code{rsid},
 #'  \code{beta} and \code{se}, respectively, and all columns must contain
 #'  numerical values.
-#'@param seed A numerical value which is required to allow reproducibility of
-#'  adjusted estimates. Small differences can occur between iterations of the
-#'  function with the same data set due to the use of parametric bootstrapping.
-#'  The default setting is the arbitrary value of \code{1998}.
+#'@param seed_opt A logical value which allows the user to choose if they wish
+#'  to set a seed, in order to ensure reproducibility of adjusted estimates.
+#'  Small differences can occur between iterations of the function with the same
+#'  data set due to the use of parametric bootstrapping. The default setting is
+#'  \code{seed_opt=FALSE}.
+#'@param seed A numerical value which specifies the seed used if
+#'  \code{seed_opt=TRUE}. The default setting is the arbitrary value of
+#'  \code{1998}.
 #'
 #'@return A data frame with the inputted summary data occupying the first three
 #'  columns. The new adjusted association estimates for each SNP are returned in
@@ -29,19 +33,19 @@
 #'  \url{https://doi.org/10.1002/sim.4228}
 #'
 #'@seealso
-#'  \url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}
-#'   for illustration of the use of \code{BR_ss} with a toy data set and further
-#'  information regarding the computation of the adjusted SNP-trait association
-#'  estimates.
+#'\url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}
+#'for illustration of the use of \code{BR_ss} with a toy data set and further
+#'information regarding the computation of the adjusted SNP-trait association
+#'estimates.
 #'
 #'
 #'@export
 
-BR_ss <- function(summary_data,seed=1998){
+BR_ss <- function(summary_data,seed_opt = FALSE,seed=1998){
     summary_data <- dplyr::arrange(summary_data, dplyr::desc((summary_data$beta/summary_data$se)))
 
     N <- nrow(summary_data)
-    set.seed(seed)
+    if(seed_opt==TRUE){set.seed(seed)}
     beta_boot <- matrix(stats::rnorm(1*N, mean = rep(summary_data$beta,1), sd = rep(summary_data$se,1)), nrow=N, ncol=1, byrow=FALSE)
 
     beta_mat <- matrix(rep(summary_data$beta,1), nrow=N, ncol=1, byrow=FALSE)
