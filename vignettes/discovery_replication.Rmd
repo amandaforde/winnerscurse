@@ -106,9 +106,9 @@ head(out1_conf)
 
 - The function `UMVCUE` executes the method detailed in [Bowden and Dudbridge (2009)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2726957/). No adaptations have been made to the method described. 
 
-- It is worth noting that, as with all conditional likelihood methods, the method used in `condlike_rep` makes adjustments to each SNP one at a time with no information relating to other SNPs required for this adjustment. However, after ordering SNPs based on signficance, for a single SNP, `UMVCUE` also uses the data of SNPs on either side of it to assist with the adjustment.
+- It is worth noting that, as with all conditional likelihood methods, the method used in `condlike_rep` makes adjustments to each SNP one at a time with no information relating to other SNPs required for this adjustment. However, after ordering SNPs based on significance, for a single SNP, `UMVCUE` also uses the data of SNPs on either side of it to assist with the adjustment.
 
-- `UMVCUE` can be applied to the toy data sets as followed, with the `alpha` again specified as `10e-6`:
+- `UMVCUE` can be applied to the toy data sets as followed, with `alpha` again specified as `10e-6`:
 ```{r}
 out2 <- UMVCUE(summary_disc = stats_disc, summary_rep = stats_rep, alpha = 10e-6)
 head(out2)
