@@ -71,29 +71,44 @@ UMVCUE <- function(summary_disc, summary_rep, alpha){
 
 
   mu_hat <- function(i){return((((rep_sig$se[i])^2)*(disc_sig$beta[i]) + ((disc_sig$se[i])^2)*(rep_sig$beta[i]))/((disc_sig$se[i])^2 + (rep_sig$se[i])^2))}
-  w <- function(s,t,p){return(((sqrt((disc_sig$se[s])^2 + (rep_sig$se[s])^2))/((disc_sig$se[s])^2))*(mu_hat(s) -((-1)^p)*((disc_sig$se[s]*abs(disc_sig$beta[t]))/(disc_sig$se[t]))))}
-  beta_UMVCUE_i <- function(i){return(mu_hat(i) - (((rep_sig$se[i])^2)/(sqrt((disc_sig$se[i])^2 + (rep_sig$se[i])^2)))*((stats::dnorm(w(i,i+1,0))-stats::dnorm(w(i,i-1,0))-stats::dnorm(w(i,i+1,1))+stats::dnorm(w(i,i-1,1)))/(stats::pnorm(w(i,i+1,0))-stats::pnorm(w(i,i-1,0))-stats::pnorm(w(i,i+1,1))+stats::pnorm(w(i,i-1,1)))))}
-  w_0 <- function(s,t,p){return(((sqrt((disc_sig$se[s])^2 + (rep_sig$se[s])^2))/((disc_sig$se[s])^2))*(mu_hat(s) -((-1)^p)*((disc_sig$se[s]*abs(Inf)))))}
-  beta_UMVCUE_1 <- function(i){return(mu_hat(i) - (((rep_sig$se[i])^2)/(sqrt((disc_sig$se[i])^2 + (rep_sig$se[i])^2)))*((stats::dnorm(w(i,i+1,0)) - stats::dnorm(w_0(i,i-1,0))-stats::dnorm(w(i,i+1,1))+stats::dnorm(w_0(i,i-1,1)))/(stats::pnorm(w(i,i+1,0))-stats::pnorm(w_0(i,i-1,0))-stats::pnorm(w(i,i+1,1))+stats::pnorm(w_0(i,i-1,1)))))}
-  beta_UMVCUE_N <- function(i){return(mu_hat(i) - (((rep_sig$se[i])^2)/(sqrt((disc_sig$se[i])^2 + (rep_sig$se[i])^2)))*((stats::dnorm(w_0(i,i+1,0)) - stats::dnorm(w(i,i-1,0))-stats::dnorm(w_0(i,i+1,1))+stats::dnorm(w(i,i-1,1)))/(stats::pnorm(w_0(i,i+1,0))-stats::pnorm(w(i,i-1,0))-stats::pnorm(w_0(i,i+1,1))+stats::pnorm(w(i,i-1,1)))))}
 
-  n_sig <- length(disc_z)
-  beta_UMVCUE <- c(rep(0,n_sig))
+  if (sum(abs(summary_disc$beta/summary_disc$se) > c) == 1){
+    beta_UMVCUE <- mu_hat(1)
+    summary_data <- cbind(disc_sig[1:3],rep_sig[2:3],beta_UMVCUE)
+    names(summary_data)[2] <- "beta_disc"
+    names(summary_data)[3] <- "se_disc"
+    names(summary_data)[4] <- "beta_rep"
+    names(summary_data)[5] <- "se_rep"
+    return(summary_data)
+  }else{
+    w <- function(s,t,p){return(((sqrt((disc_sig$se[s])^2 + (rep_sig$se[s])^2))/((disc_sig$se[s])^2))*(mu_hat(s) -((-1)^p)*((disc_sig$se[s]*abs(disc_sig$beta[t]))/(disc_sig$se[t]))))}
+    beta_UMVCUE_i <- function(i){return(mu_hat(i) - (((rep_sig$se[i])^2)/(sqrt((disc_sig$se[i])^2 + (rep_sig$se[i])^2)))*((stats::dnorm(w(i,i+1,0))-stats::dnorm(w(i,i-1,0))-stats::dnorm(w(i,i+1,1))+stats::dnorm(w(i,i-1,1)))/(stats::pnorm(w(i,i+1,0))-stats::pnorm(w(i,i-1,0))-stats::pnorm(w(i,i+1,1))+stats::pnorm(w(i,i-1,1)))))}
+    w_0 <- function(s,t,p){return(((sqrt((disc_sig$se[s])^2 + (rep_sig$se[s])^2))/((disc_sig$se[s])^2))*(mu_hat(s) -((-1)^p)*((disc_sig$se[s]*abs(Inf)))))}
+    beta_UMVCUE_1 <- function(i){return(mu_hat(i) - (((rep_sig$se[i])^2)/(sqrt((disc_sig$se[i])^2 + (rep_sig$se[i])^2)))*((stats::dnorm(w(i,i+1,0)) - stats::dnorm(w_0(i,i-1,0))-stats::dnorm(w(i,i+1,1))+stats::dnorm(w_0(i,i-1,1)))/(stats::pnorm(w(i,i+1,0))-stats::pnorm(w_0(i,i-1,0))-stats::pnorm(w(i,i+1,1))+stats::pnorm(w_0(i,i-1,1)))))}
+    beta_UMVCUE_N <- function(i){return(mu_hat(i) - (((rep_sig$se[i])^2)/(sqrt((disc_sig$se[i])^2 + (rep_sig$se[i])^2)))*((stats::dnorm(w_0(i,i+1,0)) - stats::dnorm(w(i,i-1,0))-stats::dnorm(w_0(i,i+1,1))+stats::dnorm(w(i,i-1,1)))/(stats::pnorm(w_0(i,i+1,0))-stats::pnorm(w(i,i-1,0))-stats::pnorm(w_0(i,i+1,1))+stats::pnorm(w(i,i-1,1)))))}
 
-  beta_UMVCUE[1] <- beta_UMVCUE_1(1)
-  beta_UMVCUE[n_sig] <- beta_UMVCUE_N(n_sig)
+    n_sig <- length(disc_z)
+    beta_UMVCUE <- c(rep(0,n_sig))
+
+    beta_UMVCUE[1] <- beta_UMVCUE_1(1)
+    beta_UMVCUE[n_sig] <- beta_UMVCUE_N(n_sig)
+
+    if (n_sig != 2){
+      for (i in 2:(n_sig-1)){
+        beta_UMVCUE[i] <- beta_UMVCUE_i(i)
+      }
+    }
 
 
-  for (i in 2:(n_sig-1)){
-    beta_UMVCUE[i] <- beta_UMVCUE_i(i)
+    summary_data_sig <- cbind(disc_sig[1:3],rep_sig[2:3],beta_UMVCUE)
+    names(summary_data_sig)[2] <- "beta_disc"
+    names(summary_data_sig)[3] <- "se_disc"
+    names(summary_data_sig)[4] <- "beta_rep"
+    names(summary_data_sig)[5] <- "se_rep"
+
+    return(summary_data_sig)
   }
 
-  summary_data_sig <- cbind(disc_sig[1:3],rep_sig[2:3],beta_UMVCUE)
-  names(summary_data_sig)[2] <- "beta_disc"
-  names(summary_data_sig)[3] <- "se_disc"
-  names(summary_data_sig)[4] <- "beta_rep"
-  names(summary_data_sig)[5] <- "se_rep"
 
-  return(summary_data_sig)
 
 }
