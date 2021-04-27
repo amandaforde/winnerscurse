@@ -50,6 +50,15 @@ UMVCUE <- function(summary_disc, summary_rep, alpha){
 
   c <- stats::qnorm(1-alpha/2)
 
+  if (sum(abs(summary_disc$beta/summary_disc$se) > c) == 0) {
+    summary_data_sig <- cbind(disc_sig[1:3],rep_sig[2:3])
+    names(summary_data_sig)[2] <- "beta_disc"
+    names(summary_data_sig)[3] <- "se_disc"
+    names(summary_data_sig)[4] <- "beta_rep"
+    names(summary_data_sig)[5] <- "se_rep"
+    return(summary_data_sig)
+  }
+
   disc_sig <- summary_disc[abs(summary_disc$beta/summary_disc$se) > c,]
   rep_sig <- summary_rep[abs(summary_disc$beta/summary_disc$se) > c,]
 
