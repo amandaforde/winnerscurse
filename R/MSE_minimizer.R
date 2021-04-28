@@ -56,6 +56,17 @@
 MSE_minimizer <- function(summary_disc, summary_rep, alpha, spline=FALSE){
 
   c <- stats::qnorm(1-(alpha)/2)
+
+  if(sum(abs(summary_disc$beta/summary_disc$se) > c) == 0){
+    summary_data <- cbind(summary_disc[1:3],summary_rep[2:3])
+    names(summary_data)[2] <- "beta_disc"
+    names(summary_data)[3] <- "se_disc"
+    names(summary_data)[4] <- "beta_rep"
+    names(summary_data)[5] <- "se_rep"
+    return(summary_data)
+  }
+
+
   summary_disc_sig <- summary_disc[abs(summary_disc$beta/summary_disc$se) > c,]
   summary_rep_sig <- summary_rep[abs(summary_disc$beta/summary_disc$se) > c,]
 
