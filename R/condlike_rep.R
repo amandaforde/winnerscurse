@@ -106,7 +106,7 @@ condlike_rep <- function(summary_disc,summary_rep,alpha, conf_interval=FALSE, co
 
   beta_MLE <- c(rep(0,length(summary_com_sig$beta)))
   for (b in 1:length(beta_MLE)){
-    beta_MLE[b] <- beta_adj(b)$beta_MLE
+    beta_MLE[b] <- abs(beta_adj(b)$beta_MLE)*sign(summary_com_sig$beta[b])
   }
 
   K <- (summary_com_sig$se^2)/((summary_com_sig$se^2)+(summary_com_sig$beta-beta_MLE)^2)
