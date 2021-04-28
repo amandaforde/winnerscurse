@@ -94,11 +94,14 @@ condlike_rep <- function(summary_disc,summary_rep,alpha, conf_interval=FALSE, co
 
     beta_MLE <- stats::optimize(f, c(sign(beta_com)*max(abs(beta_1),abs(beta_2)),-1*sign(beta_com)*max(abs(beta_1),abs(beta_2))), maximum=TRUE)$maximum
 
-    fun_CI <- function(beta){return(logf(beta) - logf(beta_MLE) + (stats::qchisq(conf_level, df=1))/2)}
-    beta_MLE_lower <- stats::uniroot(fun_CI, interval=c(beta_MLE+round(min(summary_disc$beta),1),beta_MLE))$root
-    beta_MLE_upper <- stats::uniroot(fun_CI, interval=c(beta_MLE,beta_MLE+round(max(summary_disc$beta),1)))$root
-    beta_adj <- data.frame(beta_MLE,beta_MLE_lower, beta_MLE_upper)
+    if (conf_interval == FALSE){beta_adj <- data.frame(beta_MLE)}else{
+        fun_CI <- function(beta){return(logf(beta) - logf(beta_MLE) + (stats::qchisq(conf_level, df=1))/2)}
+        beta_MLE_lower <- stats::uniroot(fun_CI, interval=c(beta_MLE+round(min(summary_disc$beta),1),beta_MLE))$root
+        beta_MLE_upper <- stats::uniroot(fun_CI, interval=c(beta_MLE,beta_MLE+round(max(summary_disc$beta),1)))$root
+        beta_adj <- data.frame(beta_MLE,beta_MLE_lower, beta_MLE_upper)
+      }
     return(beta_adj)
+
   }
 
   beta_MLE <- c(rep(0,length(summary_com_sig$beta)))
