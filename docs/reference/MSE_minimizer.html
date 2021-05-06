@@ -191,7 +191,9 @@ values that are then used for \(B\).</p></td>
   namely <code>beta_joint</code>. The SNPs are contained in this data frame
   according to their significance, with the most significant SNP, i.e. the
   SNP with the largest absolute \(z\)-statistic, now located in the first
-  row of the data frame.</p>
+  row of the data frame. If no SNPs are detected as significant in the
+  discovery GWAS, <code>MSE_minimizer</code> merely returns a data frame which
+  combines the two inputted data sets.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Ferguson, J., Alvarez-Iglesias, A., Newell, J., Hinde, J., &amp;

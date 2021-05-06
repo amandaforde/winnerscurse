@@ -207,7 +207,9 @@ adjusted association estimate for each SNP.</p></td>
   data frame as well as the adjusted estimates for each SNP. The SNPs are
   contained in this data frame according to their significance, with the most
   significant SNP, i.e. the SNP with the largest absolute \(z\)-statistic,
-  now located in the first row of the data frame.</p>
+  now located in the first row of the data frame. If no SNPs are detected as
+  significant in the discovery GWAS, <code>condlike_rep</code> merely returns
+  a data frame which combines the two inputted data sets.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Zhong, H., &amp; Prentice, R. L. (2008). Bias-reduced estimators and

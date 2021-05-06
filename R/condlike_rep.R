@@ -43,7 +43,9 @@
 #'   data frame as well as the adjusted estimates for each SNP. The SNPs are
 #'   contained in this data frame according to their significance, with the most
 #'   significant SNP, i.e. the SNP with the largest absolute \eqn{z}-statistic,
-#'   now located in the first row of the data frame.
+#'   now located in the first row of the data frame. If no SNPs are detected as
+#'   significant in the discovery GWAS, \code{condlike_rep} merely returns
+#'   a data frame which combines the two inputted data sets.
 #'
 #' @references Zhong, H., & Prentice, R. L. (2008). Bias-reduced estimators and
 #'   confidence intervals for odds ratios in genome-wide association studies.

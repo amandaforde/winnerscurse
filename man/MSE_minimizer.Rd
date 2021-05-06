@@ -42,7 +42,9 @@ A data frame with summary statistics and adjusted association
   namely \code{beta_joint}. The SNPs are contained in this data frame
   according to their significance, with the most significant SNP, i.e. the
   SNP with the largest absolute \eqn{z}-statistic, now located in the first
-  row of the data frame.
+  row of the data frame. If no SNPs are detected as significant in the
+  discovery GWAS, \code{MSE_minimizer} merely returns a data frame which
+  combines the two inputted data sets.
 }
 \description{
 \code{MSE_minimizer} is a function which implements an approach that combines

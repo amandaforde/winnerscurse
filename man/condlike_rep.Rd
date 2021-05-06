@@ -52,7 +52,9 @@ A data frame with summary statistics and adjusted association
   data frame as well as the adjusted estimates for each SNP. The SNPs are
   contained in this data frame according to their significance, with the most
   significant SNP, i.e. the SNP with the largest absolute \eqn{z}-statistic,
-  now located in the first row of the data frame.
+  now located in the first row of the data frame. If no SNPs are detected as
+  significant in the discovery GWAS, \code{condlike_rep} merely returns
+  a data frame which combines the two inputted data sets.
 }
 \description{
 \code{condlike_rep} is a function which attempts to produce less biased

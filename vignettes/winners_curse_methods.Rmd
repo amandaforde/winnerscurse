@@ -262,7 +262,7 @@ $~$
 
 **TO DO:** 
 
-- *How to let data make decision on number of SNPs to use in the extremes for `empirical_bayes` and number of SNPs used in loess in `BR_ss`?*
+- *How to let data make decision on number of SNPs to use in the extremes for `empirical_bayes`?*
 
 
 

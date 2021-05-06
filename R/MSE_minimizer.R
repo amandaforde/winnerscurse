@@ -39,7 +39,10 @@
 #'   namely \code{beta_joint}. The SNPs are contained in this data frame
 #'   according to their significance, with the most significant SNP, i.e. the
 #'   SNP with the largest absolute \eqn{z}-statistic, now located in the first
-#'   row of the data frame.
+#'   row of the data frame. If no SNPs are detected as significant in the
+#'   discovery GWAS, \code{MSE_minimizer} merely returns a data frame which
+#'   combines the two inputted data sets.
+#'
 #' @references Ferguson, J., Alvarez-Iglesias, A., Newell, J., Hinde, J., &
 #'   O'Donnell, M. (2017).  Joint incorporation of randomised and observational
 #'   evidence in estimating treatment effects. \emph{Statistical Methods in

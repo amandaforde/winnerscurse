@@ -33,7 +33,9 @@ A data frame with summary statistics and adjusted association estimate
  \code{beta_UMVCUE}. The SNPs are contained in this data frame according to
  their significance, with the most significant SNP, i.e. the SNP with the
  largest absolute \eqn{z}-statistic, now located in the first row of the data
- frame.
+ frame. If no SNPs are detected as significant in the discovery GWAS,
+ \code{UMVCUE} merely returns a data frame which combines the two inputted
+ data sets.
 }
 \description{
 \code{UMVCUE} is a function which aims to produce less biased SNP-trait

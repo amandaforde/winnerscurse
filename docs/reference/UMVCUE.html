@@ -180,7 +180,9 @@ significance threshold for the discovery GWAS.</p></td>
  <code>beta_UMVCUE</code>. The SNPs are contained in this data frame according to
  their significance, with the most significant SNP, i.e. the SNP with the
  largest absolute \(z\)-statistic, now located in the first row of the data
- frame.</p>
+ frame. If no SNPs are detected as significant in the discovery GWAS,
+ <code>UMVCUE</code> merely returns a data frame which combines the two inputted
+ data sets.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Bowden, J., &amp; Dudbridge, F. (2009). Unbiased estimation of odds
