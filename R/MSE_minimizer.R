@@ -72,11 +72,11 @@ MSE_minimizer <- function(summary_disc, summary_rep, alpha, spline=FALSE){
   B <- summary_disc$beta - summary_rep$beta
 
   if (spline == FALSE){
-    w <- ((summary_rep$se^2)^-1)/(((summary_rep$se^2)^-1) + ((summary_rep$se^2 + B^2)^-1))
+    w <- ((summary_rep$se^2)^-1)/(((summary_rep$se^2)^-1) + ((summary_disc$se^2 + B^2)^-1))
   }else{
     z <- summary_disc$beta/summary_disc$se
     B1 <- stats::predict(stats::smooth.spline(x=z,y=B)$fit, z)$y
-    w <- ((summary_rep$se^2)^-1)/(((summary_rep$se^2)^-1) + ((summary_rep$se^2 + B1^2)^-1))
+    w <- ((summary_rep$se^2)^-1)/(((summary_rep$se^2)^-1) + ((summary_disc$se^2 + B1^2)^-1))
   }
 
   beta_joint <- w*summary_rep$beta + (1-w)*summary_disc$beta
