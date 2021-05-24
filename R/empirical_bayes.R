@@ -71,7 +71,7 @@ empirical_bayes <- function(summary_data)
   mids_est[mids<0] <- pmin(0, mids[mids<0] + diff_interpol[mids<0])
 
   z_hat <- stats::approx(mids,mids_est,z,rule=2,ties=mean)$y
-  #z_hat <- sign(z)*pmin(abs(z),abs(z_hat))
+  z_hat <- sign(z)*pmin(abs(z),abs(z_hat))
 
   beta_EB <- z_hat*summary_data$se
   summary_data <- cbind(summary_data,beta_EB)
