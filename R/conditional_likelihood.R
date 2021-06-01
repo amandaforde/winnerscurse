@@ -70,7 +70,7 @@ conditional_likelihood <- function(summary_data, alpha){
 
     beta.cl1[i] <- (stats::optimize(cond.like, c(0,summary_data_sig$z[i]), maximum=TRUE)$maximum)*summary_data_sig$se[i]
 
-    if (stats::integrate(cond.like,-37,37)$value == 0){beta.cl2[i] <- 0} else{
+    if (stats::integrate(cond.like,-37,37)$value == 0){beta.cl2[i] <- summary_data_sig$beta[i]} else{
       beta.cl2[i] <- ((stats::integrate(mean.cond.like,-37,37)$value)/(stats::integrate(cond.like,-37,37)$value))*(summary_data_sig$se[i])
     }
 
