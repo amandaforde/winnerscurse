@@ -150,7 +150,10 @@ al.</em> (2013)</a>.</p>
       <td><p>A data frame containing summary statistics from the
 discovery GWAS. It must have three columns with column names <code>rsid</code>,
 <code>beta</code> and <code>se</code>, respectively, and all columns must contain
-numerical values.</p></td>
+numerical values. Each row must correspond to a unique SNP, identified by
+the numerical value <code>rsid</code>. The function requires that there must be at
+least 50 SNPs as any less will result in very poor performance of the
+method.</p></td>
     </tr>
     </table>
 
@@ -165,15 +168,15 @@ numerical values.</p></td>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Ferguson, J. P., Cho, J. H., Yang, C., &amp; Zhao, H. (2013).
-Empirical Bayes correction for the Winner's Curse in genetic association
-studies. <em>Genetic epidemiology</em>, <strong>37(1)</strong>, 60\(-\)68.
-<a href='https://doi.org/10.1002/gepi.21683'>https://doi.org/10.1002/gepi.21683</a></p>
+ Empirical Bayes correction for the Winner's Curse in genetic association
+ studies. <em>Genetic epidemiology</em>, <strong>37(1)</strong>, 60\(-\)68.
+ <a href='https://doi.org/10.1002/gepi.21683'>https://doi.org/10.1002/gepi.21683</a></p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><a href='https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html'>https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html</a>
-  for illustration of the use of <code>empirical_bayes</code> with a toy data set
- and further information regarding the computation of the adjusted SNP-trait
- association estimates.</p></div>
+for illustration of the use of <code>empirical_bayes</code> with a toy data set and
+further information regarding the computation of the adjusted SNP-trait
+association estimates.</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

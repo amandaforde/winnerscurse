@@ -12,9 +12,10 @@
 #' @param summary_data A data frame containing summary statistics from the
 #'   discovery GWAS. It must have three columns with column names \code{rsid},
 #'   \code{beta} and \code{se}, respectively, and all columns must contain
-#'   numerical values.
+#'   numerical values. Each row must correspond to a unique SNP, identified by
+#'  the numerical value \code{rsid}.
 #' @param alpha A numerical value which specifies the desired genome-wide
-#'   significance threshold.
+#'   significance threshold. The default is given as \code{5e-8}.
 #' @param conf_level A numerical value between 0 and 1 which determines the
 #'   confidence interval to be computed. The default setting is \code{0.95}
 #'   which results in the calculation of a 95\% confidence interval for the
@@ -39,8 +40,11 @@
 #'   is computed.
 #' @export
 #'
-cl_interval <- function(summary_data,alpha, conf_level=0.95){
-  summary_data <- conditional_likelihood(summary_data,alpha)
+cl_interval <- function(summary_data,alpha=5e-8, conf_level=0.95){
+
+  stopifnot(conf_level < 1 && conf_level > 0)
+
+   summary_data <- conditional_likelihood(summary_data,alpha)
 
   z <- summary_data$beta/summary_data$se
   c <- stats::qnorm(1-(alpha)/2)

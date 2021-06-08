@@ -10,7 +10,10 @@ empirical_bayes(summary_data)
 \item{summary_data}{A data frame containing summary statistics from the
 discovery GWAS. It must have three columns with column names \code{rsid},
 \code{beta} and \code{se}, respectively, and all columns must contain
-numerical values.}
+numerical values. Each row must correspond to a unique SNP, identified by
+the numerical value \code{rsid}. The function requires that there must be at
+least 50 SNPs as any less will result in very poor performance of the
+method.}
 }
 \value{
 A data frame with the inputted summary data occupying the first three
@@ -30,13 +33,13 @@ al.} (2013)}.
 }
 \references{
 Ferguson, J. P., Cho, J. H., Yang, C., & Zhao, H. (2013).
-Empirical Bayes correction for the Winner's Curse in genetic association
-studies. \emph{Genetic epidemiology}, \strong{37(1)}, 60\eqn{-}68.
-\url{https://doi.org/10.1002/gepi.21683}
+ Empirical Bayes correction for the Winner's Curse in genetic association
+ studies. \emph{Genetic epidemiology}, \strong{37(1)}, 60\eqn{-}68.
+ \url{https://doi.org/10.1002/gepi.21683}
 }
 \seealso{
 \url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}
-  for illustration of the use of \code{empirical_bayes} with a toy data set
- and further information regarding the computation of the adjusted SNP-trait
- association estimates.
+for illustration of the use of \code{empirical_bayes} with a toy data set and
+further information regarding the computation of the adjusted SNP-trait
+association estimates.
 }

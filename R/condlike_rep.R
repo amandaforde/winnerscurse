@@ -12,13 +12,18 @@
 #' @param summary_disc A data frame containing summary statistics from the
 #'   \emph{discovery} GWAS. It must have three columns with column names
 #'   \code{rsid}, \code{beta} and \code{se}, respectively, and all columns must
-#'   contain numerical values.
+#'   contain numerical values. Each row must correspond to a unique SNP,
+#'   identified by the numerical value \code{rsid}.
 #' @param summary_rep A data frame containing summary statistics from the
 #'   \emph{replication} GWAS. It must have three columns with column names
 #'   \code{rsid}, \code{beta} and \code{se}, respectively, and all columns must
-#'   contain numerical values.
+#'   contain numerical values. Each row must correspond to a unique SNP,
+#'   identified by the numerical value \code{rsid}. SNPs must be ordered in the
+#'   exact same manner as those in \code{summary_disc}, i.e.
+#'   \code{summary_rep$rsid} must be equivalent to \code{summary_disc$rsid}.
 #' @param alpha A numerical value which specifies the desired genome-wide
-#'   significance threshold for the discovery GWAS.
+#'   significance threshold for the discovery GWAS. The default is given as
+#'   \code{5e-8}.
 #' @param conf_interval A logical value which determines whether or not
 #'   confidence intervals for each form of adjusted association estimate is also
 #'   to be computed and outputted. The default is \code{conf_interval=FALSE}.
@@ -44,8 +49,8 @@
 #'   contained in this data frame according to their significance, with the most
 #'   significant SNP, i.e. the SNP with the largest absolute \eqn{z}-statistic,
 #'   now located in the first row of the data frame. If no SNPs are detected as
-#'   significant in the discovery GWAS, \code{condlike_rep} merely returns
-#'   a data frame which combines the two inputted data sets.
+#'   significant in the discovery GWAS, \code{condlike_rep} merely returns a
+#'   data frame which combines the two inputted data sets.
 #'
 #' @references Zhong, H., & Prentice, R. L. (2008). Bias-reduced estimators and
 #'   confidence intervals for odds ratios in genome-wide association studies.
@@ -61,8 +66,20 @@
 #' significant SNPs.
 #' @export
 #'
-condlike_rep <- function(summary_disc,summary_rep,alpha, conf_interval=FALSE, conf_level=0.95){
+condlike_rep <- function(summary_disc,summary_rep,alpha=5e-8, conf_interval=FALSE, conf_level=0.95){
   ### only selection on snps from discovery data set, just require definition for c or equivalently, alpha
+
+  stopifnot(all(c("rsid", "beta","se") %in% names(summary_disc)))
+  stopifnot(!all(is.na(summary_disc$rsid)) && !all(is.na(summary_disc$beta)) && !all(is.na(summary_disc$se)))
+  stopifnot(is.numeric(summary_disc$rsid) && is.numeric(summary_disc$rsid) && is.numeric(summary_disc$rsid))
+  stopifnot(!any(duplicated(summary_disc$rsid)))
+
+  stopifnot(all(c("rsid", "beta","se") %in% names(summary_rep)))
+  stopifnot(!all(is.na(summary_rep$rsid)) && !all(is.na(summary_rep$beta)) && !all(is.na(summary_rep$se)))
+  stopifnot(is.numeric(summary_rep$rsid) && is.numeric(summary_rep$rsid) && is.numeric(summary_rep$rsid))
+  stopifnot(!any(duplicated(summary_rep$rsid)))
+
+  stopifnot(summary_disc$rsid == summary_rep$rsid)
 
   se_com <- sqrt((((summary_disc$se)^2)*((summary_rep$se)^2))/(((summary_disc$se)^2) + ((summary_rep$se)^2)))
   beta_com <- ((((summary_rep$se)^2)*(summary_disc$beta))+(((summary_disc$se)^2)*(summary_rep$beta)))/(((summary_disc$se)^2) + ((summary_rep$se)^2))

@@ -46,7 +46,7 @@ summary_stats <- data.frame(rsid=seq(1,n_snps),beta=rnorm(n=n_snps,mean=true_bet
 - The function `se_adjust` has three parameters: 
   1. `summary_data`: a data frame in the form as described previously, with columns `rsid`, `beta` and `se`
   2. `method`: the user is required to specify which method they wish to implement in order to obtain standard errors; `"empirical_bayes"`, `"BR_ss"`, `"FDR_IQT"` 
-  3. `n_boot`: a numerical value which defines the number of bootstraps to be used, the default option is 100 bootstraps.
+  3. `n_boot`: a numerical value which defines the number of bootstraps to be used, the default option is 100 bootstraps. The function requires that this number is greater than 1. 
 
 
 
@@ -85,7 +85,6 @@ head(out_FIQT)
 
 ```{r}
 out <- cl_interval(summary_data=summary_stats, alpha = 5e-8, conf_level=0.95)
-head(out)
 ```
 
 

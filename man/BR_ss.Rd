@@ -10,7 +10,10 @@ BR_ss(summary_data, seed_opt = FALSE, seed = 1998)
 \item{summary_data}{A data frame containing summary statistics from the
 discovery GWAS. It must have three columns with column names \code{rsid},
 \code{beta} and \code{se}, respectively, and all columns must contain
-numerical values.}
+numerical values. Each row must correspond to a unique SNP, identified by
+the numerical value \code{rsid}. The function requires that there must be at
+least 5 SNPs as any less will result in issues upon usage of the
+smoothing spline.}
 
 \item{seed_opt}{A logical value which allows the user to choose if they wish
 to set a seed, in order to ensure reproducibility of adjusted estimates.

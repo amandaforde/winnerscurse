@@ -121,7 +121,7 @@
 <code>method</code>: the user is required to specify which method they wish to implement in order to obtain standard errors; <code>"empirical_bayes"</code>, <code>"BR_ss"</code>, <code>"FDR_IQT"</code>
 </li>
 <li>
-<code>n_boot</code>: a numerical value which defines the number of bootstraps to be used, the default option is 100 bootstraps.</li>
+<code>n_boot</code>: a numerical value which defines the number of bootstraps to be used, the default option is 100 bootstraps. The function requires that this number is greater than 1.</li>
 </ol>
 </li>
 <li><p><code>se_adjust</code> outputs a data frame in a similar format to other functions included in the package. It includes the <code>beta</code> estimates obtained after adjustment using the specified method as well as an additional column <code>adj_se</code>. This column contains a value which approximates the standard error of the adjusted estimate of <span class="math inline">\(\beta\)</span>.</p></li>
@@ -174,22 +174,7 @@
 <li><p><code>cl_interval</code> can be used in conjunction with the toy data set as shown below, in which <code>alpha</code> is specified as <code>5e-8</code> and a 95% confidence interval is desired:</p></li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cl_interval.html">cl_interval</a></span><span class="op">(</span>summary_data<span class="op">=</span><span class="va">summary_stats</span>, alpha <span class="op">=</span> <span class="fl">5e-8</span>, conf_level<span class="op">=</span><span class="fl">0.95</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span>
-<span class="co">#&gt;   rsid        beta          se    beta.cl1    beta.cl2    beta.cl3       lower</span>
-<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.06007537  0.05868216  0.05937877  0.03814674</span>
-<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.06213363  0.06068292  0.06140827  0.03940027</span>
-<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.05853885 -0.05655174 -0.05754529 -0.07511367</span>
-<span class="co">#&gt; 4 7261  0.05510736 0.008186396  0.05271740  0.04940315  0.05106028  0.02250892</span>
-<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.05363848  0.05011923  0.05187885  0.02216198</span>
-<span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.05203604  0.04852832  0.05028218  0.02103198</span>
-<span class="co">#&gt;         upper</span>
-<span class="co">#&gt; 1  0.07619932</span>
-<span class="co">#&gt; 2  0.07882413</span>
-<span class="co">#&gt; 3 -0.03378470</span>
-<span class="co">#&gt; 4  0.06959246</span>
-<span class="co">#&gt; 5  0.07099962</span>
-<span class="co">#&gt; 6  0.06900119</span></code></pre></div>
+<code class="sourceCode R"><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cl_interval.html">cl_interval</a></span><span class="op">(</span>summary_data<span class="op">=</span><span class="va">summary_stats</span>, alpha <span class="op">=</span> <span class="fl">5e-8</span>, conf_level<span class="op">=</span><span class="fl">0.95</span><span class="op">)</span></code></pre></div>
 <p><span class="math inline">\(~\)</span> <span class="math inline">\(~\)</span></p>
 <p><strong>TO DO:</strong></p>
 <ul>

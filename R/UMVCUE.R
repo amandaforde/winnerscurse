@@ -11,13 +11,18 @@
 #'@param summary_disc A data frame containing summary statistics from the
 #'  \emph{discovery} GWAS. It must have three columns with column names
 #'  \code{rsid}, \code{beta} and \code{se}, respectively, and all columns must
-#'  contain numerical values.
+#'  contain numerical values. Each row must correspond to a unique SNP,
+#'   identified by the numerical value \code{rsid}.
 #'@param summary_rep A data frame containing summary statistics from the
 #'  \emph{replication} GWAS. It must have three columns with column names
 #'  \code{rsid}, \code{beta} and \code{se}, respectively, and all columns must
-#'  contain numerical values.
+#'  contain numerical values. Each row must correspond to a unique SNP,
+#'   identified by the numerical value \code{rsid}. SNPs must be ordered in the
+#'   exact same manner as those in \code{summary_disc}, i.e.
+#'   \code{summary_rep$rsid} must be equivalent to \code{summary_disc$rsid}.
 #'@param alpha A numerical value which specifies the desired genome-wide
-#'  significance threshold for the discovery GWAS.
+#'  significance threshold for the discovery GWAS. The default is given as
+#'   \code{5e-8}.
 #'
 #'@return A data frame with summary statistics and adjusted association estimate
 #'  of only those SNPs which have been deemed significant in the discovery GWAS
@@ -48,7 +53,20 @@
 #'@export
 #'
 #'
-UMVCUE <- function(summary_disc, summary_rep, alpha){
+UMVCUE <- function(summary_disc, summary_rep, alpha=5e-8){
+
+  stopifnot(all(c("rsid", "beta","se") %in% names(summary_disc)))
+  stopifnot(!all(is.na(summary_disc$rsid)) && !all(is.na(summary_disc$beta)) && !all(is.na(summary_disc$se)))
+  stopifnot(is.numeric(summary_disc$rsid) && is.numeric(summary_disc$rsid) && is.numeric(summary_disc$rsid))
+  stopifnot(!any(duplicated(summary_disc$rsid)))
+
+  stopifnot(all(c("rsid", "beta","se") %in% names(summary_rep)))
+  stopifnot(!all(is.na(summary_rep$rsid)) && !all(is.na(summary_rep$beta)) && !all(is.na(summary_rep$se)))
+  stopifnot(is.numeric(summary_rep$rsid) && is.numeric(summary_rep$rsid) && is.numeric(summary_rep$rsid))
+  stopifnot(!any(duplicated(summary_rep$rsid)))
+
+  stopifnot(summary_disc$rsid == summary_rep$rsid)
+
 
   c <- stats::qnorm(1-alpha/2)
 

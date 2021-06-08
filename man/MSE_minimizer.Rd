@@ -4,21 +4,28 @@
 \alias{MSE_minimizer}
 \title{MSE minimization method for use with discovery and replication GWASs}
 \usage{
-MSE_minimizer(summary_disc, summary_rep, alpha, spline = FALSE)
+MSE_minimizer(summary_disc, summary_rep, alpha = 5e-08, spline = TRUE)
 }
 \arguments{
 \item{summary_disc}{A data frame containing summary statistics from the
 \emph{discovery} GWAS. It must have three columns with column names
 \code{rsid}, \code{beta} and \code{se}, respectively, and all columns must
-contain numerical values.}
+contain numerical values. Each row must correspond to a unique SNP,
+identified by the numerical value \code{rsid}. The function requires that
+there must be at least 5 SNPs as any less will result in issues upon usage
+of the smoothing spline.}
 
 \item{summary_rep}{A data frame containing summary statistics from the
 \emph{replication} GWAS. It must have three columns with column names
 \code{rsid}, \code{beta} and \code{se}, respectively, and all columns must
-contain numerical values.}
+contain numerical values. Each row must correspond to a unique SNP,
+identified by the numerical value \code{rsid}. SNPs must be ordered in the
+exact same manner as those in \code{summary_disc}, i.e.
+\code{summary_rep$rsid} must be equivalent to \code{summary_disc$rsid}.}
 
 \item{alpha}{A numerical value which specifies the desired genome-wide
-significance threshold for the discovery GWAS.}
+significance threshold for the discovery GWAS. The default is given as
+\code{5e-8}.}
 
 \item{spline}{A logical value which determines whether or not a cubic
 smoothing spline is to be used. When \code{spline=FALSE}, the value for

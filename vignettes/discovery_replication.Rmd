@@ -36,7 +36,7 @@ A third method has been added which obtains a new association estimate for each 
 set.seed(1998)
 n_snps <- 10^6
 effect_snps <- 0.01*n_snps
-n_samples <- 300000
+n_samples <- 30000
 maf <- runif(n_snps,0.01,0.5)
 true_beta <- rnorm(effect_snps,0,1)
 h2 <- 0.7 # variance explained by effect SNPs
@@ -59,7 +59,7 @@ head(stats_rep)
 
 - The function `condlike_rep` implements a version of the conditional likelihood method for obtaining bias-reduced estimates of $\beta$ described in [Zhong and Prentice (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2536726/). 
 
-- The function requires as inputs two independent data sets, one representing a discovery GWAS, `summary_disc`, and the other a replication study with identical SNPs, `summary_rep`, as well as a specification of the significance threshold, `alpha`, to be used. As before, the data sets must be in the form of data frames with columns `rsid`, `beta` and `se`. It is presumed that SNPs are in the exact same order in both data sets. 
+- The function requires as inputs two independent data sets, one representing a discovery GWAS, `summary_disc`, and the other a replication study with identical SNPs, `summary_rep`, as well as a specification of the significance threshold, `alpha`, to be used. As before, the data sets must be in the form of data frames with columns `rsid`, `beta` and `se`, all columns of the data frames must contain numerical values and each row of both data frames must represent a unique SNP, identified by `rsid`.  SNPs must be in the exact same order in both data sets, i.e. the identity `summary_rep$rsid == summary_disc$rsid` must evaluate to `TRUE`. 
 
 - Furthermore, the parameter `conf_interval` in `condlike_rep` provides the user with the option to obtain confidence intervals for each of the adjusted association estimates. The default setting is `conf_interval=FALSE`. Inserting `conf_interval=TRUE` when using the function will return three sets of lower and upper confidence interval boundaries for each SNP, each set corresponding to a particular form of adjusted estimate. The final parameter `conf_level` takes a numerical value between 0 and 1 which specifies the confidence interval, with the default being `0.95`.
 
@@ -97,6 +97,7 @@ out1_conf <- condlike_rep(summary_disc=stats_disc, summary_rep=stats_rep, alpha=
 head(out1_conf)
 ```
 
+- Note that the current computation of confidence intervals may not work in every situation and thus, ongoing work is being done to resolve this. 
 
 ### Method 2: UMVCUE
 
@@ -116,18 +117,18 @@ head(out2)
 
 ### Method 3: MSE minimization 
 
-- The function `MSE_minimizer` implements a combination method which closely follows that described in [Ferguson *et al.* (2017)](https://journals.sagepub.com/doi/full/10.1177/0962280217720854). The function parameters used here; `summary_disc`, `summary_rep` and `alpha`, are precisely of the same form as those previously detailed in this vignette. In addition, `MSE_minimizer` has a logical parameter, namely `spline` which defaults as `spline=FALSE`.
+- The function `MSE_minimizer` implements a combination method which closely follows that described in [Ferguson *et al.* (2017)](https://journals.sagepub.com/doi/full/10.1177/0962280217720854). The function parameters used here; `summary_disc`, `summary_rep` and `alpha`, are precisely of the same form as those previously detailed in this vignette. In addition, `MSE_minimizer` has a logical parameter, namely `spline` which defaults as `spline=TRUE`. As a smoothing spline is used in the execution of this function, data corresponding to at least 5 SNPs is required. 
 
 - An adjusted estimate is computed for each SNP which has been classified as significant in the discovery data set, based on the given threshold. Thus, similar to the above method, `MSE_minimizer` returns a data frame containing these significant SNPs with 6 columns in which the final column contains the new estimate, `beta_joint`.
 
-- Following the approach detailed in [Ferguson *et al.* (2017)](https://journals.sagepub.com/doi/full/10.1177/0962280217720854), we define the adjusted linear combination estimator as: $$\hat\beta_{\text{joint}} = \omega(\hat{B}) \cdot \hat\beta_{\text{rep}} + (1-\omega(\hat{B}))\cdot \hat\beta_{\text{disc}}$$ in which $$ \omega(\hat{B}) = \frac{\frac{1}{\sigma^2_{\text{rep}}}}{\frac{1}{\sigma^2_{\text{rep}}}+\frac{1}{\sigma^2_{\text{disc}}+ \hat{B}^2}}.$$ Using the default setting for `spline`, i.e. `spline=FALSE`, we simply let $\hat{B} = \hat\beta_{\text{disc}} - \hat\beta_{\text{rep}}$. We make the assumptions that $\beta_{\text{rep}}$ is unbiased for $\beta$, but $\beta_{\text{disc}}$ is quite likely to be biased and that $\beta_{\text{rep}}$ and $\beta_{\text{disc}}$ are independent. 
+- Following the approach detailed in [Ferguson *et al.* (2017)](https://journals.sagepub.com/doi/full/10.1177/0962280217720854), we define the adjusted linear combination estimator as: $$\hat\beta_{\text{joint}} = \omega(\hat{B}) \cdot \hat\beta_{\text{rep}} + (1-\omega(\hat{B}))\cdot \hat\beta_{\text{disc}}$$ in which $$ \omega(\hat{B}) = \frac{\frac{1}{\sigma^2_{\text{rep}}}}{\frac{1}{\sigma^2_{\text{rep}}}+\frac{1}{\sigma^2_{\text{disc}}+ \hat{B}^2}}.$$ When `spline=FALSE` is used, we simply let $\hat{B} = \hat\beta_{\text{disc}} - \hat\beta_{\text{rep}}$. We make the assumptions that $\beta_{\text{rep}}$ is unbiased for $\beta$, but $\beta_{\text{disc}}$ is quite likely to be biased and that $\beta_{\text{rep}}$ and $\beta_{\text{disc}}$ are independent. 
 
-- For `spline=TRUE`, a cubic smoothing spline is applied in which the values of $z_{\text{disc}} = \frac{\hat\beta_{\text{disc}}}{\sigma_{\text{disc}}}$ are considered as inputs and $\hat{B} = \hat\beta_{\text{disc}} - \hat\beta_{\text{rep}}$, the corresponding outputs. The predicted values for $\hat{B}$ from this process, $\hat{B}^*$ say, are then used instead of $\hat{B}$ when computing $\hat\beta_{\text{joint}}$ for each SNP.
+- For the default setting `spline=TRUE`, a cubic smoothing spline is applied in which the values of $z_{\text{disc}} = \frac{\hat\beta_{\text{disc}}}{\sigma_{\text{disc}}}$ are considered as inputs and $\hat{B} = \hat\beta_{\text{disc}} - \hat\beta_{\text{rep}}$, the corresponding outputs. The predicted values for $\hat{B}$ from this process, $\hat{B}^*$ say, are then used instead of $\hat{B}$ when computing $\hat\beta_{\text{joint}}$ for each SNP.
 
-- We apply `MSE_minimizer` to our toy data sets, once with the default setting for `spline` and once with `spline=TRUE`. Again for convenient demonstration purposes, we specify the significance threshold as `10e-6`.
+- We apply `MSE_minimizer` to our toy data sets, once with the default setting for `spline` and once with `spline=FALSE`. Again for convenient demonstration purposes, we specify the significance threshold as `10e-6`.
 ```{r}
-out3 <- MSE_minimizer(summary_disc = stats_disc, summary_rep = stats_rep, alpha=10e-6)
-out4 <- MSE_minimizer(summary_disc = stats_disc, summary_rep = stats_rep, alpha=10e-6,spline=TRUE)
+out3 <- MSE_minimizer(summary_disc = stats_disc, summary_rep = stats_rep, alpha=10e-6, spline=FALSE)
+out4 <- MSE_minimizer(summary_disc = stats_disc, summary_rep = stats_rep, alpha=10e-6)
 
 head(out3)
 head(out4)
@@ -154,7 +155,7 @@ lines(density(abs(out1$beta_rep)),col=col[3],lwd=2)
 lines(density(abs(out1$beta_com)),col=col[4],lwd=2)
 lines(density(abs(out1$beta_MLE)),col=col[5],lwd=2)
 lines(density(abs(out1$beta_MSE)),col=col[8],lwd=2)
-legend(-0.01, 67.5, legend=c("beta_disc", "true_beta","beta_rep","beta_com", "beta_MLE", "beta_MSE"),col=c(col[1:5],col[8]),lty=1,lwd=2)
+legend(0.05, 67.5, legend=c("beta_disc", "true_beta","beta_rep","beta_com", "beta_MLE", "beta_MSE"),col=c(col[1:5],col[8]),lty=1,lwd=2)
 
 plot(density(abs(out2$beta_disc)),ylim=c(0,72),xlim=c(-0.01,0.08),main="UMVCUE and MSE-minimizer Winner's Curse Adjustment",col=col[1],lwd=2)
 lines(density(abs(true_beta[out2$rsid])),col=col[2],lwd=2)
@@ -162,7 +163,7 @@ lines(density(abs(out2$beta_rep)),col=col[3],lwd=2)
 lines(density(abs(out2$beta_UMVCUE)),col=col[4],lwd=2)
 lines(density(abs(out3$beta_joint)),col=col[5],lwd=2)
 lines(density(abs(out4$beta_joint)),col=col[6],lwd=2)
-legend(-0.01, 70.5, legend=c("beta_disc", "true_beta","beta_rep","beta_UMVCUE", "beta_joint", "beta_joint_sp"),
+legend(0.05, 70.5, legend=c("beta_disc", "true_beta","beta_rep","beta_UMVCUE", "beta_joint", "beta_joint_sp"),
        col=col,lty=1,lwd=2)
 ```
 
@@ -178,5 +179,48 @@ mean_abs_diff
 
 frac_less_bias <- data.frame(beta_UMVCUE = (sum(abs(true_beta[out2$rsid] - out2$beta_rep) > abs(true_beta[out2$rsid] - out2$beta_UMVCUE)))/nrow(out2), beta_com = (sum(abs(true_beta[out1$rsid] - out1$beta_rep) > abs(true_beta[out1$rsid] - out1$beta_com)))/nrow(out1), beta_MLE = (sum(abs(true_beta[out1$rsid] - out1$beta_rep) > abs(true_beta[out1$rsid] - out1$beta_MLE)))/nrow(out1), beta_MSE = (sum(abs(true_beta[out1$rsid] - out1$beta_rep) > abs(true_beta[out1$rsid] - out1$beta_MSE)))/nrow(out1), beta_joint = (sum(abs(true_beta[out3$rsid] - out3$beta_rep) > abs(true_beta[out3$rsid] - out3$beta_joint)))/nrow(out3), beta_joint_sp = (sum(abs(true_beta[out4$rsid] - out4$beta_rep) > abs(true_beta[out4$rsid] - out4$beta_joint)))/nrow(out4))
 frac_less_bias  # comparison with naive replication estimate
+```
+
+### Using Empirical Bayes method when a replication data set is available
+
+- When a replication data set is also available, as has been described throughout this document, we also have the option to employ the empirical Bayes method. We have seen this work considerably well in simulations and thus advise exploration of its implementation in this setting. 
+
+- With data in the form described above similar to `stats_disc` and `stats_rep`, implementation of the empirical Bayes method could take place on the combined estimator as shown below: 
+
+```{r, warning=FALSE}
+  com_stats <- stats_disc
+  com_stats$beta <- ((((stats_rep$se)^2)*(stats_disc$beta))+(((stats_disc$se)^2)*(stats_rep$beta)))/(((stats_disc$se)^2) + ((stats_rep$se)^2))
+  com_stats$se <- sqrt((((stats_disc$se)^2)*((stats_rep$se)^2))/(((stats_disc$se)^2) + ((stats_rep$se)^2)))
+  out_EB_com <- empirical_bayes(com_stats)
+  out_EB_com <- dplyr::arrange(out_EB_com,out_EB_com$rsid)
+  out_EB_com <- data.frame(rsid = stats_disc$rsid, beta_disc = stats_disc$beta, se_disc  = stats_disc$se, beta_rep = stats_rep$beta, se_rep = stats_rep$se, beta_EB=out_EB_com$beta_EB)
+
+  ## reorder based on significance in first set up!
+  out_EB_com <- dplyr::arrange(out_EB_com, dplyr::desc(abs(out_EB_com$beta_disc/out_EB_com$se_disc)))
+  out_EB_com <- out_EB_com[abs(out_EB_com$beta_disc/out_EB_com$se_disc) > stats::qnorm(1-(10e-6)/2),]
+  head(out_EB_com)
+```
+
+- We then compute the evaluation metrics as considered above as well as create a plot depicting the results. 
+
+```{r}
+sq_diff <- data.frame(disc_naive = sum((true_beta[out2$rsid] - out2$beta_disc)^2), rep_naive = sum((true_beta[out2$rsid] - out2$beta_rep)^2),  beta_EB_joint = sum((true_beta[out_EB_com$rsid] - out_EB_com$beta_EB)^2))
+sq_diff
+
+mean_abs_diff <- data.frame(disc_naive = mean(abs(true_beta[out2$rsid] - out2$beta_disc)), rep_naive = mean(abs(true_beta[out2$rsid] - out2$beta_rep)),  beta_EB_joint = mean(abs(true_beta[out_EB_com$rsid] - out_EB_com$beta_EB)))
+mean_abs_diff
+
+frac_less_bias <- data.frame(beta_EB_joint = (sum(abs(true_beta[out_EB_com$rsid] - out_EB_com$beta_rep) > abs(true_beta[out_EB_com$rsid] - out_EB_com$beta_EB)))/nrow(out_EB_com))
+frac_less_bias  # comparison with naive replication estimate
+```
+
+
+```{r}
+plot(density(abs(out_EB_com$beta_disc)),ylim=c(0,72),xlim=c(-0.01,0.08),main="Empirical Bayes Winner's Curse Adjustment",col=col[1],lwd=2)
+lines(density(abs(true_beta[out_EB_com$rsid])),col=col[2],lwd=2)
+lines(density(abs(out_EB_com$beta_rep)),col=col[3],lwd=2)
+lines(density(abs(out_EB_com$beta_EB)),col=col[4],lwd=2)
+legend(0.05, 70.5, legend=c("beta_disc", "true_beta","beta_rep","beta_EB_joint"),
+       col=col,lty=1,lwd=2)
 ```
 

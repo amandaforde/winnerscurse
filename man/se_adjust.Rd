@@ -10,14 +10,15 @@ se_adjust(summary_data, method, n_boot = 100)
 \item{summary_data}{A data frame containing summary statistics from the
 discovery GWAS. It must have three columns with column names \code{rsid},
 \code{beta} and \code{se}, respectively, and all columns must contain
-numerical values.}
+numerical values. Each row must correspond to a unique SNP,
+identified by the numerical value \code{rsid}.}
 
 \item{method}{A string specifying the function to be implemented on each of
 the bootstrap samples. It should take the form \code{"BR_ss"},
 \code{"empirical_bayes"} or \code{"FDR_IQT"}.}
 
 \item{n_boot}{A numerical value which determines the number of bootstrap
-repetitions to be used. The default value is \code{100}.}
+repetitions to be used. it must be greater than 1. The default value is \code{100}.}
 }
 \value{
 A data frame which combines the output of the chosen method with an
@@ -32,7 +33,7 @@ corrected with the Empirical Bayes method, FDR Inverse Quantile
 Transformation method or the bootstrap method. Note that in comparison to the
 other functions in this package, this function can be computationally
 intensive and take a several minutes to run, depending on the size of the
-data set and the number of bootstraps chosen.
+data set, the method and the number of bootstraps chosen.
 }
 \seealso{
 \code{\link{empirical_bayes}}, \code{\link{BR_ss}} and

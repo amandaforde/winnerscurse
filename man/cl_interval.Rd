@@ -5,16 +5,17 @@
 \title{Confidence interval associated with discovery GWAS conditional likelihood
 methods}
 \usage{
-cl_interval(summary_data, alpha, conf_level = 0.95)
+cl_interval(summary_data, alpha = 5e-08, conf_level = 0.95)
 }
 \arguments{
 \item{summary_data}{A data frame containing summary statistics from the
-discovery GWAS. It must have three columns with column names \code{rsid},
-\code{beta} and \code{se}, respectively, and all columns must contain
-numerical values.}
+ discovery GWAS. It must have three columns with column names \code{rsid},
+ \code{beta} and \code{se}, respectively, and all columns must contain
+ numerical values. Each row must correspond to a unique SNP, identified by
+the numerical value \code{rsid}.}
 
 \item{alpha}{A numerical value which specifies the desired genome-wide
-significance threshold.}
+significance threshold. The default is given as \code{5e-8}.}
 
 \item{conf_level}{A numerical value between 0 and 1 which determines the
 confidence interval to be computed. The default setting is \code{0.95}

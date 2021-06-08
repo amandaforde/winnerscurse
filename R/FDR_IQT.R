@@ -9,7 +9,8 @@
 #'@param summary_data A data frame containing summary statistics from the
 #'  discovery GWAS. It must have three columns with column names \code{rsid},
 #'  \code{beta} and \code{se}, respectively, and all columns must contain
-#'  numerical values.
+#'  numerical values. Each row must correspond to a unique SNP, identified by
+#'  the numerical value \code{rsid}.
 #'@param min_pval A numerical value whose purpose is to avoid zero
 #'  \eqn{p}-values as this introduces issues when \code{qnorm()} is applied. Any
 #'  SNP for which its computed \eqn{p}-value is found to be less than
@@ -45,6 +46,13 @@
 FDR_IQT <- function(summary_data, min_pval=1e-15)
 
 {
+
+  stopifnot(all(c("rsid", "beta","se") %in% names(summary_data)))
+  stopifnot(!all(is.na(summary_data$rsid)) && !all(is.na(summary_data$beta)) && !all(is.na(summary_data$se)))
+  stopifnot(is.numeric(summary_data$rsid) && is.numeric(summary_data$rsid) && is.numeric(summary_data$rsid))
+  stopifnot(!any(duplicated(summary_data$rsid)))
+
+
   z <- summary_data$beta/summary_data$se
   p_val <- 2*(1-stats::pnorm(abs(z)))
   p_val[p_val < min_pval] <- min_pval

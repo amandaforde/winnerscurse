@@ -84,7 +84,7 @@ head(summary_stats)
 
 ### Method 1: Conditional Likelihood
 
-- The function `conditional_likelihood` requires a data frame, in the form described above, and a value for `alpha`, the significance threshold used in the GWAS. 
+- The function `conditional_likelihood` requires a data frame, in the form described above, and a value for `alpha`, the significance threshold used in the GWAS. Note that all columns of the data frame must contain numerical values and each row must represent a unique SNP, identified by `rsid`.  
 
 - As the conditional likelihood methods have been designed to be only used for SNPs which are deemed significant, the data frame returned contains only SNPs that have $p$-values below the inputted genome-wide significance threshold value, `alpha`.
 
@@ -97,7 +97,6 @@ head(summary_stats)
 ```{r}
 out_CL <- conditional_likelihood(summary_data = summary_stats, alpha = 5e-8) 
 head(out_CL)
-
 ```
 
 - Three columns have been added to the right of the inputted data frame: each represents a correction method suggested in [Ghosh *et al.* (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/). The first, `beta.cl1`, is referred to as the conditional MLE while the second, `beta.cl2`, is the mean of the normalized conditional likelihood. The third, `beta.cl3` is merely the average of the first two, known as the compromise estimator. 
@@ -109,20 +108,19 @@ head(out_CL)
 
 - The function `empirical_bayes` implements the Empirical Bayes method for correcting for Winner's Curse, detailed in [Ferguson *et al.* (2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/), with a slight modification. 
 
-- The function has one argument, `summary_data`, which is the data frame containing `rsid`, `beta` and `se` columns. 
+- The function has one argument, `summary_data`, which is the data frame containing `rsid`, `beta` and `se` columns. Again, all columns of the data frame must contain numerical values and each row must represent a unique SNP, identified by `rsid`. In addition, the function requires that the data frame must contain at least 50 rows corresponding to 50 unique SNPs. This requirement is included as the Empirical Bayes method performs poorly when only data of a small number of SNPs is available. 
 
-- It returns this data frame but with a fourth column, `beta_EB` in which the adjusted estimates of this procedure have been added. 
+- It returns the above described data frame but with a fourth column, `beta_EB` in which the adjusted estimates of this procedure have been added. 
 
 - As the Empirical Bayes method makes adjustments to all SNPs, not only those that have been considered significant, this data frame contains all SNPs.  
 
-- **Note:** The conditional likelihood methods adjust each statistic one at a time, and so summary statistics of one individual SNP can easily be inputted into the `conditional_likelihood` function. However, the Empirical Bayes method requires many SNPs as the more information given to the function, the more accurate it will be at modelling the distribution and thus, making adjustments. Thus, if `summary_data` contains information related to only one SNP, `empirical_bayes` will merely return the inputted data frame. 
+- **Note:** The conditional likelihood methods adjust each statistic one at a time, and so summary statistics of one individual SNP can easily be inputted into the `conditional_likelihood` function. However, the Empirical Bayes method requires many SNPs as the more information given to the function, the more accurate it will be at modelling the distribution and thus, making adjustments. Thus, as mentioned above, `summary_data` must contain information related to more than 50 SNPs.
 
 - Below is a demonstration of using `empirical_bayes` with our toy data set:
 
 ```{r}
 out_EB <- empirical_bayes(summary_data = summary_stats)
 head(out_EB)
-
 ```
 
 
@@ -136,7 +134,7 @@ head(out_EB)
 
 - The function `FDR_IQT` implements the winner's curse adjustment method detailed in [Bigdeli *et al.* (2016)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/). 
 
-- Similar to the approaches above, the function requires a data frame with three columns `rsid`, `beta` and `se`. 
+- Similar to the approaches above, the function requires a data frame with three columns `rsid`, `beta` and `se`,  all columns of the data frame must contain numerical values and each row must represent a unique SNP, identified by `rsid`. 
 
 - It also has an argument `min_pval`, for which the default setting is `1e-15`. This is included in order to avoid zero $p$-values which can prove problematic for the function when evaluating `qnorm()`. Furthermore, due to the nature of winner's curse, it is in fact rare that observations with $\mid z \mid > 8$ are biased. 
 
@@ -153,7 +151,7 @@ head(out_FIQT)
 
 - Inspired by the winner's curse adjustment method detailed in [Faye *et al.* (2011)](https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4228), the function `BR_ss` implements a computationally efficient bootstrap method which is suitable for use with summary statistics. 
 
-- `BR_ss` takes a data frame `summary_data` with three columns: `rsid`, `beta`, `se`, and returns the inputted data frame along with the adjusted estimate for $\beta$, `beta_BR_ss`. The function also has a logical parameter `seed_opt` which can be set to `TRUE` by the user to permit reproducibility. Its default setting is `seed_opt=FALSE`. As this method involves bootstrap implementation, the use of a seed can allow the user to obtain the exact same results for `beta_BR_ss` when running the function many times on the same dataset. The parameter `seed` provides the user with an option to set their desired value for the seed when using `seed_opt=TRUE`. The default for `seed` is the arbitrary value of `1998`. 
+- `BR_ss` takes a data frame `summary_data` with three columns: `rsid`, `beta`, `se`, and returns the inputted data frame along with the adjusted estimate for $\beta$, `beta_BR_ss`. Note that all columns of the data frame, `summary data` must contain numerical values, each row must represent a unique SNP, identified by `rsid` and the function requires that there must be at least 5 unique SNPs so that the smoothing spline can be implemented successfully.  The function also has a logical parameter `seed_opt` which can be set to `TRUE` by the user to permit reproducibility. Its default setting is `seed_opt=FALSE`. As this method involves bootstrap implementation, the use of a seed can allow the user to obtain the exact same results for `beta_BR_ss` when running the function many times on the same dataset. The parameter `seed` provides the user with an option to set their desired value for the seed when using `seed_opt=TRUE`. The default for `seed` is the arbitrary value of `1998`. 
 
 $~$
 
@@ -262,7 +260,7 @@ $~$
 
 **TO DO:** 
 
-- *How to let data make decision on number of SNPs to use in the extremes for `empirical_bayes`?*
+- *How to let data make decision on number of SNPs to use in the extremes for `empirical_bayes`? Solution: have a look at real data sets!*
 
 
 

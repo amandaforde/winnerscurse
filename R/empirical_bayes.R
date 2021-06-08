@@ -9,7 +9,10 @@
 #'@param summary_data A data frame containing summary statistics from the
 #'  discovery GWAS. It must have three columns with column names \code{rsid},
 #'  \code{beta} and \code{se}, respectively, and all columns must contain
-#'  numerical values.
+#'  numerical values. Each row must correspond to a unique SNP, identified by
+#'  the numerical value \code{rsid}. The function requires that there must be at
+#'  least 50 SNPs as any less will result in very poor performance of the
+#'  method.
 #'
 #'@return A data frame with the inputted summary data occupying the first three
 #'  columns. The new adjusted association estimates for each SNP are returned in
@@ -20,23 +23,25 @@
 #'
 #'
 #'@references Ferguson, J. P., Cho, J. H., Yang, C., & Zhao, H. (2013).
-#'Empirical Bayes correction for the Winner's Curse in genetic association
-#'studies. \emph{Genetic epidemiology}, \strong{37(1)}, 60\eqn{-}68.
-#'\url{https://doi.org/10.1002/gepi.21683}
+#'  Empirical Bayes correction for the Winner's Curse in genetic association
+#'  studies. \emph{Genetic epidemiology}, \strong{37(1)}, 60\eqn{-}68.
+#'  \url{https://doi.org/10.1002/gepi.21683}
 #'
 #'@seealso
-#'  \url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}
-#'   for illustration of the use of \code{empirical_bayes} with a toy data set
-#'  and further information regarding the computation of the adjusted SNP-trait
-#'  association estimates.
+#'\url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}
+#'for illustration of the use of \code{empirical_bayes} with a toy data set and
+#'further information regarding the computation of the adjusted SNP-trait
+#'association estimates.
 #'@export
 #'
 #'
-empirical_bayes <- function(summary_data)
+empirical_bayes <- function(summary_data){
 
-{
-
-  if(nrow(summary_data) == 1){return(summary_data)}
+  stopifnot(all(c("rsid", "beta","se") %in% names(summary_data)))
+  stopifnot(!all(is.na(summary_data$rsid)) && !all(is.na(summary_data$beta)) && !all(is.na(summary_data$se)))
+  stopifnot(nrow(summary_data) > 50)
+  stopifnot(is.numeric(summary_data$rsid) && is.numeric(summary_data$rsid) && is.numeric(summary_data$rsid))
+  stopifnot(!any(duplicated(summary_data$rsid)))
 
   z <- summary_data$beta/summary_data$se
 

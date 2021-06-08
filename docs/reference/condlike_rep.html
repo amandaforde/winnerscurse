@@ -147,7 +147,7 @@ association estimate, if desired by the user.</p>
     <pre class="usage"><span class='fu'>condlike_rep</span><span class='op'>(</span>
   <span class='va'>summary_disc</span>,
   <span class='va'>summary_rep</span>,
-  <span class='va'>alpha</span>,
+  alpha <span class='op'>=</span> <span class='fl'>5e-08</span>,
   conf_interval <span class='op'>=</span> <span class='cn'>FALSE</span>,
   conf_level <span class='op'>=</span> <span class='fl'>0.95</span>
 <span class='op'>)</span></pre>
@@ -160,19 +160,24 @@ association estimate, if desired by the user.</p>
       <td><p>A data frame containing summary statistics from the
 <em>discovery</em> GWAS. It must have three columns with column names
 <code>rsid</code>, <code>beta</code> and <code>se</code>, respectively, and all columns must
-contain numerical values.</p></td>
+contain numerical values. Each row must correspond to a unique SNP,
+identified by the numerical value <code>rsid</code>.</p></td>
     </tr>
     <tr>
       <th>summary_rep</th>
       <td><p>A data frame containing summary statistics from the
 <em>replication</em> GWAS. It must have three columns with column names
 <code>rsid</code>, <code>beta</code> and <code>se</code>, respectively, and all columns must
-contain numerical values.</p></td>
+contain numerical values. Each row must correspond to a unique SNP,
+identified by the numerical value <code>rsid</code>. SNPs must be ordered in the
+exact same manner as those in <code>summary_disc</code>, i.e.
+<code>summary_rep$rsid</code> must be equivalent to <code>summary_disc$rsid</code>.</p></td>
     </tr>
     <tr>
       <th>alpha</th>
       <td><p>A numerical value which specifies the desired genome-wide
-significance threshold for the discovery GWAS.</p></td>
+significance threshold for the discovery GWAS. The default is given as
+<code>5e-8</code>.</p></td>
     </tr>
     <tr>
       <th>conf_interval</th>
@@ -208,8 +213,8 @@ adjusted association estimate for each SNP.</p></td>
   contained in this data frame according to their significance, with the most
   significant SNP, i.e. the SNP with the largest absolute \(z\)-statistic,
   now located in the first row of the data frame. If no SNPs are detected as
-  significant in the discovery GWAS, <code>condlike_rep</code> merely returns
-  a data frame which combines the two inputted data sets.</p>
+  significant in the discovery GWAS, <code>condlike_rep</code> merely returns a
+  data frame which combines the two inputted data sets.</p>
     <h2 class="hasAnchor" id="references"><a class="anchor" href="#references"></a>References</h2>
 
     <p>Zhong, H., &amp; Prentice, R. L. (2008). Bias-reduced estimators and
