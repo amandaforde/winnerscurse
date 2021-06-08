@@ -7,7 +7,7 @@ context("conditional likelihood")
 test_that("testing if conditional likelihood functions adjust correctly",
 
           {
-            summary_data <- data.frame(rsID = c(1,2),beta = c(1.5,1.3), se =c(0.25,0.25))
+            summary_data <- data.frame(rsid = c(1,2),beta = c(1.5,1.3), se =c(0.25,0.25))
             alpha <- 2*(1-pnorm(5))
 
             out <- conditional_likelihood(summary_data,alpha)
