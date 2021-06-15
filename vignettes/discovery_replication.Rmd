@@ -97,7 +97,7 @@ out1_conf <- condlike_rep(summary_disc=stats_disc, summary_rep=stats_rep, alpha=
 head(out1_conf)
 ```
 
-- Note that the current computation of confidence intervals may not work in every situation and thus, ongoing work is being done to resolve this. 
+- **Note:** The current computation of confidence intervals may not work in every situation and thus, ongoing work is being done to resolve this. 
 
 ### Method 2: UMVCUE
 
