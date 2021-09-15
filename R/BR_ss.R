@@ -9,10 +9,10 @@
 #'
 #'@param summary_data A data frame containing summary statistics from the
 #'  discovery GWAS. It must have three columns with column names \code{rsid},
-#'  \code{beta} and \code{se}, respectively, and all columns must contain
-#'  numerical values. Each row must correspond to a unique SNP, identified by
-#'  the numerical value \code{rsid}. The function requires that there must be at
-#'  least 5 SNPs as any less will result in issues upon usage of the
+#'  \code{beta} and \code{se}, respectively, and columns \code{beta} and
+#'  \code{se} must contain numerical values. Each row must correspond to a
+#'  unique SNP, identified by \code{rsid}. The function requires that there must
+#'  be at least 5 SNPs as any less will result in issues upon usage of the
 #'  smoothing spline.
 #'@param seed_opt A logical value which allows the user to choose if they wish
 #'  to set a seed, in order to ensure reproducibility of adjusted estimates.
@@ -49,7 +49,7 @@ BR_ss <- function(summary_data,seed_opt = FALSE,seed=1998){
     stopifnot(all(c("rsid", "beta","se") %in% names(summary_data)))
     stopifnot(!all(is.na(summary_data$rsid)) && !all(is.na(summary_data$beta)) && !all(is.na(summary_data$se)))
     stopifnot(nrow(summary_data) > 5)
-    stopifnot(is.numeric(summary_data$rsid) && is.numeric(summary_data$rsid) && is.numeric(summary_data$rsid))
+    stopifnot(is.numeric(summary_data$beta) && is.numeric(summary_data$se))
     stopifnot(!any(duplicated(summary_data$rsid)))
 
     summary_data <- dplyr::arrange(summary_data, dplyr::desc((summary_data$beta/summary_data$se)))

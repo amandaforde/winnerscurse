@@ -11,9 +11,9 @@
 #'
 #' @param summary_data A data frame containing summary statistics from the
 #'   discovery GWAS. It must have three columns with column names \code{rsid},
-#'   \code{beta} and \code{se}, respectively, and all columns must contain
-#'   numerical values. Each row must correspond to a unique SNP, identified by
-#'  the numerical value \code{rsid}.
+#'   \code{beta} and \code{se}, respectively, and columns \code{beta} and
+#'   \code{se} must contain numerical values. Each row must correspond to a
+#'   unique SNP, identified by \code{rsid}.
 #' @param alpha A numerical value which specifies the desired genome-wide
 #'   significance threshold. The default is given as \code{5e-8}.
 #'
@@ -38,10 +38,10 @@
 #'
 #'
 #' @seealso
-#'   \url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}
-#'    for illustration of the use of \code{conditional_likelihood} with a toy
-#'   data set and further information regarding the computation of the adjusted
-#'   SNP-trait association estimates for significant SNPs.
+#' \url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}
+#' for illustration of the use of \code{conditional_likelihood} with a toy data
+#' set and further information regarding the computation of the adjusted
+#' SNP-trait association estimates for significant SNPs.
 #' @export
 #'
 #'
@@ -49,7 +49,7 @@ conditional_likelihood <- function(summary_data, alpha=5e-8){
 
   stopifnot(all(c("rsid", "beta","se") %in% names(summary_data)))
   stopifnot(!all(is.na(summary_data$rsid)) && !all(is.na(summary_data$beta)) && !all(is.na(summary_data$se)))
-  stopifnot(is.numeric(summary_data$rsid) && is.numeric(summary_data$rsid) && is.numeric(summary_data$rsid))
+  stopifnot(is.numeric(summary_data$beta) && is.numeric(summary_data$se))
   stopifnot(!any(duplicated(summary_data$rsid)))
 
 

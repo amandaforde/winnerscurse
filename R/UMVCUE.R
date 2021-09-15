@@ -10,19 +10,19 @@
 #'
 #'@param summary_disc A data frame containing summary statistics from the
 #'  \emph{discovery} GWAS. It must have three columns with column names
-#'  \code{rsid}, \code{beta} and \code{se}, respectively, and all columns must
-#'  contain numerical values. Each row must correspond to a unique SNP,
-#'   identified by the numerical value \code{rsid}.
+#'  \code{rsid}, \code{beta} and \code{se}, respectively, and columns
+#'  \code{beta} and \code{se} must contain numerical values. Each row must
+#'  correspond to a unique SNP, identified by \code{rsid}.
 #'@param summary_rep A data frame containing summary statistics from the
 #'  \emph{replication} GWAS. It must have three columns with column names
 #'  \code{rsid}, \code{beta} and \code{se}, respectively, and all columns must
 #'  contain numerical values. Each row must correspond to a unique SNP,
-#'   identified by the numerical value \code{rsid}. SNPs must be ordered in the
-#'   exact same manner as those in \code{summary_disc}, i.e.
-#'   \code{summary_rep$rsid} must be equivalent to \code{summary_disc$rsid}.
+#'  identified by the numerical value \code{rsid}. SNPs must be ordered in the
+#'  exact same manner as those in \code{summary_disc}, i.e.
+#'  \code{summary_rep$rsid} must be equivalent to \code{summary_disc$rsid}.
 #'@param alpha A numerical value which specifies the desired genome-wide
 #'  significance threshold for the discovery GWAS. The default is given as
-#'   \code{5e-8}.
+#'  \code{5e-8}.
 #'
 #'@return A data frame with summary statistics and adjusted association estimate
 #'  of only those SNPs which have been deemed significant in the discovery GWAS

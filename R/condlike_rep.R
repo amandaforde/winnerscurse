@@ -11,9 +11,9 @@
 #'
 #' @param summary_disc A data frame containing summary statistics from the
 #'   \emph{discovery} GWAS. It must have three columns with column names
-#'   \code{rsid}, \code{beta} and \code{se}, respectively, and all columns must
-#'   contain numerical values. Each row must correspond to a unique SNP,
-#'   identified by the numerical value \code{rsid}.
+#'   \code{rsid}, \code{beta} and \code{se}, respectively, and columns
+#'   \code{beta} and \code{se} must contain numerical values. Each row must
+#'   correspond to a unique SNP, identified by \code{rsid}.
 #' @param summary_rep A data frame containing summary statistics from the
 #'   \emph{replication} GWAS. It must have three columns with column names
 #'   \code{rsid}, \code{beta} and \code{se}, respectively, and all columns must
@@ -71,12 +71,12 @@ condlike_rep <- function(summary_disc,summary_rep,alpha=5e-8, conf_interval=FALS
 
   stopifnot(all(c("rsid", "beta","se") %in% names(summary_disc)))
   stopifnot(!all(is.na(summary_disc$rsid)) && !all(is.na(summary_disc$beta)) && !all(is.na(summary_disc$se)))
-  stopifnot(is.numeric(summary_disc$rsid) && is.numeric(summary_disc$rsid) && is.numeric(summary_disc$rsid))
+  stopifnot(is.numeric(summary_data$beta) && is.numeric(summary_data$se))
   stopifnot(!any(duplicated(summary_disc$rsid)))
 
   stopifnot(all(c("rsid", "beta","se") %in% names(summary_rep)))
   stopifnot(!all(is.na(summary_rep$rsid)) && !all(is.na(summary_rep$beta)) && !all(is.na(summary_rep$se)))
-  stopifnot(is.numeric(summary_rep$rsid) && is.numeric(summary_rep$rsid) && is.numeric(summary_rep$rsid))
+  stopifnot(is.numeric(summary_rep$beta)  && is.numeric(summary_rep$se))
   stopifnot(!any(duplicated(summary_rep$rsid)))
 
   stopifnot(summary_disc$rsid == summary_rep$rsid)
