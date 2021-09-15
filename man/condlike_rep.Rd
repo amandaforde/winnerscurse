@@ -15,9 +15,9 @@ condlike_rep(
 \arguments{
 \item{summary_disc}{A data frame containing summary statistics from the
 \emph{discovery} GWAS. It must have three columns with column names
-\code{rsid}, \code{beta} and \code{se}, respectively, and all columns must
-contain numerical values. Each row must correspond to a unique SNP,
-identified by the numerical value \code{rsid}.}
+\code{rsid}, \code{beta} and \code{se}, respectively, and columns
+\code{beta} and \code{se} must contain numerical values. Each row must
+correspond to a unique SNP, identified by \code{rsid}.}
 
 \item{summary_rep}{A data frame containing summary statistics from the
 \emph{replication} GWAS. It must have three columns with column names

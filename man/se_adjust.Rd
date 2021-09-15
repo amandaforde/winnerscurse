@@ -9,16 +9,17 @@ se_adjust(summary_data, method, n_boot = 100)
 \arguments{
 \item{summary_data}{A data frame containing summary statistics from the
 discovery GWAS. It must have three columns with column names \code{rsid},
-\code{beta} and \code{se}, respectively, and all columns must contain
-numerical values. Each row must correspond to a unique SNP,
-identified by the numerical value \code{rsid}.}
+\code{beta} and \code{se}, respectively, and columns \code{beta} and
+\code{se} must contain numerical values. Each row must correspond to a
+unique SNP, identified by \code{rsid}.}
 
 \item{method}{A string specifying the function to be implemented on each of
 the bootstrap samples. It should take the form \code{"BR_ss"},
 \code{"empirical_bayes"} or \code{"FDR_IQT"}.}
 
 \item{n_boot}{A numerical value which determines the number of bootstrap
-repetitions to be used. it must be greater than 1. The default value is \code{100}.}
+repetitions to be used. it must be greater than 1. The default value is
+\code{100}.}
 }
 \value{
 A data frame which combines the output of the chosen method with an

@@ -9,7 +9,7 @@ FDR_IQT(summary_data, min_pval = 1e-15)
 \arguments{
 \item{summary_data}{A data frame containing summary statistics from the
 discovery GWAS. It must have three columns with column names \code{rsid},
-\code{beta} and \code{se}, respectively, and all columns must contain
+\code{beta} and \code{se}, respectively, and columns \code{beta} and \code{se} must contain
 numerical values. Each row must correspond to a unique SNP, identified by
 the numerical value \code{rsid}.}
 

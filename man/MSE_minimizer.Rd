@@ -9,11 +9,11 @@ MSE_minimizer(summary_disc, summary_rep, alpha = 5e-08, spline = TRUE)
 \arguments{
 \item{summary_disc}{A data frame containing summary statistics from the
 \emph{discovery} GWAS. It must have three columns with column names
-\code{rsid}, \code{beta} and \code{se}, respectively, and all columns must
-contain numerical values. Each row must correspond to a unique SNP,
-identified by the numerical value \code{rsid}. The function requires that
-there must be at least 5 SNPs as any less will result in issues upon usage
-of the smoothing spline.}
+\code{rsid}, \code{beta} and \code{se}, respectively, and columns
+\code{beta} and \code{se} must contain numerical values. Each row must
+correspond to a unique SNP, identified by \code{rsid}. The function
+requires that there must be at least 5 SNPs as any less will result in
+issues upon usage of the smoothing spline.}
 
 \item{summary_rep}{A data frame containing summary statistics from the
 \emph{replication} GWAS. It must have three columns with column names

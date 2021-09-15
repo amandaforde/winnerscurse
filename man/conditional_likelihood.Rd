@@ -8,10 +8,10 @@ conditional_likelihood(summary_data, alpha = 5e-08)
 }
 \arguments{
 \item{summary_data}{A data frame containing summary statistics from the
- discovery GWAS. It must have three columns with column names \code{rsid},
- \code{beta} and \code{se}, respectively, and all columns must contain
- numerical values. Each row must correspond to a unique SNP, identified by
-the numerical value \code{rsid}.}
+discovery GWAS. It must have three columns with column names \code{rsid},
+\code{beta} and \code{se}, respectively, and columns \code{beta} and
+\code{se} must contain numerical values. Each row must correspond to a
+unique SNP, identified by \code{rsid}.}
 
 \item{alpha}{A numerical value which specifies the desired genome-wide
 significance threshold. The default is given as \code{5e-8}.}
@@ -48,7 +48,7 @@ Ghosh, A., Zou, F., & Wright, F. A. (2008). Estimating odds
 }
 \seealso{
 \url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}
-   for illustration of the use of \code{conditional_likelihood} with a toy
-  data set and further information regarding the computation of the adjusted
-  SNP-trait association estimates for significant SNPs.
+for illustration of the use of \code{conditional_likelihood} with a toy data
+set and further information regarding the computation of the adjusted
+SNP-trait association estimates for significant SNPs.
 }
