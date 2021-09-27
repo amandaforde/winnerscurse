@@ -7,7 +7,9 @@
 #' \code{\link{conditional_likelihood}}. This function produces one confidence
 #' interval for each significant SNP, based on the approach suggested in
 #' \href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/}{Ghosh \emph{et
-#' al.} (2008)}.
+#' al.} (2008)}. Note that in order for an appropriate confidence interval to be
+#' outputted for each significant SNP, the absolute value of the largest
+#' \eqn{z}-statistic in the data set must be less than 150.
 #'
 #' @param summary_data A data frame containing summary statistics from the
 #'   discovery GWAS. It must have three columns with column names \code{rsid},
@@ -54,13 +56,27 @@ cl_interval <- function(summary_data,alpha=5e-8, conf_level=0.95){
 
   for (i in 1:nrow(summary_data)){
     cond.like <- function (mu) { return ((stats::dnorm(z[i]-mu))/(stats::pnorm(-c+mu)+stats::pnorm(-c-mu)))}
-    norm.cond.like <- function (x) {cond.like(x)/(stats::integrate(cond.like,-37,37)$value)}
 
-    fun_low <- function(y){return(stats::integrate(norm.cond.like,-37,y)$value - ((1-conf_level)/2))}
-    lower[i] <- (stats::uniroot(fun_low,interval=c(-37,37))$root)*summary_data$se[i]
+    if ( abs(z[i]) < 37){
+      norm.cond.like <- function (x) {cond.like(x)/(stats::integrate(cond.like,-37,37)$value)}
 
-    fun_upp <- function(y){return(stats::integrate(norm.cond.like,-37,y)$value - (1-(1-conf_level)/2))}
-    upper[i] <- (stats::uniroot(fun_upp,interval=c(-37,37))$root)*summary_data$se[i]
+      fun_low <- function(y){return(stats::integrate(norm.cond.like,-37,y)$value - ((1-conf_level)/2))}
+      lower[i] <- (stats::uniroot(fun_low,interval=c(-37,37))$root)*summary_data$se[i]
+
+      fun_upp <- function(y){return(stats::integrate(norm.cond.like,-37,y)$value - (1-(1-conf_level)/2))}
+      upper[i] <- (stats::uniroot(fun_upp,interval=c(-37,37))$root)*summary_data$se[i]
+
+    }else{
+      norm.cond.like <- function (x) {cond.like(x)/(stats::integrate(cond.like,-150,150)$value)}
+
+      fun_low <- function(y){return(stats::integrate(norm.cond.like,-150,y)$value - ((1-conf_level)/2))}
+      lower[i] <- (stats::uniroot(fun_low,interval=c(-150,150))$root)*summary_data$se[i]
+
+      fun_upp <- function(y){return(stats::integrate(norm.cond.like,-150,y)$value - (1-(1-conf_level)/2))}
+      upper[i] <- (stats::uniroot(fun_upp,interval=c(-150,150))$root)*summary_data$se[i]
+
+    }
+
 
   }
 

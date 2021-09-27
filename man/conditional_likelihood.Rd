@@ -38,7 +38,10 @@ considered significant. The function implements the approximate conditional
 likelihood approach, discussed in
 \href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/}{Ghosh \emph{et
 al.} (2008)}, which suggests three different forms of a less biased
-association estimate.
+association estimate. Note that in order for an appropriate value for the
+second form of the adjusted estimate, namely \code{beta.cl2}, to be outputted
+for each significant SNP, the absolute value of the largest \eqn{z}-statistic
+in the data set must be less than 150.
 }
 \references{
 Ghosh, A., Zou, F., & Wright, F. A. (2008). Estimating odds

@@ -76,7 +76,10 @@ head(out_FIQT)
 
 ### Confidence intervals for estimates adjusted by conditional likelihood methods 
 
-- The function `cl_interval` implements the conditional likelihood methods described in [Ghosh *et al.* (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/) for each significant SNP and together with the three adjusted estimates, provides a single confidence interval for each SNP. As well as a data set in the form of a data frame with columns `rsid`, `beta` and `se`, `cl_interval` requires `alpha`, a value which specifies the significance threshold and `conf`, a value between 0 and 1 which determines the confidence interval. The default setting for `conf` is 0.95.
+- The function `cl_interval` implements the conditional likelihood methods described in [Ghosh *et al.* (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/) for each significant SNP and together with the three adjusted estimates, provides a single confidence interval for each SNP. As well as a data set in the form of a data frame with columns `rsid`, `beta` and `se`, `cl_interval` requires `alpha`, a value which specifies the significance threshold and `conf`, a value between 0 and 1 which determines the confidence interval. The default setting for `conf` is 0.95. 
+
+- **Note:** In order for this function to output an appropriate confidence interval for each significant SNP, the absolute value of the largest
+$z$-statistic in the data set must be less than 150.
 
 - This confidence interval for the adjusted estimate is specified in [Ghosh *et al.* (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/). With $\mu = \frac{\beta}{\text{se}(\beta)}$ and $z = \frac{\hat\beta}{\hat{\text{se}(\hat\beta)}}$, consider the acceptance region $A(\mu,1-\eta)$, which is defined as the interval between the $\eta/2$ and $1-\eta/2$ quantiles of the conditional density, $p_{\mu}(z | \mid Z \mid > c )$. Having obtained the lower and upper boundaries of this acceptance region, the desired confidence interval is given as: $$(\mu_{\text{lower}}\hat{\text{se}(\hat\beta)}, \mu_{\text{upper}}\hat{\text{se}(\hat\beta)}).$$                           
 

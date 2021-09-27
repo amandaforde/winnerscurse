@@ -47,7 +47,10 @@ considered significant. The function implements the approximate conditional
 likelihood approach, discussed in
 Ghosh et
 al. (2008), which suggests three different forms of a less biased
-association estimate." />
+association estimate. Note that in order for an appropriate value for the
+second form of the adjusted estimate, namely beta.cl2, to be outputted
+for each significant SNP, the absolute value of the largest \(z\)-statistic
+in the data set must be less than 150." />
 
 
 
@@ -141,7 +144,10 @@ considered significant. The function implements the approximate conditional
 likelihood approach, discussed in
 <a href='https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/'>Ghosh <em>et
 al.</em> (2008)</a>, which suggests three different forms of a less biased
-association estimate.</p>
+association estimate. Note that in order for an appropriate value for the
+second form of the adjusted estimate, namely <code>beta.cl2</code>, to be outputted
+for each significant SNP, the absolute value of the largest \(z\)-statistic
+in the data set must be less than 150.</p>
     </div>
 
     <pre class="usage"><span class='fu'>conditional_likelihood</span><span class='op'>(</span><span class='va'>summary_data</span>, alpha <span class='op'>=</span> <span class='fl'>5e-08</span><span class='op'>)</span></pre>
@@ -152,10 +158,10 @@ association estimate.</p>
     <tr>
       <th>summary_data</th>
       <td><p>A data frame containing summary statistics from the
- discovery GWAS. It must have three columns with column names <code>rsid</code>,
- <code>beta</code> and <code>se</code>, respectively, and all columns must contain
- numerical values. Each row must correspond to a unique SNP, identified by
-the numerical value <code>rsid</code>.</p></td>
+discovery GWAS. It must have three columns with column names <code>rsid</code>,
+<code>beta</code> and <code>se</code>, respectively, and columns <code>beta</code> and
+<code>se</code> must contain numerical values. Each row must correspond to a
+unique SNP, identified by <code>rsid</code>.</p></td>
     </tr>
     <tr>
       <th>alpha</th>
@@ -187,9 +193,9 @@ significance threshold. The default is given as <code>5e-8</code>.</p></td>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
     <div class='dont-index'><p><a href='https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html'>https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html</a>
-   for illustration of the use of <code>conditional_likelihood</code> with a toy
-  data set and further information regarding the computation of the adjusted
-  SNP-trait association estimates for significant SNPs.</p></div>
+for illustration of the use of <code>conditional_likelihood</code> with a toy data
+set and further information regarding the computation of the adjusted
+SNP-trait association estimates for significant SNPs.</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

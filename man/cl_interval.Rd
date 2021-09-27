@@ -35,7 +35,9 @@ have been obtained through the implementation of
 \code{\link{conditional_likelihood}}. This function produces one confidence
 interval for each significant SNP, based on the approach suggested in
 \href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/}{Ghosh \emph{et
-al.} (2008)}.
+al.} (2008)}. Note that in order for an appropriate confidence interval to be
+outputted for each significant SNP, the absolute value of the largest
+\eqn{z}-statistic in the data set must be less than 150.
 }
 \references{
 Ghosh, A., Zou, F., & Wright, F. A. (2008). Estimating odds
