@@ -91,7 +91,7 @@ head(summary_stats)
 - **Note:**  In order for this function to output an appropriate value for the
 second form of the adjusted estimate, namely `beta.cl2`,
 for each significant SNP, the absolute value of the largest $z$-statistic
-in the data set must be less than 150.
+in the dataset must be less than 150.
 
 - If no SNPs are detected as significant, the function merely returns the inputted data frame. 
 

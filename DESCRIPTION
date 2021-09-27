@@ -17,8 +17,7 @@ Suggests:
     testthat,
     knitr,
     markdown,
-    rmarkdown,
-    pandoc
+    rmarkdown
 RoxygenNote: 7.1.1
 Imports: 
     stats,
