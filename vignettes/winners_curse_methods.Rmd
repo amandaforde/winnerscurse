@@ -214,6 +214,7 @@ mean_abs_diff_2
 
 frac_less_bias_2 <- data.frame(beta_EB = (sum(abs(true_beta[out_EB$rsid] - out_EB$beta) > abs(true_beta[out_EB$rsid] - out_EB$beta_EB)))/nrow(out_EB), beta_FIQT = (sum(abs(true_beta[out_FIQT$rsid] - out_FIQT$beta) > abs(true_beta[out_FIQT$rsid] - out_FIQT$beta_FIQT)))/nrow(out_FIQT), beta_BR_ss = (sum(abs(true_beta[out_BR_ss$rsid] - out_BR_ss$beta) > abs(true_beta[out_BR_ss$rsid] - out_BR_ss$beta_BR_ss)))/nrow(out_BR_ss))
 frac_less_bias_2
+
 ```
 Again, we see that in the top two cases, the value associated with the naive estimate is greatest. This assures us that the new adjusted estimates provided by each method are indeed less biased than the original $\beta$ estimate. In fact, for each method, at least `r round(min(frac_less_bias_2[1,]),2)*100`% of the association estimates of all SNPs are now less biased. 
 
@@ -233,6 +234,7 @@ mean_abs_diff_3
 
 frac_less_bias_3 <- data.frame(beta.cl1 = (sum(abs(true_beta[out_CL$rsid] - out_CL$beta) > abs(true_beta[out_CL$rsid] - out_CL$beta.cl1)))/nrow(out_CL), beta.cl2 = (sum(abs(true_beta[out_CL$rsid] - out_CL$beta) > abs(true_beta[out_CL$rsid] - out_CL$beta.cl2)))/nrow(out_CL), beta.cl3 = (sum(abs(true_beta[out_CL$rsid] - out_CL$beta) > abs(true_beta[out_CL$rsid] - out_CL$beta.cl3)))/nrow(out_CL), beta_EB = (sum(abs(true_beta[out_EB_sig$rsid] - out_EB_sig$beta) > abs(true_beta[out_EB_sig$rsid] - out_EB_sig$beta_EB)))/nrow(out_EB_sig), beta_FIQT = (sum(abs(true_beta[out_FIQT_sig$rsid] - out_FIQT_sig$beta) > abs(true_beta[out_FIQT_sig$rsid] - out_FIQT_sig$beta_FIQT)))/nrow(out_FIQT_sig), beta_BR_ss = (sum(abs(true_beta[out_BR_ss_sig$rsid] - out_BR_ss_sig$beta) > abs(true_beta[out_BR_ss_sig$rsid] - out_BR_ss_sig$beta_BR_ss)))/nrow(out_BR_ss_sig))
 frac_less_bias_3
+
 ```
 
 
