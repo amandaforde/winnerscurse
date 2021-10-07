@@ -267,7 +267,7 @@ $~$
 
 **TO DO:** 
 
-- *How to let data make decision on number of SNPs to use in the extremes for `empirical_bayes`? Solution: have a look at real data sets!*
+- *How to let data make decision on number of SNPs to use in the extremes for `empirical_bayes`? Solution: have a look at real data sets! Real data sets as well as simulations also used to investigate properties of all of the methods.*
 
 
 
