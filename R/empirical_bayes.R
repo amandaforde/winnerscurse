@@ -75,7 +75,10 @@ empirical_bayes <- function(summary_data){
   mids_est[mids>0] <- pmax(0, mids[mids>0] + diff_interpol[mids>0])
   mids_est[mids<0] <- pmin(0, mids[mids<0] + diff_interpol[mids<0])
 
-  z_hat <- stats::approx(mids,mids_est,z,rule=2,ties=mean)$y
+  z_hat <- stats::approx(mids,mids_est,z,rule=1,ties=mean)$y
+  z_hat[is.na(z_hat) & z > 0] <-  z[is.na(z_hat) & z > 0] +   diff_interpol[length(diff_interpol)]
+
+  z_hat[is.na(z_hat) & z < 0] <-  z[is.na(z_hat) & z < 0] + diff_interpol[1]
   z_hat <- sign(z)*pmin(abs(z),abs(z_hat))
 
   beta_EB <- z_hat*summary_data$se
@@ -86,4 +89,6 @@ empirical_bayes <- function(summary_data){
   return(summary_data)
 
 }
+
+
 
