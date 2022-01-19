@@ -1,12 +1,10 @@
-# Winner's Curse Adjustment Methods for GWAS summary statistics
-
-
 <!-- badges: start -->
   [![R-CMD-check](https://github.com/amandaforde/winners_curse/workflows/R-CMD-check/badge.svg)](https://github.com/amandaforde/winners_curse/actions)
   [![Codecov test coverage](https://codecov.io/gh/amandaforde/winners_curse/branch/master/graph/badge.svg)](https://codecov.io/gh/amandaforde/winners_curse)
-  <!-- badges: end -->
+<!-- badges: end -->
 
 
+# Winner's Curse Adjustment Methods for GWAS summary statistics
 
 This package, `winnerscurse`, has been designed to provide easy access to published methods which aim to correct for Winner's Curse, using GWAS summary statistics. With merely estimates of the SNP-trait association, `beta`, and corresponding standard error, `se`, for each SNP, this package permits users to implement adjustment methods to obtain less biased estimates of the true `beta` values. Methods can be applied to data relating to both quantitative and binary traits. This package contains functions which can be implemented with just the summary statistics from a discovery GWAS as well as functions which require summary data from both discovery and replication GWASs. Users can also obtain confidence intervals and standard errors for certain adjusted association estimates. 
 
