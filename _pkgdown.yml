@@ -1,0 +1,23 @@
+template:
+  params:
+    bootswatch: lumen
+
+navbar:
+  left:
+    - text: "Articles"
+      href: articles/index.html
+    - text: "Functions"
+      href: reference/index.html
+  right:
+    - text: "Source"
+      href: https://github.com/amandaforde/winners_curse
+
+articles:
+  - title: "Guides"
+    desc: >
+      The following pages provide further details of the functions in this package and illustrate how they may be used.
+    contents:
+      - winners_curse_methods
+      - discovery_replication
+      - standard_errors_confidence_intervals
+
