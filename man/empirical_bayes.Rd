@@ -4,7 +4,7 @@
 \alias{empirical_bayes}
 \title{Empirical Bayes method for use with discovery GWAS}
 \usage{
-empirical_bayes(summary_data)
+empirical_bayes(summary_data, AIC = TRUE)
 }
 \arguments{
 \item{summary_data}{A data frame containing summary statistics from the
@@ -14,6 +14,11 @@ discovery GWAS. It must have three columns with column names \code{rsid},
 unique SNP, identified by \code{rsid}. The function requires that there must
 be at least 50 SNPs as any less will result in very poor performance of the
 method.}
+
+\item{AIC}{A logical value which allows the user to choose if they wish to use
+an AIC approach to determine an appropriate value for the degrees of
+freedom. The default setting is \code{AIC=TRUE}. If \code{AIC=FALSE}, the
+degrees of freedom is set to 6.}
 }
 \value{
 A data frame with the inputted summary data occupying the first three

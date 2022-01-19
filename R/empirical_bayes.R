@@ -13,6 +13,10 @@
 #'  unique SNP, identified by \code{rsid}. The function requires that there must
 #'  be at least 50 SNPs as any less will result in very poor performance of the
 #'  method.
+#'@param AIC A logical value which allows the user to choose if they wish to use
+#'  an AIC approach to determine an appropriate value for the degrees of
+#'  freedom. The default setting is \code{AIC=TRUE}. If \code{AIC=FALSE}, the
+#'  degrees of freedom is set to 6.
 #'
 #'@return A data frame with the inputted summary data occupying the first three
 #'  columns. The new adjusted association estimates for each SNP are returned in
@@ -35,7 +39,7 @@
 #'@export
 #'
 #'
-empirical_bayes <- function(summary_data){
+empirical_bayes <- function(summary_data, AIC=TRUE){
 
   stopifnot(all(c("rsid", "beta","se") %in% names(summary_data)))
   stopifnot(!all(is.na(summary_data$rsid)) && !all(is.na(summary_data$beta)) && !all(is.na(summary_data$se)))
@@ -53,14 +57,20 @@ empirical_bayes <- function(summary_data){
   boundary_lower <- sort(z)[most_extreme]
   boundary_upper <- sort(z,decreasing=TRUE)[most_extreme]
 
-  df <- 7
-  AIC_vector <- c(rep(0,28))
-  for (best_df in 3:30){
-    model <- stats::glm(counts ~ splines::ns(mids,knots = (seq(from=boundary_lower,to=boundary_upper,length=best_df+1)[2:best_df]), Boundary.knots=c(boundary_lower,boundary_upper)),stats::poisson,weights=rep(10^-50,length(counts)))
-    minus2loglike <- 10^50*(model$deviance)
-    AIC_vector[best_df-2] <- minus2loglike + 2*(best_df-2)
+
+  if(AIC==TRUE){
+    df <- 6
+    AIC_vector <- c(rep(0,28))
+    for (best_df in 3:30){
+      model <- stats::glm(counts ~ splines::ns(mids,knots = (seq(from=boundary_lower,to=boundary_upper,length=best_df+1)[2:best_df]), Boundary.knots=c(boundary_lower,boundary_upper)),stats::poisson,weights=rep(10^-50,length(counts)))
+      minus2loglike <- 10^50*(model$deviance)
+      AIC_vector[best_df-2] <- minus2loglike + 2*(best_df-2)
+    }
+    df <- 2 + which.min(AIC_vector)
+  }else{
+    df <- 6
   }
-  df <- 2 + which.min(AIC_vector)
+
 
   f <- stats::glm(counts ~ splines::ns(mids,knots = (seq(from=boundary_lower,to=boundary_upper,length=df+1)[2:df]), Boundary.knots=c(boundary_lower,boundary_upper)),stats::poisson,weight=rep(10^-50,length(counts)))$fit
   f[f==0] <- min(f[f>0])

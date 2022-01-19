@@ -1,7 +1,7 @@
 Package: winnerscurse
 Type: Package
 Title: Winner's Curse Adjustment Methods for GWAS Summary Statistics
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: person("Amanda", "Forde", email = "a.forde21@nuigalway.ie",
   role = c("aut", "cre"))
 Description: A package designed to provide easy access to published methods which aim to 
@@ -19,7 +19,7 @@ Suggests:
     markdown,
     rmarkdown (>= 2.11),
     covr
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2
 Imports: 
     stats,
     dplyr,

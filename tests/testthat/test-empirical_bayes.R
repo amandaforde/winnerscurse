@@ -24,9 +24,11 @@ test_that("testing if empirical bayes is giving appropriate output",
             summary_stats <- data.frame(rsid=seq(1,n_snps),beta=rnorm(n=n_snps,mean=true_beta,sd=se),se=se)
 
             out <- empirical_bayes(summary_stats)
+            test1 <- sum(abs(round(out$beta,6)) >= abs(round(out$beta_EB,6))) >= 0.9*length(out$beta)
+            expect_true(identical(test1,TRUE) == 1)
 
-            test <- sum(abs(round(out$beta,6)) >= abs(round(out$beta_EB,6))) >= 0.9*length(out$beta)
-
-            expect_true(identical(test,TRUE) == 1)
+            out <- empirical_bayes(summary_stats, AIC=FALSE)
+            test2 <- sum(abs(round(out$beta,6)) >= abs(round(out$beta_EB,6))) >= 0.9*length(out$beta)
+            expect_true(identical(test2,TRUE) == 1)
 
           })

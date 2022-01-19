@@ -96,4 +96,4 @@ $~$
 
 **TO DO:** 
 
-- *creating confidence intervals for other three methods but have noted that the adjusted estimates of `BR_ss` are not normally distributed - one option is obtain quantiles with parametric bootstrap, similar to implementation of `se_adjust` but very computationally intensive?*
+- *Creating confidence intervals for other three methods but have noted that the adjusted estimates of `BR_ss` are not normally distributed - one option is obtain quantiles with parametric bootstrap, similar to implementation of `se_adjust` but very computationally intensive?*

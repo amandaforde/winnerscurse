@@ -64,20 +64,27 @@ An important feature which distinguishes these four methods is detailed in the t
 set.seed(1998)
 
 n_snps <- 10^6
-effect_snps <- 10000
+
 n_samples <- 30000
+effect_snps <- 0.01*n_snps
 
 maf <- runif(n_snps,0.01,0.5)
 
 true_beta <- rnorm(effect_snps,0,1)
-h2 <- 0.7 # variance explained by effect SNPs
+h2 <- 0.7
+# variance explained by effect SNPs
 var_y <- sum(2*maf[1:effect_snps]*(1-maf[1:effect_snps])*true_beta^2)/h2
 
 true_beta <- true_beta/sqrt(var_y) # scaling to represent a phenotype with variance 1
 true_beta <- c(true_beta, rep(0,n_snps-effect_snps))
 se <- sqrt((1 - 2*maf*(1-maf)*true_beta^2)/(2*(n_samples-2)*maf*(1-maf)))
 
+
+
 summary_stats <- data.frame(rsid=seq(1,n_snps),beta=rnorm(n=n_snps,mean=true_beta,sd=se),se=se)
+
+
+
 
 head(summary_stats)
 ```
@@ -123,7 +130,7 @@ head(out_CL)
 
 - Below is a demonstration of using `empirical_bayes` with our toy data set:
 
-```{r}
+```{r, warning=FALSE}
 out_EB <- empirical_bayes(summary_data = summary_stats)
 head(out_EB)
 ```
@@ -265,9 +272,6 @@ legend(-0.008, 77.5, legend=c("beta_naive", "true_beta","beta_FIQT","beta.cl1","
 $~$
 $~$
 
-**TO DO:** 
-
-- *How to let data make decision on number of SNPs to use in the extremes for `empirical_bayes`? Solution: have a look at real data sets! Real data sets as well as simulations also used to investigate properties of all of the methods.*
 
 
 

@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,18 +33,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">winnerscurse</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.1</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../reference/index.html">Reference</a>
 </li>
@@ -75,7 +71,7 @@
 
       
 
-      </header><script src="standard_errors_confidence_intervals_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Standard errors and confidence intervals of adjusted estimates</h1>
@@ -89,27 +85,27 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://amandaforde.github.io/winnerscurse/">winnerscurse</a></span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://amandaforde.github.io/winnerscurse/" class="external-link">winnerscurse</a></span><span class="op">)</span></code></pre></div>
 <p>Using the same toy data set as was used to demonstrate the application of the adjustment functions, we will show how two other functions included in the package; <code>se_adjust</code> and <code>cl_interval</code>, may be implemented and discuss the properties of each.</p>
 <p>Firstly, the toy data set is created as before - a data frame with columns <code>rsid</code>, <code>beta</code> and <code>se</code>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">1998</span><span class="op">)</span>
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1998</span><span class="op">)</span>
 
 <span class="va">n_snps</span> <span class="op">&lt;-</span> <span class="fl">10</span><span class="op">^</span><span class="fl">6</span>
 <span class="va">effect_snps</span> <span class="op">&lt;-</span> <span class="fl">10000</span>
 <span class="va">n_samples</span> <span class="op">&lt;-</span> <span class="fl">30000</span>
-<span class="va">maf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html">runif</a></span><span class="op">(</span><span class="va">n_snps</span>,<span class="fl">0.01</span>,<span class="fl">0.5</span><span class="op">)</span>
-<span class="va">true_beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span><span class="va">effect_snps</span>,<span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>
+<span class="va">maf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">n_snps</span>,<span class="fl">0.01</span>,<span class="fl">0.5</span><span class="op">)</span>
+<span class="va">true_beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">effect_snps</span>,<span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>
 <span class="va">h2</span> <span class="op">&lt;-</span> <span class="fl">0.7</span> <span class="co"># variance explained by effect SNPs</span>
-<span class="va">var_y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">maf</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">effect_snps</span><span class="op">]</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">maf</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">effect_snps</span><span class="op">]</span><span class="op">)</span><span class="op">*</span><span class="va">true_beta</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">/</span><span class="va">h2</span>
-<span class="va">true_beta</span> <span class="op">&lt;-</span> <span class="va">true_beta</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="va">var_y</span><span class="op">)</span> <span class="co"># scaling to represent a phenotype with variance 1</span>
-<span class="va">true_beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="va">true_beta</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="va">n_snps</span><span class="op">-</span><span class="va">effect_snps</span><span class="op">)</span><span class="op">)</span>
-<span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">sqrt</a></span><span class="op">(</span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="fl">2</span><span class="op">*</span><span class="va">maf</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">maf</span><span class="op">)</span><span class="op">*</span><span class="va">true_beta</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="op">(</span><span class="va">n_samples</span><span class="op">-</span><span class="fl">2</span><span class="op">)</span><span class="op">*</span><span class="va">maf</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">maf</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
+<span class="va">var_y</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="va">maf</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">effect_snps</span><span class="op">]</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">maf</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="va">effect_snps</span><span class="op">]</span><span class="op">)</span><span class="op">*</span><span class="va">true_beta</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">/</span><span class="va">h2</span>
+<span class="va">true_beta</span> <span class="op">&lt;-</span> <span class="va">true_beta</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="va">var_y</span><span class="op">)</span> <span class="co"># scaling to represent a phenotype with variance 1</span>
+<span class="va">true_beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">true_beta</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fl">0</span>,<span class="va">n_snps</span><span class="op">-</span><span class="va">effect_snps</span><span class="op">)</span><span class="op">)</span>
+<span class="va">se</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">sqrt</a></span><span class="op">(</span><span class="op">(</span><span class="fl">1</span> <span class="op">-</span> <span class="fl">2</span><span class="op">*</span><span class="va">maf</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">maf</span><span class="op">)</span><span class="op">*</span><span class="va">true_beta</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">/</span><span class="op">(</span><span class="fl">2</span><span class="op">*</span><span class="op">(</span><span class="va">n_samples</span><span class="op">-</span><span class="fl">2</span><span class="op">)</span><span class="op">*</span><span class="va">maf</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="va">maf</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 
-<span class="va">summary_stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>rsid<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="va">n_snps</span><span class="op">)</span>,beta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html">rnorm</a></span><span class="op">(</span>n<span class="op">=</span><span class="va">n_snps</span>,mean<span class="op">=</span><span class="va">true_beta</span>,sd<span class="op">=</span><span class="va">se</span><span class="op">)</span>,se<span class="op">=</span><span class="va">se</span><span class="op">)</span></code></pre></div>
-<div id="obtaining-standard-errors-of-adjusted-estimates" class="section level3">
-<h3 class="hasAnchor">
-<a href="#obtaining-standard-errors-of-adjusted-estimates" class="anchor"></a>Obtaining standard errors of adjusted estimates</h3>
+<span class="va">summary_stats</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>rsid<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">1</span>,<span class="va">n_snps</span><span class="op">)</span>,beta<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span>n<span class="op">=</span><span class="va">n_snps</span>,mean<span class="op">=</span><span class="va">true_beta</span>,sd<span class="op">=</span><span class="va">se</span><span class="op">)</span>,se<span class="op">=</span><span class="va">se</span><span class="op">)</span></code></pre></div>
+<div class="section level3">
+<h3 id="obtaining-standard-errors-of-adjusted-estimates">Obtaining standard errors of adjusted estimates<a class="anchor" aria-label="anchor" href="#obtaining-standard-errors-of-adjusted-estimates"></a>
+</h3>
 <ul>
 <li>
 <p>The function <code>se_adjust</code> has three parameters:</p>
@@ -132,17 +128,17 @@
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">out_EB</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/se_adjust.html">se_adjust</a></span><span class="op">(</span>summary_data <span class="op">=</span> <span class="va">summary_stats</span>, method <span class="op">=</span> <span class="st">"empirical_bayes"</span>, n_boot<span class="op">=</span><span class="fl">10</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">out_EB</span><span class="op">)</span>
-<span class="co">#&gt;   rsid        beta          se     beta_EB     adj_se</span>
-<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.05127625 0.01191990</span>
-<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.05307140 0.01195209</span>
-<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.05057030 0.01372858</span>
-<span class="co">#&gt; 4 7261  0.05510736 0.008186396  0.04624187 0.01250742</span>
-<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.04714887 0.01358060</span>
-<span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.04580573 0.00847833</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">out_EB</span><span class="op">)</span>
+<span class="co">#&gt;   rsid        beta          se     beta_EB      adj_se</span>
+<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.05177699 0.012056841</span>
+<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.05355088 0.012128193</span>
+<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.05107993 0.013921651</span>
+<span class="co">#&gt; 4 7261  0.05510736 0.008186396  0.04624187 0.012507416</span>
+<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.04714887 0.013614514</span>
+<span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.04580573 0.008606223</span>
 
 <span class="va">out_BR_ss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/se_adjust.html">se_adjust</a></span><span class="op">(</span>summary_data <span class="op">=</span> <span class="va">summary_stats</span>, method <span class="op">=</span> <span class="st">"BR_ss"</span>, n_boot<span class="op">=</span><span class="fl">10</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">out_BR_ss</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">out_BR_ss</span><span class="op">)</span>
 <span class="co">#&gt;   rsid        beta          se  beta_BR_ss      adj_se</span>
 <span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.04608950 0.009319973</span>
 <span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.04765488 0.009184917</span>
@@ -152,7 +148,7 @@
 <span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.03858223 0.005714822</span>
 
 <span class="va">out_FIQT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/se_adjust.html">se_adjust</a></span><span class="op">(</span>summary_data <span class="op">=</span> <span class="va">summary_stats</span>, method <span class="op">=</span> <span class="st">"FDR_IQT"</span>, n_boot<span class="op">=</span><span class="fl">10</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">out_FIQT</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">out_FIQT</span><span class="op">)</span>
 <span class="co">#&gt;   rsid        beta          se   beta_FIQT      adj_se</span>
 <span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.04419398 0.015086292</span>
 <span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.04574119 0.017748660</span>
@@ -164,13 +160,13 @@
 <li>Due to the nature of the conditional likelihood methods, we cannot obtain standard errors of the adjusted <code>beta</code> estimates in this manner.</li>
 </ul>
 </div>
-<div id="confidence-intervals-for-estimates-adjusted-by-conditional-likelihood-methods" class="section level3">
-<h3 class="hasAnchor">
-<a href="#confidence-intervals-for-estimates-adjusted-by-conditional-likelihood-methods" class="anchor"></a>Confidence intervals for estimates adjusted by conditional likelihood methods</h3>
+<div class="section level3">
+<h3 id="confidence-intervals-for-estimates-adjusted-by-conditional-likelihood-methods">Confidence intervals for estimates adjusted by conditional likelihood methods<a class="anchor" aria-label="anchor" href="#confidence-intervals-for-estimates-adjusted-by-conditional-likelihood-methods"></a>
+</h3>
 <ul>
-<li><p>The function <code>cl_interval</code> implements the conditional likelihood methods described in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/">Ghosh <em>et al.</em> (2008)</a> for each significant SNP and together with the three adjusted estimates, provides a single confidence interval for each SNP. As well as a data set in the form of a data frame with columns <code>rsid</code>, <code>beta</code> and <code>se</code>, <code>cl_interval</code> requires <code>alpha</code>, a value which specifies the significance threshold and <code>conf</code>, a value between 0 and 1 which determines the confidence interval. The default setting for <code>conf</code> is 0.95.</p></li>
+<li><p>The function <code>cl_interval</code> implements the conditional likelihood methods described in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/" class="external-link">Ghosh <em>et al.</em> (2008)</a> for each significant SNP and together with the three adjusted estimates, provides a single confidence interval for each SNP. As well as a data set in the form of a data frame with columns <code>rsid</code>, <code>beta</code> and <code>se</code>, <code>cl_interval</code> requires <code>alpha</code>, a value which specifies the significance threshold and <code>conf</code>, a value between 0 and 1 which determines the confidence interval. The default setting for <code>conf</code> is 0.95.</p></li>
 <li><p><strong>Note:</strong> In order for this function to output an appropriate confidence interval for each significant SNP, the absolute value of the largest <span class="math inline">\(z\)</span>-statistic in the data set must be less than 150.</p></li>
-<li><p>This confidence interval for the adjusted estimate is specified in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/">Ghosh <em>et al.</em> (2008)</a>. With <span class="math inline">\(\mu = \frac{\beta}{\text{se}(\beta)}\)</span> and <span class="math inline">\(z = \frac{\hat\beta}{\hat{\text{se}(\hat\beta)}}\)</span>, consider the acceptance region <span class="math inline">\(A(\mu,1-\eta)\)</span>, which is defined as the interval between the <span class="math inline">\(\eta/2\)</span> and <span class="math inline">\(1-\eta/2\)</span> quantiles of the conditional density, <span class="math inline">\(p_{\mu}(z | \mid Z \mid &gt; c )\)</span>. Having obtained the lower and upper boundaries of this acceptance region, the desired confidence interval is given as: <span class="math display">\[(\mu_{\text{lower}}\hat{\text{se}(\hat\beta)}, \mu_{\text{upper}}\hat{\text{se}(\hat\beta)}).\]</span></p></li>
+<li><p>This confidence interval for the adjusted estimate is specified in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/" class="external-link">Ghosh <em>et al.</em> (2008)</a>. With <span class="math inline">\(\mu = \frac{\beta}{\text{se}(\beta)}\)</span> and <span class="math inline">\(z = \frac{\hat\beta}{\hat{\text{se}(\hat\beta)}}\)</span>, consider the acceptance region <span class="math inline">\(A(\mu,1-\eta)\)</span>, which is defined as the interval between the <span class="math inline">\(\eta/2\)</span> and <span class="math inline">\(1-\eta/2\)</span> quantiles of the conditional density, <span class="math inline">\(p_{\mu}(z | \mid Z \mid &gt; c )\)</span>. Having obtained the lower and upper boundaries of this acceptance region, the desired confidence interval is given as: <span class="math display">\[(\mu_{\text{lower}}\hat{\text{se}(\hat\beta)}, \mu_{\text{upper}}\hat{\text{se}(\hat\beta)}).\]</span></p></li>
 <li><p>In the output of <code>cl_interval</code>, the <code>lower</code> column holds the values of the lower confidence limit for each SNP while the <code>upper</code> column contains the upper confidence limit.</p></li>
 <li><p><code>cl_interval</code> can be used in conjunction with the toy data set as shown below, in which <code>alpha</code> is specified as <code>5e-8</code> and a 95% confidence interval is desired:</p></li>
 </ul>
@@ -179,7 +175,7 @@
 <p><span class="math inline">\(~\)</span> <span class="math inline">\(~\)</span></p>
 <p><strong>TO DO:</strong></p>
 <ul>
-<li><em>creating confidence intervals for other three methods but have noted that the adjusted estimates of <code>BR_ss</code> are not normally distributed - one option is obtain quantiles with parametric bootstrap, similar to implementation of <code>se_adjust</code> but very computationally intensive?</em></li>
+<li><em>Creating confidence intervals for other three methods but have noted that the adjusted estimates of <code>BR_ss</code> are not normally distributed - one option is obtain quantiles with parametric bootstrap, similar to implementation of <code>se_adjust</code> but very computationally intensive?</em></li>
 </ul>
 </div>
   </div>
@@ -193,11 +189,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Amanda Forde.</p>
+  <p></p>
+<p>Developed by Amanda Forde.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
 </div>
 
       </footer>
@@ -205,6 +203,8 @@
 
   
 
+
+  
 
   </body>
 </html>
