@@ -18,7 +18,9 @@ method.}
 \item{AIC}{A logical value which allows the user to choose if they wish to use
 an AIC approach to determine an appropriate value for the degrees of
 freedom. The default setting is \code{AIC=TRUE}. If \code{AIC=FALSE}, the
-degrees of freedom is set to 6.}
+degrees of freedom is set to 7. Using \code{AIC=FALSE} is the recommended
+approach if the user is working with a real data set, unless they are
+certain that there is a minimal degree of LD in their array.}
 }
 \value{
 A data frame with the inputted summary data occupying the first three
