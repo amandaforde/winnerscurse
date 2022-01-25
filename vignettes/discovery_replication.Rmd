@@ -1,6 +1,8 @@
 ---
 title: "Methods for use with discovery and replication GWASs"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: yes
 vignette: >
   %\VignetteIndexEntry{Methods for use with discovery and replication GWASs}
   %\VignetteEngine{knitr::rmarkdown}
@@ -167,7 +169,7 @@ legend(0.05, 70.5, legend=c("beta_disc", "true_beta","beta_rep","beta_UMVCUE", "
        col=col,lty=1,lwd=2)
 ```
 
-- In addition, as the data sets are simulated, we obtain measures such as sum of squared differences and mean of absolute differences for the various estimates as follows: 
+- In addition, as the data sets are simulated, we can obtain measures such as sum of squared differences and mean of absolute differences for the various estimates, in a similar fashion to as we did in the previous article describing 'discovery only' methods: 
 
 
 ```{r}

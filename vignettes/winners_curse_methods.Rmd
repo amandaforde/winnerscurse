@@ -1,6 +1,8 @@
 ---
 title: "Methods for use with discovery GWAS"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: yes
 vignette: >
   %\VignetteIndexEntry{Methods for use with discovery GWAS}
   %\VignetteEngine{knitr::rmarkdown}
@@ -64,28 +66,17 @@ An important feature which distinguishes these four methods is detailed in the t
 set.seed(1998)
 
 n_snps <- 10^6
-
 n_samples <- 30000
 effect_snps <- 0.01*n_snps
-
 maf <- runif(n_snps,0.01,0.5)
-
 true_beta <- rnorm(effect_snps,0,1)
-h2 <- 0.7
-# variance explained by effect SNPs
+h2 <- 0.7  # variance explained by effect SNPs
 var_y <- sum(2*maf[1:effect_snps]*(1-maf[1:effect_snps])*true_beta^2)/h2
-
 true_beta <- true_beta/sqrt(var_y) # scaling to represent a phenotype with variance 1
 true_beta <- c(true_beta, rep(0,n_snps-effect_snps))
 se <- sqrt((1 - 2*maf*(1-maf)*true_beta^2)/(2*(n_samples-2)*maf*(1-maf)))
 
-
-
 summary_stats <- data.frame(rsid=seq(1,n_snps),beta=rnorm(n=n_snps,mean=true_beta,sd=se),se=se)
-
-
-
-
 head(summary_stats)
 ```
 
@@ -120,7 +111,7 @@ head(out_CL)
 
 - The function `empirical_bayes` implements the Empirical Bayes method for correcting for Winner's Curse, detailed in [Ferguson *et al.* (2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/), with a slight modification. 
 
-- The function has one argument, `summary_data`, which is the data frame containing `rsid`, `beta` and `se` columns. Again, all columns of the data frame must contain numerical values and each row must represent a unique SNP, identified by `rsid`. In addition, the function requires that the data frame must contain at least 50 rows corresponding to 50 unique SNPs. This requirement is included as the Empirical Bayes method performs poorly when only data of a small number of SNPs is available. 
+- The function has two arguments with the first being `summary_data`, the data frame containing `rsid`, `beta` and `se` columns. Again, all columns of the data frame must contain numerical values and each row must represent a unique SNP, identified by `rsid`. In addition, the function requires that the data frame must contain at least 50 rows corresponding to 50 unique SNPs. This requirement is included as the Empirical Bayes method performs poorly when only data of a small number of SNPs is available. The second argument, `AIC`, is a logical parameter which allows the user to choose if they wish to use an AIC approach to determine an appropriate value for the degrees of freedom. The current default setting is `AIC=TRUE`. If `AIC=FALSE`, the degrees of freedom is set to 7. Using `AIC=FALSE` is the recommended approach if the user is working with a real data set, unless they are certain that there is a minimal degree of LD in their array.
 
 - It returns the above described data frame but with a fourth column, `beta_EB` in which the adjusted estimates of this procedure have been added. 
 
@@ -128,7 +119,8 @@ head(out_CL)
 
 - **Note:** The conditional likelihood methods adjust each statistic one at a time, and so summary statistics of one individual SNP can easily be inputted into the `conditional_likelihood` function. However, the Empirical Bayes method requires many SNPs as the more information given to the function, the more accurate it will be at modelling the distribution and thus, making adjustments. Thus, as mentioned above, `summary_data` must contain information related to more than 50 SNPs.
 
-- Below is a demonstration of using `empirical_bayes` with our toy data set:
+
+- Below is a demonstration of using `empirical_bayes` with our toy data set with the default setting for `AIC`:
 
 ```{r, warning=FALSE}
 out_EB <- empirical_bayes(summary_data = summary_stats)
@@ -194,7 +186,13 @@ head(out_BR_ss)
 
 ### Comparing Results
 
-As we have simulated our data set, we have the ability to quantify the amount of bias present in the original naive $\beta$ estimates and also, in our adjusted estimates for each method. We can use measures such as the sum of squared differences and mean of absolute differences to assess this bias. Furthermore, we can also simply obtain the fraction of SNPs which are now *less* biased after adjustment. First, we take a look at the conditional likelihood method as follows, in which only SNPs that are originally deemed significant are included: 
+As we have simulated our data set, we have the ability to quantify the amount of bias present in the original naive $\beta$ estimates and also, in our adjusted estimates for each method. We can use measures such as the sum of squared differences (`sq_diff`) and mean of absolute differences (`mean_abs_diff`) to assess this bias. Furthermore, we can also simply obtain the fraction of SNPs which are now *less* biased after adjustment (`frac_less_bias`). These three evaluation metrics can be be mathematically defined as follows, in which there are $n$ significant SNPs: 
+
+- `sq_diff` $= \sum_{i=1}^n (\beta_i - \hat\beta_{\text{adj},i})^2$
+- `mean_abs_diff` $= \frac{1}{n} \sum_{i=1}^n |\beta_i - \hat\beta_{\text{adj},i}|$ 
+- `frac_less_bias` $= \frac{1}{n} \sum_{i=1}^n \text{I} \{ |\beta_i - \hat\beta_{i}| \gt |\beta_i - \hat\beta_{\text{adj},i}| \}$
+
+First, we take a look at the conditional likelihood method as follows, in which only SNPs that are originally deemed significant are included: 
 
 ```{r}
 sq_diff_1 <- data.frame(naive = sum((true_beta[out_CL$rsid] - out_CL$beta)^2), beta.cl1 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl1)^2),  beta.cl2 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl2)^2),  beta.cl3 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl3)^2))
@@ -210,7 +208,7 @@ frac_less_bias_1
 For the first two quantities, the values for all three conditional likelihood methods are less than that of the naive estimate and we find that at least `r round(frac_less_bias_1[1,1],2)*100`% of the significant SNPs are now less biased.
 
 
-Next, we investigate the other three methods described above which take into account all SNPs, not just those with $p$-values less than a specified threshold. 
+Next, we investigate the other three methods described above which take into account all SNPs, not just those with $p$-values less than a specified threshold. Thus, when computing the values below, $n$ is now equal to the total number of SNPs, i.e. $n = 1,000,000$.
 
 ```{r}
 sq_diff_2 <- data.frame(naive = sum((true_beta[out_EB$rsid] - out_EB$beta)^2), beta_EB = sum((true_beta[out_EB$rsid] - out_EB$beta_EB)^2), beta_FIQT = sum((true_beta[out_FIQT$rsid] - out_FIQT$beta_FIQT)^2), beta_BR_ss = sum((true_beta[out_BR_ss$rsid] - out_BR_ss$beta_BR_ss)^2))
@@ -231,7 +229,6 @@ Finally, we can compare the performance of all methods for the SNPs with raw $p$
 out_EB_sig <- out_EB[2*(1-pnorm(abs(out_EB$beta/out_EB$se))) < 5e-8,]
 out_FIQT_sig <- out_FIQT[2*(1-pnorm(abs(out_FIQT$beta/out_FIQT$se))) < 5e-8,]
 out_BR_ss_sig <- out_BR_ss[2*(1-pnorm(abs(out_BR_ss$beta/out_BR_ss$se))) < 5e-8,]
-
 
 sq_diff_3 <- data.frame(naive = sum((true_beta[out_CL$rsid] - out_CL$beta)^2), beta.cl1 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl1)^2),  beta.cl2 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl2)^2),  beta.cl3 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl3)^2), beta_EB = sum((true_beta[out_EB_sig$rsid] - out_EB_sig$beta_EB)^2), beta_FIQT = sum((true_beta[out_FIQT_sig$rsid] - out_FIQT_sig$beta_FIQT)^2), beta_BR_ss = sum((true_beta[out_BR_ss_sig$rsid] - out_BR_ss_sig$beta_BR_ss)^2))
 sq_diff_3

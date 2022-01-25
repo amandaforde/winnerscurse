@@ -1,6 +1,8 @@
 ---
 title: "Standard errors and confidence intervals of adjusted estimates"
-output: rmarkdown::html_vignette
+output: 
+  rmarkdown::html_vignette:
+    toc: yes
 vignette: >
   %\VignetteIndexEntry{Standard errors and confidence intervals of adjusted estimates}
   %\VignetteEngine{knitr::rmarkdown}
@@ -88,12 +90,14 @@ $z$-statistic in the data set must be less than 150.
 
 ```{r}
 out <- cl_interval(summary_data=summary_stats, alpha = 5e-8, conf_level=0.95)
+head(out)
 ```
 
 
 $~$
 $~$
 
-**TO DO:** 
+**NOTE:** 
 
-- *Creating confidence intervals for other three methods but have noted that the adjusted estimates of `BR_ss` are not normally distributed - one option is obtain quantiles with parametric bootstrap, similar to implementation of `se_adjust` but very computationally intensive?*
+- Future work includes creating confidence intervals for the other three methods. However, we have noted that the adjusted estimates of `BR_ss` do not tend to be normally distributed. One option that we could consider is to obtain quantiles by means of parametric bootstrap, similar to the implementation of `se_adjust`. Unfortunately, this would be very computationally intensive. 
+
