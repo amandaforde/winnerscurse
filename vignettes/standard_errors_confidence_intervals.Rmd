@@ -86,6 +86,9 @@ $z$-statistic in the data set must be less than 150.
 - This confidence interval for the adjusted estimate is specified in [Ghosh *et al.* (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/). With $\mu = \frac{\beta}{\text{se}(\beta)}$ and $z = \frac{\hat\beta}{\hat{\text{se}(\hat\beta)}}$, consider the acceptance region $A(\mu,1-\eta)$, which is defined as the interval between the $\eta/2$ and $1-\eta/2$ quantiles of the conditional density, $p_{\mu}(z | \mid Z \mid > c )$. Having obtained the lower and upper boundaries of this acceptance region, the desired confidence interval is given as: $$(\mu_{\text{lower}}\hat{\text{se}(\hat\beta)}, \mu_{\text{upper}}\hat{\text{se}(\hat\beta)}).$$                           
 
 - In the output of `cl_interval`, the `lower` column holds the values of the lower confidence limit for each SNP while the `upper` column contains the upper confidence limit. 
+
+- If no SNPs are detected as significant, the function returns a warning message: `WARNING: There are no significant SNPs at this threshold`. 
+
 - `cl_interval` can be used in conjunction with the toy data set as shown below, in which `alpha` is specified as `5e-8` and a 95% confidence interval is desired: 
 
 ```{r}

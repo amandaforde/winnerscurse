@@ -91,7 +91,7 @@ second form of the adjusted estimate, namely `beta.cl2`,
 for each significant SNP, the absolute value of the largest $z$-statistic
 in the data set must be less than 150.
 
-- If no SNPs are detected as significant, the function merely returns the inputted data frame. 
+- If no SNPs are detected as significant, the function returns a warning message: `WARNING: There are no significant SNPs at this threshold`. 
 
 - The returned data frame has SNPs ordered based on their $p$-values from smallest to largest, or equivalently, in descending order of $\mid z \mid$ in which $z$ is the estimated value for $\beta$ divided by its standard error. 
 

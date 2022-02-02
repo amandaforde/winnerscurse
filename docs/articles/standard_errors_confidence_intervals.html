@@ -119,12 +119,12 @@
 <code class="sourceCode R"><span class="va">out_EB</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/se_adjust.html">se_adjust</a></span><span class="op">(</span>summary_data <span class="op">=</span> <span class="va">summary_stats</span>, method <span class="op">=</span> <span class="st">"empirical_bayes"</span>, n_boot<span class="op">=</span><span class="fl">10</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">out_EB</span><span class="op">)</span>
 <span class="co">#&gt;   rsid        beta          se     beta_EB      adj_se</span>
-<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.05177699 0.012056841</span>
-<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.05355088 0.012128193</span>
-<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.05107993 0.013921651</span>
-<span class="co">#&gt; 4 7261  0.05510736 0.008186396  0.04624187 0.012507416</span>
-<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.04714887 0.013614514</span>
-<span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.04580573 0.008606223</span>
+<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.05964965 0.012000317</span>
+<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.06169916 0.012420728</span>
+<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.05258126 0.012976760</span>
+<span class="co">#&gt; 4 7261  0.05510736 0.008186396  0.05411000 0.012142904</span>
+<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.05521183 0.013170766</span>
+<span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.05366415 0.008169006</span>
 
 <span class="va">out_BR_ss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/se_adjust.html">se_adjust</a></span><span class="op">(</span>summary_data <span class="op">=</span> <span class="va">summary_stats</span>, method <span class="op">=</span> <span class="st">"BR_ss"</span>, n_boot<span class="op">=</span><span class="fl">10</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">out_BR_ss</span><span class="op">)</span>
@@ -157,6 +157,7 @@
 <li><p><strong>Note:</strong> In order for this function to output an appropriate confidence interval for each significant SNP, the absolute value of the largest <span class="math inline">\(z\)</span>-statistic in the data set must be less than 150.</p></li>
 <li><p>This confidence interval for the adjusted estimate is specified in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/" class="external-link">Ghosh <em>et al.</em> (2008)</a>. With <span class="math inline">\(\mu = \frac{\beta}{\text{se}(\beta)}\)</span> and <span class="math inline">\(z = \frac{\hat\beta}{\hat{\text{se}(\hat\beta)}}\)</span>, consider the acceptance region <span class="math inline">\(A(\mu,1-\eta)\)</span>, which is defined as the interval between the <span class="math inline">\(\eta/2\)</span> and <span class="math inline">\(1-\eta/2\)</span> quantiles of the conditional density, <span class="math inline">\(p_{\mu}(z | \mid Z \mid &gt; c )\)</span>. Having obtained the lower and upper boundaries of this acceptance region, the desired confidence interval is given as: <span class="math display">\[(\mu_{\text{lower}}\hat{\text{se}(\hat\beta)}, \mu_{\text{upper}}\hat{\text{se}(\hat\beta)}).\]</span></p></li>
 <li><p>In the output of <code>cl_interval</code>, the <code>lower</code> column holds the values of the lower confidence limit for each SNP while the <code>upper</code> column contains the upper confidence limit.</p></li>
+<li><p>If no SNPs are detected as significant, the function returns a warning message: <code>WARNING: There are no significant SNPs at this threshold</code>.</p></li>
 <li><p><code>cl_interval</code> can be used in conjunction with the toy data set as shown below, in which <code>alpha</code> is specified as <code>5e-8</code> and a 95% confidence interval is desired:</p></li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">

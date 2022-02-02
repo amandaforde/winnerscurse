@@ -29,9 +29,10 @@
 #'   \code{beta.cl1}, \code{beta.cl2} and \code{beta.cl3}. The SNPs are
 #'   contained in this data frame according to their significance, with the most
 #'   significant SNP, i.e. the SNP with the largest absolute \eqn{z}-statistic,
-#'   now located in the first row of the data frame. If no SNPs are detected as
-#'   significant in the data set, \code{conditional_likelihood} merely returns
-#'   the inputted data frame, \code{summary_data}.
+#'   now located in the first row of the data frame. However, if no SNPs are
+#'   detected as significant in the data set, \code{conditional_likelihood}
+#'   returns a warning message: \code{"WARNING: There are no significant SNPs at
+#'   this threshold."}
 #'
 #'
 #' @references Ghosh, A., Zou, F., & Wright, F. A. (2008). Estimating odds
@@ -62,8 +63,8 @@ conditional_likelihood <- function(summary_data, alpha=5e-8){
 
 
   if (sum(summary_data$p_val<alpha) == 0) {
-    summary_data <- dplyr::arrange(summary_data,dplyr::desc(abs(summary_data$z)))
-    return(summary_data[,1:3])
+    warn <- "WARNING: There are no significant SNPs at this threshold."
+    return(warn)
   }
 
   summary_data_sig <- summary_data[summary_data$p_val<alpha,]

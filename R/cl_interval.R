@@ -27,6 +27,9 @@
 #'   \code{conditional_likelihood} with two additional columns, namely
 #'   \code{lower} and \code{upper}, containing the lower and upper bounds of the
 #'   required confidence interval for each significant SNP, respectively.
+#'   However, if no SNPs are detected as significant in the data set,
+#'   \code{cl_interval} returns a warning message: \code{"WARNING: There are no
+#'   significant SNPs at this threshold."}
 #'
 #' @references Ghosh, A., Zou, F., & Wright, F. A. (2008). Estimating odds
 #'   ratios in genome scans: an approximate conditional likelihood approach.
@@ -46,7 +49,14 @@ cl_interval <- function(summary_data,alpha=5e-8, conf_level=0.95){
 
   stopifnot(conf_level < 1 && conf_level > 0)
 
-   summary_data <- conditional_likelihood(summary_data,alpha)
+  p_val <- 2*(1-stats::pnorm(abs(summary_data$beta/summary_data$se)))
+
+  if (sum(p_val<alpha) == 0) {
+    warn <- "WARNING: There are no significant SNPs at this threshold."
+    return(warn)
+  }
+
+  summary_data <- conditional_likelihood(summary_data,alpha)
 
   z <- summary_data$beta/summary_data$se
   c <- stats::qnorm(1-(alpha)/2)
