@@ -51,7 +51,7 @@ empirical_bayes <- function(summary_data, AIC=TRUE){
 
   z <- summary_data$beta/summary_data$se
 
-  bins <- seq(min(z),max(z),length.out=121)
+  bins <- seq(min(z),max(z),length.out=120)
   mids <- (bins[-length(bins)]+bins[-1])/2
   counts <- graphics::hist(z,breaks=bins,plot=F)$counts
 
