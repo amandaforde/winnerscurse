@@ -60,7 +60,7 @@ al.</em> (2013)</a>.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">empirical_bayes</span><span class="op">(</span><span class="va">summary_data</span>, AIC <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">empirical_bayes</span><span class="op">(</span><span class="va">summary_data</span>, method <span class="op">=</span> <span class="st">"AIC"</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -73,13 +73,12 @@ discovery GWAS. It must have three columns with column names <code>rsid</code>,
 unique SNP, identified by <code>rsid</code>. The function requires that there must
 be at least 50 SNPs as any less will result in very poor performance of the
 method.</p></dd>
-<dt>AIC</dt>
-<dd><p>A logical value which allows the user to choose if they wish to use
-an AIC approach to determine an appropriate value for the degrees of
-freedom. The default setting is <code>AIC=TRUE</code>. If <code>AIC=FALSE</code>, the
-degrees of freedom is set to 7. Using <code>AIC=FALSE</code> is the recommended
-approach if the user is working with a real data set, unless they are
-certain that there is a minimal degree of LD in their array.</p></dd>
+<dt>method</dt>
+<dd><p>A string which allows the user to choose what modelling approach
+to take for the purpose of estimating the log density function. The default
+setting is <code>method="AIC"</code>, which is the current published method. Other
+options include <code>method="fix_df"</code>, <code>method="scam"</code>,
+<code>method="gam_nb"</code> and <code>method="gam_po"</code>.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>
@@ -117,7 +116,8 @@ association estimates.</p></div>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
       </footer></div>

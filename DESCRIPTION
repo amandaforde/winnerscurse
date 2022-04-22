@@ -23,5 +23,7 @@ RoxygenNote: 7.1.2
 Imports: 
     stats,
     dplyr,
-    RColorBrewer
+    RColorBrewer,
+    scam,
+    mgcv
 VignetteBuilder: knitr

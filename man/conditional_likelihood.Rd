@@ -26,9 +26,10 @@ A data frame with summary statistics and adjusted association
   \code{beta.cl1}, \code{beta.cl2} and \code{beta.cl3}. The SNPs are
   contained in this data frame according to their significance, with the most
   significant SNP, i.e. the SNP with the largest absolute \eqn{z}-statistic,
-  now located in the first row of the data frame. If no SNPs are detected as
-  significant in the data set, \code{conditional_likelihood} merely returns
-  the inputted data frame, \code{summary_data}.
+  now located in the first row of the data frame. However, if no SNPs are
+  detected as significant in the data set, \code{conditional_likelihood}
+  returns a warning message: \code{"WARNING: There are no significant SNPs at
+  this threshold."}
 }
 \description{
 \code{conditional_likelihood} is a function which uses summary statistics to

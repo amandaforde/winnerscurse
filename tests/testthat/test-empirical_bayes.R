@@ -27,8 +27,20 @@ test_that("testing if empirical bayes is giving appropriate output",
             test1 <- sum(abs(round(out$beta,6)) >= abs(round(out$beta_EB,6))) >= 0.9*length(out$beta)
             expect_true(identical(test1,TRUE) == 1)
 
-            out <- empirical_bayes(summary_stats, AIC=FALSE)
+            out <- empirical_bayes(summary_stats, method="fix_df")
             test2 <- sum(abs(round(out$beta,6)) >= abs(round(out$beta_EB,6))) >= 0.9*length(out$beta)
             expect_true(identical(test2,TRUE) == 1)
+
+            out <- empirical_bayes(summary_stats, method="scam")
+            test3 <- sum(abs(round(out$beta,6)) >= abs(round(out$beta_EB,6))) >= 0.9*length(out$beta)
+            expect_true(identical(test3,TRUE) == 1)
+
+            out <- empirical_bayes(summary_stats, method="gam_po")
+            test4 <- sum(abs(round(out$beta,6)) >= abs(round(out$beta_EB,6))) >= 0.9*length(out$beta)
+            expect_true(identical(test4,TRUE) == 1)
+
+            out <- empirical_bayes(summary_stats, method="gam_nb")
+            test5 <- sum(abs(round(out$beta,6)) >= abs(round(out$beta_EB,6))) >= 0.9*length(out$beta)
+            expect_true(identical(test5,TRUE) == 1)
 
           })

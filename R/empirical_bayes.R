@@ -13,12 +13,14 @@
 #'  unique SNP, identified by \code{rsid}. The function requires that there must
 #'  be at least 50 SNPs as any less will result in very poor performance of the
 #'  method.
-#'@param AIC A logical value which allows the user to choose if they wish to use
-#'  an AIC approach to determine an appropriate value for the degrees of
-#'  freedom. The default setting is \code{AIC=TRUE}. If \code{AIC=FALSE}, the
-#'  degrees of freedom is set to 7. Using \code{AIC=FALSE} is the recommended
-#'  approach if the user is working with a real data set, unless they are
-#'  certain that there is a minimal degree of LD in their array.
+#'@param method A string which allows the user to choose what modelling approach
+#'  to take for the purpose of estimating the log density function. The default
+#'  setting is \code{method="AIC"}, which is the current published method. Other
+#'  options include \code{method="fix_df"}, \code{method="scam"},
+#'  \code{method="gam_nb"} and \code{method="gam_po"}. If
+#'  \code{method="fix_df"}, the degrees of freedom is set to 7. The other three
+#'  options all enforce additional constraints on the shape of the estimated log
+#'  density function.
 #'
 #'@return A data frame with the inputted summary data occupying the first three
 #'  columns. The new adjusted association estimates for each SNP are returned in
@@ -41,7 +43,7 @@
 #'@export
 #'
 #'
-empirical_bayes <- function(summary_data, AIC=TRUE){
+empirical_bayes <- function(summary_data, method="AIC"){
 
   stopifnot(all(c("rsid", "beta","se") %in% names(summary_data)))
   stopifnot(!all(is.na(summary_data$rsid)) && !all(is.na(summary_data$beta)) && !all(is.na(summary_data$se)))
@@ -54,13 +56,13 @@ empirical_bayes <- function(summary_data, AIC=TRUE){
   bins <- seq(min(z),max(z),length.out=120)
   mids <- (bins[-length(bins)]+bins[-1])/2
   counts <- graphics::hist(z,breaks=bins,plot=F)$counts
+  data <- data.frame(counts,mids)
 
   most_extreme <- 10
   boundary_lower <- sort(z)[most_extreme]
   boundary_upper <- sort(z,decreasing=TRUE)[most_extreme]
 
-
-  if(AIC==TRUE){
+  if(method=="AIC"){
     df <- 7
     AIC_vector <- c(rep(0,28))
     for (best_df in 3:30){
@@ -69,33 +71,42 @@ empirical_bayes <- function(summary_data, AIC=TRUE){
       AIC_vector[best_df-2] <- minus2loglike + 2*(best_df-2)
     }
     df <- 2 + which.min(AIC_vector)
-  }else{
+    f <- stats::glm(counts ~ splines::ns(mids,knots = (seq(from=boundary_lower,to=boundary_upper,length=df+1)[2:df]), Boundary.knots=c(boundary_lower,boundary_upper)),stats::poisson,weight=rep(10^-50,length(counts)))$fit
+  }
+
+  if(method=="fix_df"){
     df <- 7
+    f <- stats::glm(counts ~ splines::ns(mids,knots = (seq(from=boundary_lower,to=boundary_upper,length=df+1)[2:df]), Boundary.knots=c(boundary_lower,boundary_upper)),stats::poisson,weight=rep(10^-50,length(counts)))$fit
   }
 
 
-  f <- stats::glm(counts ~ splines::ns(mids,knots = (seq(from=boundary_lower,to=boundary_upper,length=df+1)[2:df]), Boundary.knots=c(boundary_lower,boundary_upper)),stats::poisson,weight=rep(10^-50,length(counts)))$fit
-  f[f==0] <- min(f[f>0])
+  if(method=="gam_nb"){f <- mgcv::gam(counts ~ s(mids), family=mgcv::nb(), data=data)$fit}
 
+  if(method=="gam_po"){f <- mgcv::gam(counts ~ s(mids), family=poisson(), data=data)$fit}
+
+  if(method=="scam"){
+    f1 <- scam::scam(counts[mids >= 0] ~ s(mids[mids >= 0], bs="mpd"), family =poisson(link="log"), data = data)$fit
+    f2 <- scam::scam(counts[mids < 0] ~ s(mids[mids < 0], bs="mpi"), family = poisson(link="log"), data = data)$fit
+    f <- c(f2,f1)
+  }
+
+
+  f[f==0] <- min(f[f>0])
   log_f <- as.vector(log(f))
   diff <- diff(log_f)/diff(mids)
   mids2 <- (mids[-length(mids)]+mids[-1])/2
 
   diff_interpol <- stats::approx(mids2,diff,mids,rule=2,ties=mean)$y
-
   mids_est <- c(rep(0,length(mids)))
   mids_est[mids>0] <- pmax(0, mids[mids>0] + diff_interpol[mids>0])
   mids_est[mids<0] <- pmin(0, mids[mids<0] + diff_interpol[mids<0])
 
   z_hat <- stats::approx(mids,mids_est,z,rule=1,ties=mean)$y
   z_hat[is.na(z_hat) & z > 0] <-  z[is.na(z_hat) & z > 0] +   diff_interpol[length(diff_interpol)]
-
   z_hat[is.na(z_hat) & z < 0] <-  z[is.na(z_hat) & z < 0] + diff_interpol[1]
   z_hat <- sign(z)*pmin(abs(z),abs(z_hat))
-
   beta_EB <- z_hat*summary_data$se
   summary_data <- cbind(summary_data,beta_EB)
-
   summary_data <- dplyr::arrange(summary_data,dplyr::desc(abs(summary_data$beta/summary_data$se)))
 
   return(summary_data)

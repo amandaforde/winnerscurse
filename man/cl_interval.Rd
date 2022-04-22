@@ -27,6 +27,9 @@ A data frame which combines the output of
   \code{conditional_likelihood} with two additional columns, namely
   \code{lower} and \code{upper}, containing the lower and upper bounds of the
   required confidence interval for each significant SNP, respectively.
+  However, if no SNPs are detected as significant in the data set,
+  \code{cl_interval} returns a warning message: \code{"WARNING: There are no
+  significant SNPs at this threshold."}
 }
 \description{
 \code{cl_interval} is a function that allows the user to obtain a confidence

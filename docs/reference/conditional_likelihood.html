@@ -96,9 +96,9 @@ significance threshold. The default is given as <code>5e-8</code>.</p></dd>
 <code>beta.cl1</code>, <code>beta.cl2</code> and <code>beta.cl3</code>. The SNPs are
   contained in this data frame according to their significance, with the most
   significant SNP, i.e. the SNP with the largest absolute \(z\)-statistic,
-  now located in the first row of the data frame. If no SNPs are detected as
-  significant in the data set, <code>conditional_likelihood</code> merely returns
-  the inputted data frame, <code>summary_data</code>.</p>
+  now located in the first row of the data frame. However, if no SNPs are
+  detected as significant in the data set, <code>conditional_likelihood</code>  returns a warning message: <code>"WARNING: There are no significant SNPs at
+  this threshold."</code></p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -127,7 +127,8 @@ SNP-trait association estimates for significant SNPs.</p></div>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
       </footer></div>

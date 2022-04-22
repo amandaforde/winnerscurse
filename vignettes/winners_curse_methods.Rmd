@@ -111,7 +111,7 @@ head(out_CL)
 
 - The function `empirical_bayes` implements the Empirical Bayes method for correcting for Winner's Curse, detailed in [Ferguson *et al.* (2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/), with a slight modification. 
 
-- The function has two arguments with the first being `summary_data`, the data frame containing `rsid`, `beta` and `se` columns. Again, all columns of the data frame must contain numerical values and each row must represent a unique SNP, identified by `rsid`. In addition, the function requires that the data frame must contain at least 50 rows corresponding to 50 unique SNPs. This requirement is included as the Empirical Bayes method performs poorly when only data of a small number of SNPs is available. The second argument, `AIC`, is a logical parameter which allows the user to choose if they wish to use an AIC approach to determine an appropriate value for the degrees of freedom. The current default setting is `AIC=TRUE`. If `AIC=FALSE`, the degrees of freedom is set to 7. Using `AIC=FALSE` is the recommended approach if the user is working with a real data set, unless they are certain that there is a minimal degree of LD in their array.
+- The function has two arguments with the first being `summary_data`, the data frame containing `rsid`, `beta` and `se` columns. Again, all columns of the data frame must contain numerical values and each row must represent a unique SNP, identified by `rsid`. In addition, the function requires that the data frame must contain at least 50 rows corresponding to 50 unique SNPs. This requirement is included as the Empirical Bayes method performs poorly when only data of a small number of SNPs is available. The second argument, `method`, is a string parameter which allows the user to choose what modelling approach to take for the purpose of estimating the log density function. The default setting is `method="AIC"`, which is the current published method. Other options include `method="fix_df"`, `method="scam"`, `method="gam_nb"` and `method="gam_po"`. If `method="fix_df"`, the degrees of freedom is set to 7. The other three options all enforce additional constraints on the shape of the estimated log density function by i) fitting a generalized additive model (GAM), with integrated smoothness estimation, (`method="gam_nb"` and `method="gam_po"`) and ii) applying two shape constrained additive models (SCAMs) (`method="scam"`). 
 
 - It returns the above described data frame but with a fourth column, `beta_EB` in which the adjusted estimates of this procedure have been added. 
 
@@ -120,7 +120,7 @@ head(out_CL)
 - **Note:** The conditional likelihood methods adjust each statistic one at a time, and so summary statistics of one individual SNP can easily be inputted into the `conditional_likelihood` function. However, the Empirical Bayes method requires many SNPs as the more information given to the function, the more accurate it will be at modelling the distribution and thus, making adjustments. Thus, as mentioned above, `summary_data` must contain information related to more than 50 SNPs.
 
 
-- Below is a demonstration of using `empirical_bayes` with our toy data set with the default setting for `AIC`:
+- Below is a demonstration of using `empirical_bayes` with our toy data set with the default setting for `method`:
 
 ```{r, warning=FALSE}
 out_EB <- empirical_bayes(summary_data = summary_stats)

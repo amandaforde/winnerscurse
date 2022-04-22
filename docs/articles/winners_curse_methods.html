@@ -75,27 +75,39 @@
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://amandaforde.github.io/winnerscurse/" class="external-link">winnerscurse</a></span><span class="op">)</span></code></pre></div>
-<p>In order to demonstrate how this package can be used to obtain new adjusted <span class="math inline">\(\hat\beta\)</span> estimates, we first create a toy data set and subsequently, illustrate how a user could engage with each of the package’s functions using this data set. The methods currently available for implementation are:</p>
+<p>In order to demonstrate how this package can be used to obtain new
+adjusted <span class="math inline">\(\hat\beta\)</span> estimates, we
+first create a toy data set and subsequently, illustrate how a user
+could engage with each of the package’s functions using this data set.
+The methods currently available for implementation are:</p>
 <ol style="list-style-type: decimal">
-<li>Conditional Likelihood methods - <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/" class="external-link">Ghosh <em>et al.</em> (2008)</a>
+<li>Conditional Likelihood methods - <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/" class="external-link">Ghosh
+<em>et al.</em> (2008)</a>
 </li>
-<li>Empirical Bayes method - <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/" class="external-link">Ferguson <em>et al.</em> (2013)</a>
+<li>Empirical Bayes method - <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/" class="external-link">Ferguson
+<em>et al.</em> (2013)</a>
 </li>
-<li>FDR Inverse Quantile Transformation method - <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/" class="external-link">Bigdeli <em>et al.</em> (2016)</a>
+<li>FDR Inverse Quantile Transformation method - <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/" class="external-link">Bigdeli
+<em>et al.</em> (2016)</a>
 </li>
-<li>Bootstrap method - adapted from <a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4228" class="external-link">Faye <em>et al.</em> (2011)</a>
+<li>Bootstrap method - adapted from <a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4228" class="external-link">Faye
+<em>et al.</em> (2011)</a>
 </li>
 </ol>
-<p>An important feature which distinguishes these four methods is detailed in the table below:</p>
+<p>An important feature which distinguishes these four methods is
+detailed in the table below:</p>
 <table class="table">
 <colgroup>
 <col width="53%">
 <col width="47%">
 </colgroup>
 <thead><tr class="header">
-<th>Adjusts <span class="math inline">\(\beta\)</span> estimate of <em>only</em> SNPs with <span class="math inline">\(p\)</span>-values less than specified threshold, <span class="math inline">\(\alpha\)</span>
+<th>Adjusts <span class="math inline">\(\beta\)</span> estimate of
+<em>only</em> SNPs with <span class="math inline">\(p\)</span>-values
+less than specified threshold, <span class="math inline">\(\alpha\)</span>
 </th>
-<th>Adjusts <span class="math inline">\(\beta\)</span> estimate of <em>all</em> SNPs</th>
+<th>Adjusts <span class="math inline">\(\beta\)</span> estimate of
+<em>all</em> SNPs</th>
 </tr></thead>
 <tbody><tr class="odd">
 <td><ul>
@@ -112,7 +124,9 @@
 <h3 id="creating-a-toy-data-set">Creating a toy data set<a class="anchor" aria-label="anchor" href="#creating-a-toy-data-set"></a>
 </h3>
 <ul>
-<li><p>We wish to generate summary statistics for 1 million SNPs, in which there exists a polygenic background of 10,000 SNPs while all others have no effects.</p></li>
+<li><p>We wish to generate summary statistics for 1 million SNPs, in
+which there exists a polygenic background of 10,000 SNPs while all
+others have no effects.</p></li>
 <li>
 <p>We specify:</p>
 <ol style="list-style-type: decimal">
@@ -124,8 +138,12 @@
 </li>
 </ol>
 </li>
-<li><p>With these specifications, we can obtain quite realistic summary statistics as shown below.</p></li>
-<li><p>The summary statistics have been arranged here in a suitable way for each method - in the form of a <strong>data frame with columns <code>rsid</code>, <code>beta</code> and <code>se</code>.</strong></p></li>
+<li><p>With these specifications, we can obtain quite realistic summary
+statistics as shown below.</p></li>
+<li><p>The summary statistics have been arranged here in a suitable way
+for each method - in the form of a <strong>data frame with columns
+<code>rsid</code>, <code>beta</code> and
+<code>se</code>.</strong></p></li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1998</span><span class="op">)</span>
@@ -155,12 +173,30 @@
 <h3 id="method-1-conditional-likelihood">Method 1: Conditional Likelihood<a class="anchor" aria-label="anchor" href="#method-1-conditional-likelihood"></a>
 </h3>
 <ul>
-<li><p>The function <code>conditional_likelihood</code> requires a data frame, in the form described above, and a value for <code>alpha</code>, the significance threshold used in the GWAS. Note that all columns of the data frame must contain numerical values and each row must represent a unique SNP, identified by <code>rsid</code>.</p></li>
-<li><p>As the conditional likelihood methods have been designed to be only used for SNPs which are deemed significant, the data frame returned contains only SNPs that have <span class="math inline">\(p\)</span>-values below the inputted genome-wide significance threshold value, <code>alpha</code>.</p></li>
-<li><p><strong>Note:</strong> In order for this function to output an appropriate value for the second form of the adjusted estimate, namely <code>beta.cl2</code>, for each significant SNP, the absolute value of the largest <span class="math inline">\(z\)</span>-statistic in the data set must be less than 150.</p></li>
-<li><p>If no SNPs are detected as significant, the function returns a warning message: <code>WARNING: There are no significant SNPs at this threshold</code>.</p></li>
-<li><p>The returned data frame has SNPs ordered based on their <span class="math inline">\(p\)</span>-values from smallest to largest, or equivalently, in descending order of <span class="math inline">\(\mid z \mid\)</span> in which <span class="math inline">\(z\)</span> is the estimated value for <span class="math inline">\(\beta\)</span> divided by its standard error.</p></li>
-<li><p>We implement the function on our toy data set as follows, choosing a significance threshold of <code>5e-8</code>:</p></li>
+<li><p>The function <code>conditional_likelihood</code> requires a data
+frame, in the form described above, and a value for <code>alpha</code>,
+the significance threshold used in the GWAS. Note that all columns of
+the data frame must contain numerical values and each row must represent
+a unique SNP, identified by <code>rsid</code>.</p></li>
+<li><p>As the conditional likelihood methods have been designed to be
+only used for SNPs which are deemed significant, the data frame returned
+contains only SNPs that have <span class="math inline">\(p\)</span>-values below the inputted genome-wide
+significance threshold value, <code>alpha</code>.</p></li>
+<li><p><strong>Note:</strong> In order for this function to output an
+appropriate value for the second form of the adjusted estimate, namely
+<code>beta.cl2</code>, for each significant SNP, the absolute value of
+the largest <span class="math inline">\(z\)</span>-statistic in the data
+set must be less than 150.</p></li>
+<li><p>If no SNPs are detected as significant, the function returns a
+warning message:
+<code>WARNING: There are no significant SNPs at this threshold</code>.</p></li>
+<li><p>The returned data frame has SNPs ordered based on their <span class="math inline">\(p\)</span>-values from smallest to largest, or
+equivalently, in descending order of <span class="math inline">\(\mid z
+\mid\)</span> in which <span class="math inline">\(z\)</span> is the
+estimated value for <span class="math inline">\(\beta\)</span> divided
+by its standard error.</p></li>
+<li><p>We implement the function on our toy data set as follows,
+choosing a significance threshold of <code>5e-8</code>:</p></li>
 </ul>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">out_CL</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/conditional_likelihood.html">conditional_likelihood</a></span><span class="op">(</span>summary_data <span class="op">=</span> <span class="va">summary_stats</span>, alpha <span class="op">=</span> <span class="fl">5e-8</span><span class="op">)</span> 
@@ -173,44 +209,127 @@
 <span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.05363848  0.05011923  0.05187885</span>
 <span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.05203604  0.04852832  0.05028218</span></code></pre></div>
 <ul>
-<li><p>Three columns have been added to the right of the inputted data frame: each represents a correction method suggested in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/" class="external-link">Ghosh <em>et al.</em> (2008)</a>. The first, <code>beta.cl1</code>, is referred to as the conditional MLE while the second, <code>beta.cl2</code>, is the mean of the normalized conditional likelihood. The third, <code>beta.cl3</code> is merely the average of the first two, known as the compromise estimator.</p></li>
-<li><p>Ghosh <em>et al.</em> (2008) noted that for instances in which the true <span class="math inline">\(\beta\)</span> value is close to zero, <code>beta.cl2</code> often has greater mean squared error than <code>beta.cl1</code> but for true <span class="math inline">\(\beta\)</span> values further from zero, <code>beta.cl2</code> performs better. Thus, it was suggested that <code>beta.cl3</code> be used to combine the strengths of these two estimators. However, this function, <code>conditional_likelihood</code>, outputs values for all three estimators in order to allow the user to make their own decision on which they believe to be the most appropriate.</p></li>
+<li><p>Three columns have been added to the right of the inputted data
+frame: each represents a correction method suggested in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/" class="external-link">Ghosh
+<em>et al.</em> (2008)</a>. The first, <code>beta.cl1</code>, is
+referred to as the conditional MLE while the second,
+<code>beta.cl2</code>, is the mean of the normalized conditional
+likelihood. The third, <code>beta.cl3</code> is merely the average of
+the first two, known as the compromise estimator.</p></li>
+<li><p>Ghosh <em>et al.</em> (2008) noted that for instances in which
+the true <span class="math inline">\(\beta\)</span> value is close to
+zero, <code>beta.cl2</code> often has greater mean squared error than
+<code>beta.cl1</code> but for true <span class="math inline">\(\beta\)</span> values further from zero,
+<code>beta.cl2</code> performs better. Thus, it was suggested that
+<code>beta.cl3</code> be used to combine the strengths of these two
+estimators. However, this function, <code>conditional_likelihood</code>,
+outputs values for all three estimators in order to allow the user to
+make their own decision on which they believe to be the most
+appropriate.</p></li>
 </ul>
 </div>
 <div class="section level3">
 <h3 id="method-2-empirical-bayes">Method 2: Empirical Bayes<a class="anchor" aria-label="anchor" href="#method-2-empirical-bayes"></a>
 </h3>
 <ul>
-<li><p>The function <code>empirical_bayes</code> implements the Empirical Bayes method for correcting for Winner’s Curse, detailed in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/" class="external-link">Ferguson <em>et al.</em> (2013)</a>, with a slight modification.</p></li>
-<li><p>The function has two arguments with the first being <code>summary_data</code>, the data frame containing <code>rsid</code>, <code>beta</code> and <code>se</code> columns. Again, all columns of the data frame must contain numerical values and each row must represent a unique SNP, identified by <code>rsid</code>. In addition, the function requires that the data frame must contain at least 50 rows corresponding to 50 unique SNPs. This requirement is included as the Empirical Bayes method performs poorly when only data of a small number of SNPs is available. The second argument, <code>AIC</code>, is a logical parameter which allows the user to choose if they wish to use an AIC approach to determine an appropriate value for the degrees of freedom. The current default setting is <code>AIC=TRUE</code>. If <code>AIC=FALSE</code>, the degrees of freedom is set to 7. Using <code>AIC=FALSE</code> is the recommended approach if the user is working with a real data set, unless they are certain that there is a minimal degree of LD in their array.</p></li>
-<li><p>It returns the above described data frame but with a fourth column, <code>beta_EB</code> in which the adjusted estimates of this procedure have been added.</p></li>
-<li><p>As the Empirical Bayes method makes adjustments to all SNPs, not only those that have been considered significant, this data frame contains all SNPs.</p></li>
-<li><p><strong>Note:</strong> The conditional likelihood methods adjust each statistic one at a time, and so summary statistics of one individual SNP can easily be inputted into the <code>conditional_likelihood</code> function. However, the Empirical Bayes method requires many SNPs as the more information given to the function, the more accurate it will be at modelling the distribution and thus, making adjustments. Thus, as mentioned above, <code>summary_data</code> must contain information related to more than 50 SNPs.</p></li>
-<li><p>Below is a demonstration of using <code>empirical_bayes</code> with our toy data set with the default setting for <code>AIC</code>:</p></li>
+<li><p>The function <code>empirical_bayes</code> implements the
+Empirical Bayes method for correcting for Winner’s Curse, detailed in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/" class="external-link">Ferguson
+<em>et al.</em> (2013)</a>, with a slight modification.</p></li>
+<li><p>The function has two arguments with the first being
+<code>summary_data</code>, the data frame containing <code>rsid</code>,
+<code>beta</code> and <code>se</code> columns. Again, all columns of the
+data frame must contain numerical values and each row must represent a
+unique SNP, identified by <code>rsid</code>. In addition, the function
+requires that the data frame must contain at least 50 rows corresponding
+to 50 unique SNPs. This requirement is included as the Empirical Bayes
+method performs poorly when only data of a small number of SNPs is
+available. The second argument, <code>method</code>, is a string
+parameter which allows the user to choose what modelling approach to
+take for the purpose of estimating the log density function. The default
+setting is <code>method="AIC"</code>, which is the current published
+method. Other options include <code>method="fix_df"</code>,
+<code>method="scam"</code>, <code>method="gam_nb"</code> and
+<code>method="gam_po"</code>. If <code>method="fix_df"</code>, the
+degrees of freedom is set to 7. The other three options all enforce
+additional constraints on the shape of the estimated log density
+function by i) fitting a generalized additive model (GAM), with
+integrated smoothness estimation, (<code>method="gam_nb"</code> and
+<code>method="gam_po"</code>) and ii) applying two shape constrained
+additive models (SCAMs) (<code>method="scam"</code>).</p></li>
+<li><p>It returns the above described data frame but with a fourth
+column, <code>beta_EB</code> in which the adjusted estimates of this
+procedure have been added.</p></li>
+<li><p>As the Empirical Bayes method makes adjustments to all SNPs, not
+only those that have been considered significant, this data frame
+contains all SNPs.</p></li>
+<li><p><strong>Note:</strong> The conditional likelihood methods adjust
+each statistic one at a time, and so summary statistics of one
+individual SNP can easily be inputted into the
+<code>conditional_likelihood</code> function. However, the Empirical
+Bayes method requires many SNPs as the more information given to the
+function, the more accurate it will be at modelling the distribution and
+thus, making adjustments. Thus, as mentioned above,
+<code>summary_data</code> must contain information related to more than
+50 SNPs.</p></li>
+<li><p>Below is a demonstration of using <code>empirical_bayes</code>
+with our toy data set with the default setting for
+<code>method</code>:</p></li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">out_EB</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/empirical_bayes.html">empirical_bayes</a></span><span class="op">(</span>summary_data <span class="op">=</span> <span class="va">summary_stats</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">out_EB</span><span class="op">)</span>
 <span class="co">#&gt;   rsid        beta          se     beta_EB</span>
-<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.05964965</span>
-<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.06169916</span>
-<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.05258126</span>
-<span class="co">#&gt; 4 7261  0.05510736 0.008186396  0.05411000</span>
-<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.05521183</span>
-<span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.05366415</span></code></pre></div>
+<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.05177699</span>
+<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.05355088</span>
+<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.05107993</span>
+<span class="co">#&gt; 4 7261  0.05510736 0.008186396  0.04624187</span>
+<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.04714887</span>
+<span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.04580573</span></code></pre></div>
 <ul>
-<li><p>Unfortunately, the Empirical Bayes estimator described by Ferguson <em>et al.</em> (2013) is known to perform poorly in the extreme tails of the distribution. Therefore, it is quite possible that a lack of adjustment for the <span class="math inline">\(\beta\)</span> values of SNPs with the most extreme <span class="math inline">\(z\)</span>-statistics could be witnessed with this method. A somewhat ad hoc approach to overcome this issue of combining the Empirical Bayes and the conditional likelihood methods was suggested by Ferguson <em>et al.</em> (2013).</p></li>
-<li><p>In order to ensure that shrinkage does occur for the <span class="math inline">\(\beta\)</span> values of these extreme SNPs, it was decided that the following modification would be added to the <code>empirical_bayes</code> function detailed here. The basis function of the natural cubic spline has been altered so that the boundary knots are no longer the most extreme <span class="math inline">\(z\)</span>-values. Instead, the lower boundary knot is defined as the <span class="math inline">\(10^{\text{th}}\)</span> <span class="math inline">\(z\)</span>-statistic when the <span class="math inline">\(z\)</span>-statistics lie in increasing order while the upper boundary knot is the <span class="math inline">\(10^{\text{th}}\)</span> <span class="math inline">\(z\)</span>-statistic when the <span class="math inline">\(z\)</span>-statistics have been arranged in decreasing order. The natural cubic spline is then merely linear beyond these boundary knots. This assists in fixing the ‘tails’ issue discussed above. We see that the reduction of the estimated <span class="math inline">\(\beta\)</span> values for all of the top 6 most significant SNPs has occurred.</p></li>
+<li><p>Unfortunately, the Empirical Bayes estimator described by
+Ferguson <em>et al.</em> (2013) is known to perform poorly in the
+extreme tails of the distribution. Therefore, it is quite possible that
+a lack of adjustment for the <span class="math inline">\(\beta\)</span>
+values of SNPs with the most extreme <span class="math inline">\(z\)</span>-statistics could be witnessed with this
+method. A somewhat ad hoc approach to overcome this issue of combining
+the Empirical Bayes and the conditional likelihood methods was suggested
+by Ferguson <em>et al.</em> (2013).</p></li>
+<li><p>In order to ensure that shrinkage does occur for the <span class="math inline">\(\beta\)</span> values of these extreme SNPs, it
+was decided that the following modification would be added to the
+<code>empirical_bayes</code> function detailed here. The basis function
+of the natural cubic spline has been altered so that the boundary knots
+are no longer the most extreme <span class="math inline">\(z\)</span>-values. Instead, the lower boundary
+knot is defined as the <span class="math inline">\(10^{\text{th}}\)</span> <span class="math inline">\(z\)</span>-statistic when the <span class="math inline">\(z\)</span>-statistics lie in increasing order
+while the upper boundary knot is the <span class="math inline">\(10^{\text{th}}\)</span> <span class="math inline">\(z\)</span>-statistic when the <span class="math inline">\(z\)</span>-statistics have been arranged in
+decreasing order. The natural cubic spline is then merely linear beyond
+these boundary knots. This assists in fixing the ‘tails’ issue discussed
+above. We see that the reduction of the estimated <span class="math inline">\(\beta\)</span> values for all of the top 6 most
+significant SNPs has occurred.</p></li>
 </ul>
 </div>
 <div class="section level3">
 <h3 id="method-3-fdr-inverse-quantile-transformation">Method 3: FDR Inverse Quantile Transformation<a class="anchor" aria-label="anchor" href="#method-3-fdr-inverse-quantile-transformation"></a>
 </h3>
 <ul>
-<li><p>The function <code>FDR_IQT</code> implements the winner’s curse adjustment method detailed in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/" class="external-link">Bigdeli <em>et al.</em> (2016)</a>.</p></li>
-<li><p>Similar to the approaches above, the function requires a data frame with three columns <code>rsid</code>, <code>beta</code> and <code>se</code>, all columns of the data frame must contain numerical values and each row must represent a unique SNP, identified by <code>rsid</code>.</p></li>
-<li><p>It also has an argument <code>min_pval</code>, for which the default setting is <code>1e-15</code>. This is included in order to avoid zero <span class="math inline">\(p\)</span>-values which can prove problematic for the function when evaluating <code><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">qnorm()</a></code>. Furthermore, due to the nature of winner’s curse, it is in fact rare that observations with <span class="math inline">\(\mid z \mid &gt; 8\)</span> are biased.</p></li>
-<li><p>The function outputs a data frame similar to that inputted with an additional column containing the adjusted estimate, <code>beta_FIQT</code>, and again, the SNPs have been reordered according to their individual <span class="math inline">\(z\)</span>-statistics.</p></li>
+<li><p>The function <code>FDR_IQT</code> implements the winner’s curse
+adjustment method detailed in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/" class="external-link">Bigdeli
+<em>et al.</em> (2016)</a>.</p></li>
+<li><p>Similar to the approaches above, the function requires a data
+frame with three columns <code>rsid</code>, <code>beta</code> and
+<code>se</code>, all columns of the data frame must contain numerical
+values and each row must represent a unique SNP, identified by
+<code>rsid</code>.</p></li>
+<li><p>It also has an argument <code>min_pval</code>, for which the
+default setting is <code>1e-15</code>. This is included in order to
+avoid zero <span class="math inline">\(p\)</span>-values which can prove
+problematic for the function when evaluating <code><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">qnorm()</a></code>.
+Furthermore, due to the nature of winner’s curse, it is in fact rare
+that observations with <span class="math inline">\(\mid z \mid &gt;
+8\)</span> are biased.</p></li>
+<li><p>The function outputs a data frame similar to that inputted with
+an additional column containing the adjusted estimate,
+<code>beta_FIQT</code>, and again, the SNPs have been reordered
+according to their individual <span class="math inline">\(z\)</span>-statistics.</p></li>
 </ul>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">out_FIQT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/FDR_IQT.html">FDR_IQT</a></span><span class="op">(</span>summary_data <span class="op">=</span> <span class="va">summary_stats</span><span class="op">)</span>
@@ -227,17 +346,66 @@
 <h3 id="method-4-bootstrap">Method 4: Bootstrap<a class="anchor" aria-label="anchor" href="#method-4-bootstrap"></a>
 </h3>
 <ul>
-<li><p>Inspired by the winner’s curse adjustment method detailed in <a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4228" class="external-link">Faye <em>et al.</em> (2011)</a>, the function <code>BR_ss</code> implements a computationally efficient bootstrap method which is suitable for use with summary statistics.</p></li>
-<li><p><code>BR_ss</code> takes a data frame <code>summary_data</code> with three columns: <code>rsid</code>, <code>beta</code>, <code>se</code>, and returns the inputted data frame along with the adjusted estimate for <span class="math inline">\(\beta\)</span>, <code>beta_BR_ss</code>. Note that all columns of the data frame, <code>summary data</code> must contain numerical values, each row must represent a unique SNP, identified by <code>rsid</code> and the function requires that there must be at least 5 unique SNPs so that the smoothing spline can be implemented successfully. The function also has a logical parameter <code>seed_opt</code> which can be set to <code>TRUE</code> by the user to permit reproducibility. Its default setting is <code>seed_opt=FALSE</code>. As this method involves bootstrap implementation, the use of a seed can allow the user to obtain the exact same results for <code>beta_BR_ss</code> when running the function many times on the same dataset. The parameter <code>seed</code> provides the user with an option to set their desired value for the seed when using <code>seed_opt=TRUE</code>. The default for <code>seed</code> is the arbitrary value of <code>1998</code>.</p></li>
+<li><p>Inspired by the winner’s curse adjustment method detailed in <a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4228" class="external-link">Faye
+<em>et al.</em> (2011)</a>, the function <code>BR_ss</code> implements a
+computationally efficient bootstrap method which is suitable for use
+with summary statistics.</p></li>
+<li><p><code>BR_ss</code> takes a data frame <code>summary_data</code>
+with three columns: <code>rsid</code>, <code>beta</code>,
+<code>se</code>, and returns the inputted data frame along with the
+adjusted estimate for <span class="math inline">\(\beta\)</span>,
+<code>beta_BR_ss</code>. Note that all columns of the data frame,
+<code>summary data</code> must contain numerical values, each row must
+represent a unique SNP, identified by <code>rsid</code> and the function
+requires that there must be at least 5 unique SNPs so that the smoothing
+spline can be implemented successfully. The function also has a logical
+parameter <code>seed_opt</code> which can be set to <code>TRUE</code> by
+the user to permit reproducibility. Its default setting is
+<code>seed_opt=FALSE</code>. As this method involves bootstrap
+implementation, the use of a seed can allow the user to obtain the exact
+same results for <code>beta_BR_ss</code> when running the function many
+times on the same dataset. The parameter <code>seed</code> provides the
+user with an option to set their desired value for the seed when using
+<code>seed_opt=TRUE</code>. The default for <code>seed</code> is the
+arbitrary value of <code>1998</code>.</p></li>
 </ul>
 <p><span class="math inline">\(~\)</span></p>
 <p><strong>Method description:</strong></p>
 <ul>
-<li><p>First, the <span class="math inline">\(N\)</span> SNPs are arranged according to their naive <span class="math inline">\(z\)</span>-statistics, <span class="math inline">\(\frac{\hat\beta}{\text{se}(\hat\beta)}\)</span>, in descending order and given rank <span class="math inline">\(k\)</span>. Thus, the SNP with the largest positive original <span class="math inline">\(z\)</span>-statistic is given rank <span class="math inline">\(k=1\)</span> while the SNP with the largest negative original <span class="math inline">\(z\)</span>-statistic receives rank <span class="math inline">\(k=N\)</span>.</p></li>
-<li><p>Following this, a parametric bootstrap is performed in which a value <span class="math inline">\(\hat\beta^{\text{b}}_{(k)}\)</span> is simulated for SNP <span class="math inline">\(k\)</span> from the distribution: <span class="math display">\[\hat\beta^{\text{b}}_{(k)} \sim N(\hat\beta_{(k)}, \text{se}(\hat\beta_{(k)})).\]</span> Upon obtaining <span class="math inline">\(\hat\beta^{\text{b}}\)</span>, SNPs undergo a second ordering in which they are arranged based on <span class="math inline">\(z^{\text{b}}\)</span>-statistics and receive a rank <span class="math inline">\(A(k)\)</span> accordingly. The <span class="math inline">\(z^{\text{b}}_{(k)}\)</span>-statistic of SNP <span class="math inline">\(k\)</span> is equal to <span class="math inline">\(\frac{\hat\beta^{\text{b}}_{(k)}}{\text{se}(\hat\beta_{(k)})}\)</span>.</p></li>
-<li><p>An estimate for the bias correction value of SNP <span class="math inline">\(k\)</span> is given as: <span class="math display">\[\text{bias}_{(k)} = \frac{\hat\beta^{\text{b}}_{A(k)} - \hat\beta^{\text{oob}}_{A(k)}}{\text{se}(\hat\beta_{A(k)})} = \frac{\hat\beta^{\text{b}}_{A(k)} - \hat\beta_{A(k)}}{\text{se}(\hat\beta_{A(k)})}, \]</span>in which <span class="math inline">\(\hat\beta^{\text{b}}_{A(k)}\)</span> is the bootstrap value of the SNP ranked in position <span class="math inline">\(k\)</span> in the second ordering, <span class="math inline">\(\hat\beta^{\text{oob}}_{A(k)} = \hat\beta_{A(k)}\)</span> is that same SNP’s naive <span class="math inline">\(\beta\)</span> estimate and <span class="math inline">\(\text{se}(\hat\beta_{A(k)})\)</span> it’s standard error.</p></li>
-<li><p>Next, a cubic smoothing spline is fitted to the data using <code><a href="https://rdrr.io/r/stats/smooth.spline.html" class="external-link">stats::smooth.spline</a></code> in which <span class="math inline">\(z_{(k)}\)</span>-statistics are considered as the inputs and <span class="math inline">\(\text{bias}_{(k)}\)</span>, their corresponding outputs. The predicted values from this process provides <span class="math inline">\(\text{bias}^{*}_{(k)}\)</span> for each SNP. Using <span class="math inline">\(\text{bias}^{*}_{(k)}\)</span> instead of <span class="math inline">\(\text{bias}_{(k)}\)</span> results in a faster approach with increased accuracy as only one bootstrap iteration for each SNP is sufficient for competitive performance.</p></li>
-<li><p>Finally, the new estimate for <span class="math inline">\(\beta\)</span> for SNP <span class="math inline">\(k\)</span> is defined as follows: <span class="math display">\[\hat\beta_{(k)}^{*} = \hat\beta_{(k)} - \text{se}(\hat\beta_{(k)}) \cdot  \text{bias}^{*}_{(k)}.\]</span></p></li>
+<li><p>First, the <span class="math inline">\(N\)</span> SNPs are
+arranged according to their naive <span class="math inline">\(z\)</span>-statistics, <span class="math inline">\(\frac{\hat\beta}{\text{se}(\hat\beta)}\)</span>,
+in descending order and given rank <span class="math inline">\(k\)</span>. Thus, the SNP with the largest
+positive original <span class="math inline">\(z\)</span>-statistic is
+given rank <span class="math inline">\(k=1\)</span> while the SNP with
+the largest negative original <span class="math inline">\(z\)</span>-statistic receives rank <span class="math inline">\(k=N\)</span>.</p></li>
+<li><p>Following this, a parametric bootstrap is performed in which a
+value <span class="math inline">\(\hat\beta^{\text{b}}_{(k)}\)</span> is
+simulated for SNP <span class="math inline">\(k\)</span> from the
+distribution: <span class="math display">\[\hat\beta^{\text{b}}_{(k)}
+\sim N(\hat\beta_{(k)}, \text{se}(\hat\beta_{(k)})).\]</span> Upon
+obtaining <span class="math inline">\(\hat\beta^{\text{b}}\)</span>,
+SNPs undergo a second ordering in which they are arranged based on <span class="math inline">\(z^{\text{b}}\)</span>-statistics and receive a
+rank <span class="math inline">\(A(k)\)</span> accordingly. The <span class="math inline">\(z^{\text{b}}_{(k)}\)</span>-statistic of SNP <span class="math inline">\(k\)</span> is equal to <span class="math inline">\(\frac{\hat\beta^{\text{b}}_{(k)}}{\text{se}(\hat\beta_{(k)})}\)</span>.</p></li>
+<li><p>An estimate for the bias correction value of SNP <span class="math inline">\(k\)</span> is given as: <span class="math display">\[\text{bias}_{(k)} =
+\frac{\hat\beta^{\text{b}}_{A(k)} -
+\hat\beta^{\text{oob}}_{A(k)}}{\text{se}(\hat\beta_{A(k)})} =
+\frac{\hat\beta^{\text{b}}_{A(k)} -
+\hat\beta_{A(k)}}{\text{se}(\hat\beta_{A(k)})}, \]</span>in which <span class="math inline">\(\hat\beta^{\text{b}}_{A(k)}\)</span> is the
+bootstrap value of the SNP ranked in position <span class="math inline">\(k\)</span> in the second ordering, <span class="math inline">\(\hat\beta^{\text{oob}}_{A(k)} =
+\hat\beta_{A(k)}\)</span> is that same SNP’s naive <span class="math inline">\(\beta\)</span> estimate and <span class="math inline">\(\text{se}(\hat\beta_{A(k)})\)</span> it’s standard
+error.</p></li>
+<li><p>Next, a cubic smoothing spline is fitted to the data using
+<code><a href="https://rdrr.io/r/stats/smooth.spline.html" class="external-link">stats::smooth.spline</a></code> in which <span class="math inline">\(z_{(k)}\)</span>-statistics are considered as the
+inputs and <span class="math inline">\(\text{bias}_{(k)}\)</span>, their
+corresponding outputs. The predicted values from this process provides
+<span class="math inline">\(\text{bias}^{*}_{(k)}\)</span> for each SNP.
+Using <span class="math inline">\(\text{bias}^{*}_{(k)}\)</span> instead
+of <span class="math inline">\(\text{bias}_{(k)}\)</span> results in a
+faster approach with increased accuracy as only one bootstrap iteration
+for each SNP is sufficient for competitive performance.</p></li>
+<li><p>Finally, the new estimate for <span class="math inline">\(\beta\)</span> for SNP <span class="math inline">\(k\)</span> is defined as follows: <span class="math display">\[\hat\beta_{(k)}^{*} = \hat\beta_{(k)} -
+\text{se}(\hat\beta_{(k)})
+\cdot  \text{bias}^{*}_{(k)}.\]</span></p></li>
 </ul>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">out_BR_ss</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/BR_ss.html">BR_ss</a></span><span class="op">(</span>summary_data <span class="op">=</span> <span class="va">summary_stats</span>, seed<span class="op">=</span><span class="fl">2020</span><span class="op">)</span>
@@ -253,19 +421,34 @@
 <div class="section level3">
 <h3 id="comparing-results">Comparing Results<a class="anchor" aria-label="anchor" href="#comparing-results"></a>
 </h3>
-<p>As we have simulated our data set, we have the ability to quantify the amount of bias present in the original naive <span class="math inline">\(\beta\)</span> estimates and also, in our adjusted estimates for each method. We can use measures such as the sum of squared differences (<code>sq_diff</code>) and mean of absolute differences (<code>mean_abs_diff</code>) to assess this bias. Furthermore, we can also simply obtain the fraction of SNPs which are now <em>less</em> biased after adjustment (<code>frac_less_bias</code>). These three evaluation metrics can be be mathematically defined as follows, in which there are <span class="math inline">\(n\)</span> significant SNPs:</p>
+<p>As we have simulated our data set, we have the ability to quantify
+the amount of bias present in the original naive <span class="math inline">\(\beta\)</span> estimates and also, in our adjusted
+estimates for each method. We can use measures such as the sum of
+squared differences (<code>sq_diff</code>) and mean of absolute
+differences (<code>mean_abs_diff</code>) to assess this bias.
+Furthermore, we can also simply obtain the fraction of SNPs which are
+now <em>less</em> biased after adjustment (<code>frac_less_bias</code>).
+These three evaluation metrics can be be mathematically defined as
+follows, in which there are <span class="math inline">\(n\)</span>
+significant SNPs:</p>
 <ul>
 <li>
-<code>sq_diff</code> <span class="math inline">\(= \sum_{i=1}^n (\beta_i - \hat\beta_{\text{adj},i})^2\)</span>
+<code>sq_diff</code> <span class="math inline">\(= \sum_{i=1}^n
+(\beta_i - \hat\beta_{\text{adj},i})^2\)</span>
 </li>
 <li>
-<code>mean_abs_diff</code> <span class="math inline">\(= \frac{1}{n} \sum_{i=1}^n |\beta_i - \hat\beta_{\text{adj},i}|\)</span>
+<code>mean_abs_diff</code> <span class="math inline">\(= \frac{1}{n}
+\sum_{i=1}^n |\beta_i - \hat\beta_{\text{adj},i}|\)</span>
 </li>
 <li>
-<code>frac_less_bias</code> <span class="math inline">\(= \frac{1}{n} \sum_{i=1}^n \text{I} \{ |\beta_i - \hat\beta_{i}| \gt |\beta_i - \hat\beta_{\text{adj},i}| \}\)</span>
+<code>frac_less_bias</code> <span class="math inline">\(=
+\frac{1}{n} \sum_{i=1}^n \text{I} \{ |\beta_i - \hat\beta_{i}| \gt
+|\beta_i - \hat\beta_{\text{adj},i}| \}\)</span>
 </li>
 </ul>
-<p>First, we take a look at the conditional likelihood method as follows, in which only SNPs that are originally deemed significant are included:</p>
+<p>First, we take a look at the conditional likelihood method as
+follows, in which only SNPs that are originally deemed significant are
+included:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sq_diff_1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>naive <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, beta.cl1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta.cl1</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>,  beta.cl2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta.cl2</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>,  beta.cl3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta.cl3</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>
 <span class="va">sq_diff_1</span>
@@ -281,25 +464,37 @@
 <span class="va">frac_less_bias_1</span>
 <span class="co">#&gt;    beta.cl1  beta.cl2  beta.cl3</span>
 <span class="co">#&gt; 1 0.6176471 0.8235294 0.7352941</span></code></pre></div>
-<p>For the first two quantities, the values for all three conditional likelihood methods are less than that of the naive estimate and we find that at least 62% of the significant SNPs are now less biased.</p>
-<p>Next, we investigate the other three methods described above which take into account all SNPs, not just those with <span class="math inline">\(p\)</span>-values less than a specified threshold. Thus, when computing the values below, <span class="math inline">\(n\)</span> is now equal to the total number of SNPs, i.e. <span class="math inline">\(n = 1,000,000\)</span>.</p>
+<p>For the first two quantities, the values for all three conditional
+likelihood methods are less than that of the naive estimate and we find
+that at least 62% of the significant SNPs are now less biased.</p>
+<p>Next, we investigate the other three methods described above which
+take into account all SNPs, not just those with <span class="math inline">\(p\)</span>-values less than a specified threshold.
+Thus, when computing the values below, <span class="math inline">\(n\)</span> is now equal to the total number of
+SNPs, i.e. <span class="math inline">\(n = 1,000,000\)</span>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sq_diff_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>naive <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_EB</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_EB</span><span class="op">$</span><span class="va">beta</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, beta_EB <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_EB</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_EB</span><span class="op">$</span><span class="va">beta_EB</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, beta_FIQT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_FIQT</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_FIQT</span><span class="op">$</span><span class="va">beta_FIQT</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, beta_BR_ss <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_BR_ss</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_BR_ss</span><span class="op">$</span><span class="va">beta_BR_ss</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>
 <span class="va">sq_diff_2</span>
 <span class="co">#&gt;      naive  beta_EB beta_FIQT beta_BR_ss</span>
-<span class="co">#&gt; 1 155.8238 1.856606  1.867272   15.13993</span>
+<span class="co">#&gt; 1 155.8238 1.840651  1.867272   15.13993</span>
 
 <span class="va">mean_abs_diff_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>naive <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_EB</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_EB</span><span class="op">$</span><span class="va">beta</span><span class="op">)</span><span class="op">)</span>, beta_EB <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_EB</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_EB</span><span class="op">$</span><span class="va">beta_EB</span><span class="op">)</span><span class="op">)</span>, beta_FIQT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_FIQT</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_FIQT</span><span class="op">$</span><span class="va">beta_FIQT</span><span class="op">)</span><span class="op">)</span>, beta_BR_ss <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_BR_ss</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_BR_ss</span><span class="op">$</span><span class="va">beta_BR_ss</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="va">mean_abs_diff_2</span>
 <span class="co">#&gt;         naive      beta_EB    beta_FIQT  beta_BR_ss</span>
-<span class="co">#&gt; 1 0.009104013 0.0002508148 0.0002557587 0.002778236</span>
+<span class="co">#&gt; 1 0.009104013 0.0002067548 0.0002557587 0.002778236</span>
 
 <span class="va">frac_less_bias_2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>beta_EB <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_EB</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_EB</span><span class="op">$</span><span class="va">beta</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_EB</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_EB</span><span class="op">$</span><span class="va">beta_EB</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">out_EB</span><span class="op">)</span>, beta_FIQT <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_FIQT</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_FIQT</span><span class="op">$</span><span class="va">beta</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_FIQT</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_FIQT</span><span class="op">$</span><span class="va">beta_FIQT</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">out_FIQT</span><span class="op">)</span>, beta_BR_ss <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_BR_ss</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_BR_ss</span><span class="op">$</span><span class="va">beta</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_BR_ss</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_BR_ss</span><span class="op">$</span><span class="va">beta_BR_ss</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">out_BR_ss</span><span class="op">)</span><span class="op">)</span>
 <span class="va">frac_less_bias_2</span>
 <span class="co">#&gt;    beta_EB beta_FIQT beta_BR_ss</span>
-<span class="co">#&gt; 1 0.991175  0.994367   0.994128</span></code></pre></div>
-<p>Again, we see that in the top two cases, the value associated with the naive estimate is greatest. This assures us that the new adjusted estimates provided by each method are indeed less biased than the original <span class="math inline">\(\beta\)</span> estimate. In fact, for each method, at least 99% of the association estimates of all SNPs are now less biased.</p>
-<p>Finally, we can compare the performance of all methods for the SNPs with raw <span class="math inline">\(p\)</span>-values less than <code>5e-8</code>.</p>
+<span class="co">#&gt; 1 0.991785  0.994367   0.994128</span></code></pre></div>
+<p>Again, we see that in the top two cases, the value associated with
+the naive estimate is greatest. This assures us that the new adjusted
+estimates provided by each method are indeed less biased than the
+original <span class="math inline">\(\beta\)</span> estimate. In fact,
+for each method, at least 99% of the association estimates of all SNPs
+are now less biased.</p>
+<p>Finally, we can compare the performance of all methods for the SNPs
+with raw <span class="math inline">\(p\)</span>-values less than
+<code>5e-8</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">out_EB_sig</span> <span class="op">&lt;-</span> <span class="va">out_EB</span><span class="op">[</span><span class="fl">2</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">out_EB</span><span class="op">$</span><span class="va">beta</span><span class="op">/</span><span class="va">out_EB</span><span class="op">$</span><span class="va">se</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">5e-8</span>,<span class="op">]</span>
 <span class="va">out_FIQT_sig</span> <span class="op">&lt;-</span> <span class="va">out_FIQT</span><span class="op">[</span><span class="fl">2</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">out_FIQT</span><span class="op">$</span><span class="va">beta</span><span class="op">/</span><span class="va">out_FIQT</span><span class="op">$</span><span class="va">se</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">5e-8</span>,<span class="op">]</span>
@@ -308,23 +503,27 @@
 <span class="va">sq_diff_3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>naive <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, beta.cl1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta.cl1</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>,  beta.cl2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta.cl2</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>,  beta.cl3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta.cl3</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, beta_EB <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_EB_sig</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_EB_sig</span><span class="op">$</span><span class="va">beta_EB</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, beta_FIQT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_FIQT_sig</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_FIQT_sig</span><span class="op">$</span><span class="va">beta_FIQT</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, beta_BR_ss <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_BR_ss_sig</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_BR_ss_sig</span><span class="op">$</span><span class="va">beta_BR_ss</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>
 <span class="va">sq_diff_3</span>
 <span class="co">#&gt;        naive   beta.cl1    beta.cl2   beta.cl3     beta_EB   beta_FIQT</span>
-<span class="co">#&gt; 1 0.01315265 0.01096133 0.004872073 0.00726706 0.008898041 0.003633531</span>
+<span class="co">#&gt; 1 0.01315265 0.01096133 0.004872073 0.00726706 0.005337383 0.003633531</span>
 <span class="co">#&gt;    beta_BR_ss</span>
 <span class="co">#&gt; 1 0.003402189</span>
 
 <span class="va">mean_abs_diff_3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>naive <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta</span><span class="op">)</span><span class="op">)</span>, beta.cl1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta.cl1</span><span class="op">)</span><span class="op">)</span>,  beta.cl2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta.cl2</span><span class="op">)</span><span class="op">)</span>,  beta.cl3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta.cl3</span><span class="op">)</span><span class="op">)</span>, beta_EB <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_EB_sig</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_EB_sig</span><span class="op">$</span><span class="va">beta_EB</span><span class="op">)</span><span class="op">)</span>, beta_FIQT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_FIQT_sig</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_FIQT_sig</span><span class="op">$</span><span class="va">beta_FIQT</span><span class="op">)</span><span class="op">)</span>, beta_BR_ss <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_BR_ss_sig</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_BR_ss_sig</span><span class="op">$</span><span class="va">beta_BR_ss</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="va">mean_abs_diff_3</span>
-<span class="co">#&gt;        naive   beta.cl1    beta.cl2   beta.cl3   beta_EB   beta_FIQT</span>
-<span class="co">#&gt; 1 0.01655319 0.01495558 0.009610264 0.01212566 0.0120782 0.007019747</span>
+<span class="co">#&gt;        naive   beta.cl1    beta.cl2   beta.cl3     beta_EB   beta_FIQT</span>
+<span class="co">#&gt; 1 0.01655319 0.01495558 0.009610264 0.01212566 0.009245785 0.007019747</span>
 <span class="co">#&gt;    beta_BR_ss</span>
 <span class="co">#&gt; 1 0.006709485</span>
 
 <span class="va">frac_less_bias_3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>beta.cl1 <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta.cl1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">out_CL</span><span class="op">)</span>, beta.cl2 <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta.cl2</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">out_CL</span><span class="op">)</span>, beta.cl3 <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta.cl3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">out_CL</span><span class="op">)</span>, beta_EB <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_EB_sig</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_EB_sig</span><span class="op">$</span><span class="va">beta</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_EB_sig</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_EB_sig</span><span class="op">$</span><span class="va">beta_EB</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">out_EB_sig</span><span class="op">)</span>, beta_FIQT <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_FIQT_sig</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_FIQT_sig</span><span class="op">$</span><span class="va">beta</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_FIQT_sig</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_FIQT_sig</span><span class="op">$</span><span class="va">beta_FIQT</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">out_FIQT_sig</span><span class="op">)</span>, beta_BR_ss <span class="op">=</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_BR_ss_sig</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_BR_ss_sig</span><span class="op">$</span><span class="va">beta</span><span class="op">)</span> <span class="op">&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_BR_ss_sig</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_BR_ss_sig</span><span class="op">$</span><span class="va">beta_BR_ss</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">out_BR_ss_sig</span><span class="op">)</span><span class="op">)</span>
 <span class="va">frac_less_bias_3</span>
 <span class="co">#&gt;    beta.cl1  beta.cl2  beta.cl3   beta_EB beta_FIQT beta_BR_ss</span>
-<span class="co">#&gt; 1 0.6176471 0.8235294 0.7352941 0.9117647 0.8529412  0.8529412</span></code></pre></div>
+<span class="co">#&gt; 1 0.6176471 0.8235294 0.7352941 0.8823529 0.8529412  0.8529412</span></code></pre></div>
 <p><span class="math inline">\(~\)</span> <span class="math inline">\(~\)</span></p>
-<p>In addition, we can gain a visual insight into the adjustments made by these functions by plotting the adjusted <em>absolute</em> values along with the naive estimates and the true <em>absolute</em> <span class="math inline">\(\beta\)</span> values of SNPs which are originally deemed as significant, i.e. those with raw <span class="math inline">\(p\)</span>-values less than <code>5e-8</code>, as follows:</p>
+<p>In addition, we can gain a visual insight into the adjustments made
+by these functions by plotting the adjusted <em>absolute</em> values
+along with the naive estimates and the true <em>absolute</em> <span class="math inline">\(\beta\)</span> values of SNPs which are originally
+deemed as significant, i.e. those with raw <span class="math inline">\(p\)</span>-values less than <code>5e-8</code>, as
+follows:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st">"RColorBrewer"</span><span class="op">)</span>
 <span class="va">col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html" class="external-link">brewer.pal</a></span><span class="op">(</span><span class="fl">8</span>,<span class="st">"Dark2"</span><span class="op">)</span>
@@ -359,7 +558,8 @@
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
       </footer>

@@ -94,7 +94,10 @@ adjusted association estimate for each SNP.</p></dd>
     <p>A data frame which combines the output of
 <code>conditional_likelihood</code> with two additional columns, namely
 <code>lower</code> and <code>upper</code>, containing the lower and upper bounds of the
-  required confidence interval for each significant SNP, respectively.</p>
+  required confidence interval for each significant SNP, respectively.
+  However, if no SNPs are detected as significant in the data set,
+<code>cl_interval</code> returns a warning message: <code>"WARNING: There are no
+  significant SNPs at this threshold."</code></p>
     </div>
     <div id="references">
     <h2>References</h2>
@@ -125,7 +128,8 @@ adjusted association estimate for each SNP.</p></dd>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
       </footer></div>
