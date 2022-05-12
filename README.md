@@ -16,9 +16,6 @@ You can install the current version of `winnerscurse` from GitHub with:
 ```r
 # install.packages("devtools")
 devtools::install_github("amandaforde/winnerscurse")
-
-github.com/amandaforde/winnerscurse
-
 ```
 
 
