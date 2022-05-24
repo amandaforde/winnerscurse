@@ -6,10 +6,10 @@ considered significant. The function implements the approximate conditional
 likelihood approach, discussed in
 Ghosh et
 al. (2008), which suggests three different forms of a less biased
-association estimate. Note that in order for an appropriate value for the
-second form of the adjusted estimate, namely beta.cl2, to be outputted
-for each significant SNP, the absolute value of the largest \(z\)-statistic
-in the data set must be less than 150."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
+association estimate. Note that if the \(z\)-statistic of a particular SNP
+is greater than 100, then merely the original naive estimate will be
+outputted for the second form of the adjusted estimate, namely
+beta.cl2, for that SNP."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 <![endif]--></head><body data-spy="scroll" data-target="#toc">
@@ -63,10 +63,10 @@ considered significant. The function implements the approximate conditional
 likelihood approach, discussed in
 <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/" class="external-link">Ghosh <em>et
 al.</em> (2008)</a>, which suggests three different forms of a less biased
-association estimate. Note that in order for an appropriate value for the
-second form of the adjusted estimate, namely <code>beta.cl2</code>, to be outputted
-for each significant SNP, the absolute value of the largest \(z\)-statistic
-in the data set must be less than 150.</p>
+association estimate. Note that if the \(z\)-statistic of a particular SNP
+is greater than 100, then merely the original naive estimate will be
+outputted for the second form of the adjusted estimate, namely
+<code>beta.cl2</code>, for that SNP.</p>
     </div>
 
     <div id="ref-usage">

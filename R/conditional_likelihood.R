@@ -7,10 +7,10 @@
 #' likelihood approach, discussed in
 #' \href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/}{Ghosh \emph{et
 #' al.} (2008)}, which suggests three different forms of a less biased
-#' association estimate. Note that in order for an appropriate value for the
-#' second form of the adjusted estimate, namely \code{beta.cl2}, to be outputted
-#' for each significant SNP, the absolute value of the largest \eqn{z}-statistic
-#' in the data set must be less than 150.
+#' association estimate. Note that if the \eqn{z}-statistic of a particular SNP
+#' is greater than 100, then merely the original naive estimate will be
+#' outputted for the second form of the adjusted estimate, namely
+#' \code{beta.cl2}, for that SNP.
 #'
 #' @param summary_data A data frame containing summary statistics from the
 #'   discovery GWAS. It must have three columns with column names \code{rsid},
@@ -81,16 +81,15 @@ conditional_likelihood <- function(summary_data, alpha=5e-8){
 
     beta.cl1[i] <- (stats::optimize(cond.like, c(0,summary_data_sig$z[i]), maximum=TRUE)$maximum)*summary_data_sig$se[i]
 
-    if ( abs(z[i]) < 37){
-      if (stats::integrate(cond.like,-37,37)$value == 0){beta.cl2[i] <- summary_data_sig$beta[i]} else{
-        beta.cl2[i] <- ((stats::integrate(mean.cond.like,-37,37)$value)/(stats::integrate(cond.like,-37,37)$value))*(summary_data_sig$se[i])
-      }
+    if(abs(summary_data_sig$z[i]) < 37){
+      beta.cl2[i] <- ((stats::integrate(mean.cond.like,-37,37)$value)/(stats::integrate(cond.like,-37,37)$value))*(summary_data_sig$se[i])
     }else{
-      if (stats::integrate(cond.like,-150,150)$value == 0){beta.cl2[i] <- summary_data_sig$beta[i]} else{
-        beta.cl2[i] <- ((stats::integrate(mean.cond.like,-150,150)$value)/(stats::integrate(cond.like,-150,150)$value))*(summary_data_sig$se[i])
+      if(abs(summary_data_sig$z[i]) > 100){
+        beta.cl2[i] <- summary_data_sig$beta[i]
+      }else{
+        beta.cl2[i] <- ((stats::integrate(mean.cond.like,-100,100)$value)/(stats::integrate(cond.like,-100,100)$value))*(summary_data_sig$se[i])
       }
     }
-
 
     beta.cl3[i] <- (beta.cl1[i]+beta.cl2[i])/2
   }

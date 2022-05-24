@@ -86,10 +86,8 @@ head(summary_stats)
 
 - As the conditional likelihood methods have been designed to be only used for SNPs which are deemed significant, the data frame returned contains only SNPs that have $p$-values below the inputted genome-wide significance threshold value, `alpha`.
 
-- **Note:**  In order for this function to output an appropriate value for the
-second form of the adjusted estimate, namely `beta.cl2`,
-for each significant SNP, the absolute value of the largest $z$-statistic
-in the data set must be less than 150.
+- **Note:**  If the \eqn{z}-statistic of a particular SNP is greater than 100, then merely the original naive estimate will be outputted for the second form of the adjusted estimate, namely
+\code{beta.cl2}, for that SNP.
 
 - If no SNPs are detected as significant, the function returns a warning message: `WARNING: There are no significant SNPs at this threshold`. 
 

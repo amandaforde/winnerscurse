@@ -19,7 +19,10 @@ method.}
 to take for the purpose of estimating the log density function. The default
 setting is \code{method="AIC"}, which is the current published method. Other
 options include \code{method="fix_df"}, \code{method="scam"},
-\code{method="gam_nb"} and \code{method="gam_po"}.}
+\code{method="gam_nb"} and \code{method="gam_po"}. If
+\code{method="fix_df"}, the degrees of freedom is set to 7. The other three
+options all enforce additional constraints on the shape of the estimated log
+density function.}
 }
 \value{
 A data frame with the inputted summary data occupying the first three

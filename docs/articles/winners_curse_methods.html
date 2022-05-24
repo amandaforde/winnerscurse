@@ -182,11 +182,10 @@ a unique SNP, identified by <code>rsid</code>.</p></li>
 only used for SNPs which are deemed significant, the data frame returned
 contains only SNPs that have <span class="math inline">\(p\)</span>-values below the inputted genome-wide
 significance threshold value, <code>alpha</code>.</p></li>
-<li><p><strong>Note:</strong> In order for this function to output an
-appropriate value for the second form of the adjusted estimate, namely
-<code>beta.cl2</code>, for each significant SNP, the absolute value of
-the largest <span class="math inline">\(z\)</span>-statistic in the data
-set must be less than 150.</p></li>
+<li><p><strong>Note:</strong> If the -statistic of a particular SNP is
+greater than 100, then merely the original naive estimate will be
+outputted for the second form of the adjusted estimate, namely , for
+that SNP.</p></li>
 <li><p>If no SNPs are detected as significant, the function returns a
 warning message:
 <code>WARNING: There are no significant SNPs at this threshold</code>.</p></li>
