@@ -115,7 +115,6 @@ conditional_likelihood <- function(summary_data, alpha=5e-8){
     }
   }
 
-  summary_data_sig <- cbind(summary_data_sig,beta.cl1,beta.cl2,beta.cl3)
   summary_data_sig <- dplyr::arrange(summary_data_sig,dplyr::desc(abs(summary_data_sig$z)))
   summary_data_sig <- cbind(summary_data_sig[,1:3],summary_data_sig[,6:8])
   return(summary_data_sig)
