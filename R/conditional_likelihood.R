@@ -94,6 +94,26 @@ conditional_likelihood <- function(summary_data, alpha=5e-8){
     beta.cl3[i] <- (beta.cl1[i]+beta.cl2[i])/2
   }
 
+  summary_data_sig <- cbind(summary_data_sig,beta.cl1,beta.cl2,beta.cl3)
+
+
+  if(sum(abs(beta.cl2) > abs(summary_data_sig$beta + sign(summary_data_sig$beta))) >= 1){
+    bad.cl2 <- which((abs(beta.cl2) > abs(summary_data_sig$beta + sign(summary_data_sig$beta))) == TRUE)
+    bad.cl2.df <- data.frame(rsid = summary_data_sig$rsid[bad.cl2], z = summary_data_sig$z[bad.cl2], z.cl2 = beta.cl2[bad.cl2]/summary_data_sig$se[bad.cl2], beta = summary_data_sig$beta[bad.cl2], beta.cl2 = beta.cl2[bad.cl2], se = summary_data_sig$se[bad.cl2])
+    good.cl2.df <- data.frame(rsid = summary_data_sig$rsid[-(bad.cl2)], z = summary_data_sig$z[-(bad.cl2)], z.cl2 = beta.cl2[-(bad.cl2)]/summary_data_sig$se[-(bad.cl2)], beta = summary_data_sig$beta[-bad.cl2], beta.cl2 = beta.cl2[-(bad.cl2)], se = summary_data_sig$se[-(bad.cl2)])
+    for(i in 1:nrow(bad.cl2.df)){
+      if(length(good.cl2.df$z[good.cl2.df$z >= bad.cl2.df$z[i]]) == 0 || length(good.cl2.df$z[good.cl2.df$z < bad.cl2.df$z[i]]) == 0){bad.cl2.df$z.cl2[i] <- good.cl2.df$z.cl2[which.min(abs(good.cl2.df$z-bad.cl2.df$z[i]))]
+      bad.cl2.df$beta.cl2[i] <- bad.cl2.df$z.cl2[i]*bad.cl2.df$se[i]}else{
+        min_greater <- min(good.cl2.df$z[good.cl2.df$z >= bad.cl2.df$z[i]])
+        min_smaller <- min(good.cl2.df$z[good.cl2.df$z < bad.cl2.df$z[i]])
+        bad.cl2.df$z.cl2[i] <- ((abs(min_greater - bad.cl2.df$z[i]))*(good.cl2.df$z.cl2[good.cl2.df$z == min_smaller]) + (abs(bad.cl2.df$z[i] -     min_smaller))*(good.cl2.df$z.cl2[good.cl2.df$z == min_greater]))/(abs(min_greater - min_smaller))
+        bad.cl2.df$beta.cl2[i] <- bad.cl2.df$z.cl2[i]*bad.cl2.df$se[i]
+      }
+
+      summary_data_sig$beta.cl2[summary_data_sig$rsid == bad.cl2.df$rsid[i]] <- bad.cl2.df$beta.cl2[i]
+      summary_data_sig$beta.cl3[summary_data_sig$rsid == bad.cl2.df$rsid[i]] <- (summary_data_sig$beta.cl1[summary_data_sig$rsid == bad.cl2.df$rsid[i]] +bad.cl2.df$beta.cl2[i])/2
+    }
+  }
 
   summary_data_sig <- cbind(summary_data_sig,beta.cl1,beta.cl2,beta.cl3)
   summary_data_sig <- dplyr::arrange(summary_data_sig,dplyr::desc(abs(summary_data_sig$z)))
