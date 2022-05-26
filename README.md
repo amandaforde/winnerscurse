@@ -27,7 +27,7 @@ However, the Winner's Curse isn't just a phenomenon related to GWAS. An understa
 
 Now, let us reframe this idea in the context of GWAS. The *'winners'* here are SNPs whose effect sizes are *stochastically* higher in the discovery study than their true association values. Clearly, these raw effect estimates are therefore biased estimates of `beta`, especially for those SNPs who are ranked highly in the study - the most significant SNPs. SNPs are often ranked according to their *z*-statistics or corresponding *p*-values. 
 
-The goal of the functions in this package is to adjust the raw effect estimates, `beta`, rendering them less biased. These adjustments are made using only the summary statistics obtained from the discovery study.  
+The goal of the functions in this package is to adjust the raw effect estimates, `beta`, rendering them less biased. Several functions in this package can make adjustments using only the summary statistics obtained from the discovery study.  
 
 
 
