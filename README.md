@@ -34,14 +34,17 @@ The goal of the functions in this package is to adjust the raw effect estimates,
 ### Example
 
 We will now discuss a simple simulated data set of GWAS summary statistics, providing an alternative manner in which to comprehend the Winner’s Curse with a visual representation of the bias induced. We simulate GWAS summary statistics for a quantitative trait with a normal effect size distribution under the assumption that SNPs are independent. We assume a fixed array of 1,000,000 SNPs, and fix the heritability of this trait at 0.7, the sample size to be 30,000 and the proportion of effect SNPs at 0.01. A more detailed description of the code used to simulate this data set can be viewed in the article [‘Methods for use with discovery GWAS’](https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html). 
-The true effect sizes, `beta`, were first generated and then, used these to simulate *one* effect estimate, `beta_hat` for each SNP – this is similar to performing a single GWAS or only having access to the points scored by players in one World Cup tournament. In this simulation scenario, we can thus easily compare `beta_hat` with `beta` for each SNP. With real data sets, we are not as fortunate and hence, this provides motivation to establish suitable Winner’s Curse correction methods which will aim to reduce or eliminate the bias witnessed in the effect estimates of significant SNPs. The table below shows the 6 SNPs which have been deemed most extreme according to their z-statistic. It contains the values for `beta_hat` and `beta `, with the bias induced by Winner’s Curse evident. 5 of the `beta_hat` values are an *overestimation* of their corresponding true effect size.
+The true effect sizes, `beta`, were first generated and then, used these to simulate *one* effect estimate, `beta_hat` for each SNP – this is similar to performing a single GWAS or only having access to the points scored by players in one World Cup tournament. In this simulation scenario, we can thus easily compare `beta_hat` with `beta` for each SNP. With real data sets, we are not as fortunate and hence, this provides motivation to establish suitable Winner’s Curse correction methods which will aim to reduce or eliminate the bias witnessed in the effect estimates of significant SNPs. The table below shows the 6 SNPs which have been deemed most extreme according to their z-statistic. It contains the values for `beta_hat` and `beta`, with the bias induced by Winner’s Curse evident. 5 of the `beta_hat` values are an *overestimation* of their corresponding true effect size.
 
-![](https://raw.githubusercontent.com/amandaforde/winnerscurse/main/winnerscurse_table.PNG)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/amandaforde/winnerscurse/main/winnerscurse_table.PNG" width="50%">
+</p>
 
 Plotting the distribution of the true absolute effect sizes for SNPs which have been deemed significant according to the genome-wide significance threshold of `5e-8` with the estimated absolute effect sizes from this study allows visualise Winner’s Curse. As expected, we witness the orange curve of the estimated effect lying to the right of the true effect turquoise curve. This provides a strong indication that a large number of the estimated effect of these extreme SNPs are greater than their corresponding true value. 
 
-![](https://raw.githubusercontent.com/amandaforde/winnerscurse/main/winnerscurse_plot.PNG)
-
+<p align="center">
+  <img src="https://raw.githubusercontent.com/amandaforde/winnerscurse/main/winnerscurse_plot.PNG" width="50%">
+</p>
 
 Therefore, in visual terms, we would like the functions of our package to produce estimates which are more in line with the true values, i.e. shifted more towards the turquoise density plot on the left, avoiding the obvious inflation incurred by the raw `beta_hat` estimates here. 
 
