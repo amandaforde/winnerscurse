@@ -151,7 +151,7 @@ head(out_FIQT)
 
 ### Method 4: Bootstrap 
 
-- Inspired by the winner's curse adjustment method detailed in [Faye *et al.* (2011)](https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4228), the function `BR_ss` implements a computationally efficient bootstrap method which is suitable for use with summary statistics. 
+- Inspired by the bootstrap resampling method detailed in [Faye *et al.* (2011)](https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4228), the function `BR_ss` implements a similar approach which can be easily applied to published sets of GWAS summary statistics without the requirement of access to original individual-level data. The major advantage of our alternative suggested method is the considerable improvement in computational efficiency, with a reasonably low level of conceptual difficulty being maintained. 
 
 - `BR_ss` takes a data frame `summary_data` with three columns: `rsid`, `beta`, `se`, and returns the inputted data frame along with the adjusted estimate for $\beta$, `beta_BR_ss`. Note that all columns of the data frame, `summary data` must contain numerical values, each row must represent a unique SNP, identified by `rsid` and the function requires that there must be at least 5 unique SNPs so that the smoothing spline can be implemented successfully.  The function also has a logical parameter `seed_opt` which can be set to `TRUE` by the user to permit reproducibility. Its default setting is `seed_opt=FALSE`. As this method involves bootstrap implementation, the use of a seed can allow the user to obtain the exact same results for `beta_BR_ss` when running the function many times on the same dataset. The parameter `seed` provides the user with an option to set their desired value for the seed when using `seed_opt=TRUE`. The default for `seed` is the arbitrary value of `1998`. 
 
@@ -159,18 +159,20 @@ $~$
 
 **Method description:**
 
-- First, the $N$ SNPs are arranged according to their naive $z$-statistics, $\frac{\hat\beta}{\text{se}(\hat\beta)}$, in descending order and given rank $k$. Thus, the SNP with the largest positive original $z$-statistic is given rank $k=1$ while the SNP with the largest negative original $z$-statistic receives rank $k=N$. 
+- This procedure begins with arranging all $N$ SNPs according to their original $z$-statistics, $z_i = \frac{\hat\beta_i}{\hat{\text{se}(\hat\beta_i)}}$, in descending order. A randomized estimate of the extent of ranking bias for the $k^{th}$ largest $z$-statistic is calculated by means of the parametric bootstrap as follows: 
 
-- Following this, a parametric bootstrap is performed in which a value $\hat\beta^{\text{b}}_{(k)}$ is simulated for SNP $k$ from the distribution: 
-$$\hat\beta^{\text{b}}_{(k)} \sim N(\hat\beta_{(k)}, \text{se}(\hat\beta_{(k)})).$$ Upon obtaining $\hat\beta^{\text{b}}$, SNPs undergo a second ordering in which they are arranged based on $z^{\text{b}}$-statistics and receive a rank $A(k)$ accordingly. The $z^{\text{b}}_{(k)}$-statistic of SNP $k$ is equal to $\frac{\hat\beta^{\text{b}}_{(k)}}{\text{se}(\hat\beta_{(k)})}$. 
+    1) A value $\hat\beta_i^{\text{b}}$ is simulated for SNP $i, i=1,...,N$, independently, from a Gaussian distribution with mean $\hat\beta_i$ and standard deviation $\hat{\text{se}(\hat\beta_i)}$, i.e. $$\hat\beta_i^{\text{b}} \sim N(\hat\beta_i, \hat{\text{se}(\hat\beta_i)}).$$
 
-- An estimate for the bias correction value of SNP $k$ is given as:
-$$\text{bias}_{(k)} = \frac{\hat\beta^{\text{b}}_{A(k)} - \hat\beta^{\text{oob}}_{A(k)}}{\text{se}(\hat\beta_{A(k)})} = \frac{\hat\beta^{\text{b}}_{A(k)} - \hat\beta_{A(k)}}{\text{se}(\hat\beta_{A(k)})}, $$in which $\hat\beta^{\text{b}}_{A(k)}$ is the bootstrap value of the SNP ranked in position $k$ in the second ordering, $\hat\beta^{\text{oob}}_{A(k)} = \hat\beta_{A(k)}$ is that same SNP's naive $\beta$ estimate and $\text{se}(\hat\beta_{A(k)})$ it's standard error. 
+    2) Upon obtaining $\hat\beta_i^{\text{b}}$ for $i, i=1,...,N$, the SNPs are subjected to an ordering in which they are arranged based on their $z_i^{\text{b}}$-statistics, in descending order. The $z_i^{\text{b}}$-statistic of SNP $i$ is defined as $$z_i^{\text{b}} = \frac{\hat\beta_i^{\text{b}}}{\hat{\text{se}(\hat\beta_i)}}.$$Due to this ordering, each SNP is assigned a rank $A(k)$. Equivalently, we define $A(k)$ as the index corresponding to the $k^{th}$ largest entry in the vector: $[z_1^{\text{b}}, ..., z_N^{\text{b}}] = [\frac{\hat\beta_1^{\text{b}}}{\hat{\text{se}(\hat\beta_1)}}, ..., \frac{\hat\beta_N^{\text{b}}}{\hat{\text{se}(\hat\beta_N)}}]$.
 
-- Next, a cubic smoothing spline is fitted to the data using `stats::smooth.spline` in which $z_{(k)}$-statistics are considered as the inputs and $\text{bias}_{(k)}$, their corresponding outputs. The predicted values from this process provides $\text{bias}^{*}_{(k)}$ for each SNP. Using $\text{bias}^{*}_{(k)}$ instead of $\text{bias}_{(k)}$ results in a faster approach with increased accuracy as only one bootstrap iteration for each SNP is sufficient for competitive performance. 
+    3) Then, the estimated bias of SNP $k$, the SNP with the $k^{th}$ largest original $z$-statistic, takes the following form: $$\text{bias}_k = \frac{\hat\beta_{A(k)}^{\text{b}}- \hat\beta_{A(k)}^{\text{oob}}}{\hat{\text{se}(\hat\beta_{A(k)})}} = \frac{\hat\beta_{A(k)}^{\text{b}}- \hat\beta_{A(k)}}{\hat{\text{se}(\hat\beta_{A(k)})}},$$in which $\hat\beta_{A(k)}^{\text{b}}$ is the bootstrap value of the SNP ranked in position $k$ in the ordering of $z_i^{\text{b}}$-statistics, $\hat\beta_{A(k)}^{\text{oob}} = \hat\beta_{A(k)}$ is that same SNP's original $\beta$ estimate and $\hat{\text{se}(\hat\beta_{A(k)})}$ its standard error.
 
-- Finally, the new estimate for $\beta$ for SNP $k$ is defined as follows:
-$$\hat\beta_{(k)}^{*} = \hat\beta_{(k)} - \text{se}(\hat\beta_{(k)}) \cdot  \text{bias}^{*}_{(k)}.$$
+- In the next step of the process, a cubic smoothing spline is fitted to the data in which the $z$-statistics are considered as the inputs and $\text{bias}_k$, their corresponding outputs. The predicted values from this model fitting provides new estimates for the bias correction, $\text{bias}_k^*$ for each SNP. This additional stage in which $\text{bias}_k^*$ is obtained eliminates the need for more than one bootstrap iteration for each SNP in order to ensure competitive performance of the method. This results in a faster approach with increased accuracy. 
+
+- Finally, the new estimate for the true effect size of SNP k, the SNP with the kth largest original z-statistic, is defined as $\hat\beta_k^* = \hat\beta_k - \hat{\text{se}(\hat\beta_k)} \cdot \text{bias}_k^*$. 
+
+
+
 
 
 ```{r}
@@ -266,11 +268,4 @@ legend(-0.008, 77.5, legend=c("beta_naive", "true_beta","beta_FIQT","beta.cl1","
 
 $~$
 $~$
-
-
-
-
-
-
-
 

@@ -117,76 +117,60 @@ ranked highly in the study - the most significant SNPs. SNPs are often
 ranked according to their <em>z</em>-statistics or corresponding
 <em>p</em>-values.</p>
 <p>The goal of the functions in this package is to adjust the raw effect
-estimates, <code>beta</code>, rendering them less biased. These
-adjustments are made using only the summary statistics obtained from the
-discovery study.</p>
+estimates, <code>beta</code>, rendering them less biased. Several
+functions in this package can make adjustments using only the summary
+statistics obtained from the discovery study.</p>
 </div>
 <div class="section level3">
-<h3 id="simple-example">Simple Example<a class="anchor" aria-label="anchor" href="#simple-example"></a>
+<h3 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h3>
-<p>We will now discuss a simple simulated data set, providing another
-way of comprehending the Winner’s Curse with the assistance of a plot.
-However, remember throughout that this is very much a hypothetical data
-set used for demonstration purposes and does not resemble a true data
-set that one would obtain in a GWAS.</p>
-<p>Let us first generate 1000 values from a standard normal
-distribution, centred at 0 with standard deviation of 1. We allow these
-values to act as the <em>true</em> effect sizes of 1000 independent
-SNPs.</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1948</span><span class="op">)</span>
-<span class="va">beta</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">1000</span>,<span class="fl">0</span>,<span class="fl">1</span><span class="op">)</span>
-<span class="va">beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>id <span class="op">=</span> <span class="fl">1</span><span class="op">:</span><span class="fl">1000</span>, beta <span class="op">=</span> <span class="va">beta</span><span class="op">)</span></code></pre></div>
-<p>Next, we use these true effect sizes to simulate <em>one</em> effect
-estimate for each SNP - this is similar to performing a single GWAS
-study or looking at points scored by players in one World Cup
-tournament. We imagine that the effect size of each SNP also follows a
-normal distribution which is centred at its true effect size,
-<code>beta</code> and has a standard deviation of 0.5. This value of 0.5
-is only used for convenience and in general, each SNP would have its own
-individual value here. Therefore, <code>beta_hat</code> below can be
-understood as a vector of estimates of effect sizes obtained from one
-study. We then re-arrange our data set so that SNPs are now ordered
-based on decreasing absolute <code>beta_hat</code> values and have a
-look at the 6 most extreme SNPs. As this data set is simulated, we know
-the true <code>beta</code> values and thus, can easily compare
-<code>beta_hat</code> with <code>beta</code> for each SNP. With real
-data sets, we are not as fortunate. From the table below, the bias
-induced by Winner’s Curse is evident. Each <code>beta_hat</code> value
-is an <em>overestimation</em> of its corresponding true effect size.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">beta_hat</span> <span class="op">&lt;-</span> <span class="fu">stats</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">1000</span>,<span class="va">beta</span><span class="op">$</span><span class="va">beta</span>,<span class="fl">0.5</span><span class="op">)</span>  
-<span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="va">beta</span>, <span class="va">beta_hat</span><span class="op">)</span>
-<span class="va">data</span> <span class="op">&lt;-</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html" class="external-link">arrange</a></span><span class="op">(</span><span class="va">data</span>, <span class="fu">desc</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">beta_hat</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">data</span><span class="op">)</span></code></pre></div>
-<p><img src="https://raw.githubusercontent.com/amandaforde/winnerscurse/main/winnerscurse.PNG"></p>
-<p>Plotting the distribution of the true absolute effect sizes for the
-SNPs which have been ranked in the top 50 together with the estimated
-absolute effect sizes from this study allows us visualize Winner’s
-Curse. As expected, we witness the orange curve of the estimated effects
-lying to the right of the true effect turquoise curve. This provides a
-strong indication that a large number of the estimated effects of these
-extreme SNPs are greater than their corresponding true value.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">RColorBrewer</span><span class="op">)</span>
-<span class="va">col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html" class="external-link">brewer.pal</a></span><span class="op">(</span><span class="fl">3</span>,<span class="st">"Dark2"</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/density.html" class="external-link">density</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">beta</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">50</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>,<span class="fl">1.4</span><span class="op">)</span>,xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="fl">4.5</span><span class="op">)</span>, main<span class="op">=</span><span class="st">"Visualisation of Winner's Curse"</span>, col<span class="op">=</span><span class="va">col</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, lwd<span class="op">=</span><span class="fl">2</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html" class="external-link">lines</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/density.html" class="external-link">density</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">data</span><span class="op">$</span><span class="va">beta_hat</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">50</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>, col<span class="op">=</span><span class="va">col</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, lwd<span class="op">=</span><span class="fl">2</span><span class="op">)</span></code></pre></div>
-<p><img src="https://raw.githubusercontent.com/amandaforde/winnerscurse/main/readme_plot.png"></p>
+<p>We will now discuss a simple simulated data set of GWAS summary
+statistics, providing an alternative manner in which to comprehend the
+Winner’s Curse with a visual representation of the bias induced. We
+simulate GWAS summary statistics for a quantitative trait with a normal
+effect size distribution under the assumption that SNPs are independent.
+We assume a fixed array of 1,000,000 SNPs, and fix the heritability of
+this trait at 0.7, the sample size to be 30,000 and the proportion of
+effect SNPs at 0.01. A more detailed description of the code used to
+simulate this data set can be viewed in the article <a href="https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html" class="external-link">‘Methods
+for use with discovery GWAS’</a>. The true effect sizes,
+<code>beta</code>, were first generated and then, used these to simulate
+<em>one</em> effect estimate, <code>beta_hat</code> for each SNP – this
+is similar to performing a single GWAS or only having access to the
+points scored by players in one World Cup tournament. In this simulation
+scenario, we can thus easily compare <code>beta_hat</code> with
+<code>beta</code> for each SNP. With real data sets, we are not as
+fortunate and hence, this provides motivation to establish suitable
+Winner’s Curse correction methods which will aim to reduce or eliminate
+the bias witnessed in the effect estimates of significant SNPs. The
+table below shows the 6 SNPs which have been deemed most extreme
+according to their z-statistic. It contains the values for
+<code>beta_hat</code> and <code>beta</code>, with the bias induced by
+Winner’s Curse evident. 5 of the <code>beta_hat</code> values are an
+<em>overestimation</em> of their corresponding true effect size.</p>
+<p align="center">
+<img src="https://raw.githubusercontent.com/amandaforde/winnerscurse/main/winnerscurse_table.PNG" width="25%"></p>
+<p>Plotting the distribution of the true absolute effect sizes for SNPs
+which have been deemed significant according to the genome-wide
+significance threshold of <code>5e-8</code> with the estimated absolute
+effect sizes from this study allows visualise Winner’s Curse. As
+expected, we witness the orange curve of the estimated effect lying to
+the right of the true effect turquoise curve. This provides a strong
+indication that a large number of the estimated effect of these extreme
+SNPs are greater than their corresponding true value.</p>
+<p align="center">
+<img src="https://raw.githubusercontent.com/amandaforde/winnerscurse/main/winnerscurse_plot.PNG" width="50%"></p>
 <p>Therefore, in visual terms, we would like the functions of our
 package to produce estimates which are more in line with the true
 values, i.e. shifted more towards the turquoise density plot on the
 left, avoiding the obvious inflation incurred by the raw
 <code>beta_hat</code> estimates here.</p>
-<p><strong>Note:</strong> The above data is <em>not</em> suitable for
-use with the functions in this package. It has merely been used a very
-simple example to demonstrate the concept of winner’s curse. In order to
-appropriately use the functions, summary statistics must be in the form
-of a <strong>data frame</strong> in which the first column, titled
-<code>rsid</code>, contains the SNP ID number, the second column, named
-<code>beta</code>, contains the effect size estimate while the third
-column, <code>se</code> holds the corresponding estimated standard
-error.</p>
+<p><strong>Note:</strong> In order to appropriately use the functions in
+this package, summary statistics must be in the form of a <strong>data
+frame</strong> in which the first column, titled <code>rsid</code>,
+contains the SNP ID number, the second column, named <code>beta</code>,
+contains the effect size estimate while the third column,
+<code>se</code> holds the corresponding estimated standard error.</p>
 </div>
 </div>
 
