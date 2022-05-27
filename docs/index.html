@@ -165,12 +165,30 @@ package to produce estimates which are more in line with the true
 values, i.e. shifted more towards the turquoise density plot on the
 left, avoiding the obvious inflation incurred by the raw
 <code>beta_hat</code> estimates here.</p>
+<p>Another interesting way in which this Winner’s curse induced bias can
+be visualised is to plot <code>z</code> vs <code>bias</code> for this
+simulated data set in which <code>z</code> =
+<code>beta_hat</code>/<code>se</code> and <code>bias</code> =
+<code>beta_hat</code> - <code>beta</code>. In the plot below, the bright
+red line corresponds to the significance threshold of <code>5e-8</code>
+while the darker red line relates to <code>5e-4</code>. The points
+corresponding to SNPs which are significantly overestimated and are
+significant at a threshold of <code>5e-4</code> are coloured in navy . A
+SNP is determined to be significantly overestimated if it satisfies the
+condition: |<code>beta_hat</code>| &gt; |<code>beta</code>| +
+1.96<code>se</code>. It can be seen clearly that significant SNPs with
+negative <em>z</em>-statistics tend to also have negative
+<code>bias</code> values and vice versa for the significant SNPs with
+positive <em>z</em>-statistics.</p>
+<p align="center">
+<img src="https://raw.githubusercontent.com/amandaforde/winnerscurse/main/winnerscurse_plot_2.PNG" width="50%"></p>
 <p><strong>Note:</strong> In order to appropriately use the functions in
-this package, summary statistics must be in the form of a <strong>data
-frame</strong> in which the first column, titled <code>rsid</code>,
-contains the SNP ID number, the second column, named <code>beta</code>,
-contains the effect size estimate while the third column,
-<code>se</code> holds the corresponding estimated standard error.</p>
+this package, GWAS summary statistics must be in the form of a
+<strong>data frame</strong> in which the first column, titled
+<code>rsid</code>, contains the SNP ID number, the second column, named
+<code>beta</code>, contains the effect size estimate while the third
+column, <code>se</code> holds the corresponding estimated standard
+error.</p>
 </div>
 </div>
 
