@@ -48,10 +48,12 @@ Plotting the distribution of the true absolute effect sizes for SNPs which have 
 
 Therefore, in visual terms, we would like the functions of our package to produce estimates which are more in line with the true values, i.e. shifted more towards the turquoise density plot on the left, avoiding the obvious inflation incurred by the raw `beta_hat` estimates here. 
 
-Another interesting manner in which to visualise this Winner's curse induced bias is to plot `z` vs `bias` for this simulated data set in which `z` = `beta_hat`/`se` and `bias` = `beta_hat` - `beta`. In the plot below, the bright red line corresponds to the significance threshold of `5e-8` while the darker red line relates to `5e-4`. The points corresponding to SNPs which are significantly overestimated and are significant at a threshold of `5e-4` are coloured in navy . A SNP is determined to be significantly overestimated if it satisfies the condition: |`beta_hat`| > |`beta`| + 1.96`se`. It can be seen clearly that significant SNPs with negative *z*-statistics tend to also have negative `bias` values and vice versa for the significant SNPs with positivie *z*-statistics. 
+Another interesting manner in which to visualise this Winner's curse induced bias is to plot `z` vs `bias` for this simulated data set in which `z` = `beta_hat`/`se` and `bias` = `beta_hat` - `beta`. In the plot below, the bright red line corresponds to the significance threshold of `5e-8` while the darker red line relates to `5e-4`. The points corresponding to SNPs which are significantly overestimated and are significant at a threshold of `5e-4` are coloured in navy . A SNP is determined to be significantly overestimated if it satisfies the condition: |`beta_hat`| > |`beta`| + 1.96`se`. It can be seen clearly that significant SNPs with negative *z*-statistics tend to also have negative `bias` values and vice versa for the significant SNPs with positive *z*-statistics. 
+
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/amandaforde/winnerscurse/main/winnerscurse_plot_2.PNG" width="50%">
 </p>
 
-**Note:** In order to appropriately use the functions in this package, summary statistics must be in the form of a **data frame** in which the first column, titled `rsid`, contains the SNP ID number, the second column, named `beta`, contains the effect size estimate while the third column, `se` holds the corresponding estimated standard error. 
+
+**Note:** In order to appropriately use the functions in this package, GWAS summary statistics must be in the form of a **data frame** in which the first column, titled `rsid`, contains the SNP ID number, the second column, named `beta`, contains the effect size estimate while the third column, `se` holds the corresponding estimated standard error. 
