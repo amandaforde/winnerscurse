@@ -260,7 +260,7 @@ lines(density(abs(out_CL$beta.cl3)),col=col[6],lwd=2)
 lines(density(abs(out_EB_sig$beta_EB)),col=col[7],lwd=2)
 lines(density(abs(out_BR_ss_sig$beta_BR_ss)),col=col[8],lwd=2)
 legend(-0.008, 77.5, legend=c("beta_naive", "true_beta","beta_FIQT","beta.cl1","beta.cl2","beta.cl3","beta_EB", "beta_BR_ss"),
-       col=col,lty=1,lwd=2)
+       col=col,lty=1,lwd=2,cex=0.75)
 
 ```
 
@@ -268,4 +268,5 @@ legend(-0.008, 77.5, legend=c("beta_naive", "true_beta","beta_FIQT","beta.cl1","
 
 $~$
 $~$
+
 
