@@ -1,5 +1,5 @@
 codecov:
-  token: 99806a56-c077-40be-9f47-838b6292d64c
+  token: 42fe8de9-74e1-48d3-be7b-d6783f1de1dd
   bot: "codecov-io"
   ci:
     - "travis.org"
