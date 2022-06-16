@@ -82,11 +82,11 @@ empirical_bayes <- function(summary_data, method="AIC"){
 
   if(method=="gam_nb"){f <- mgcv::gam(counts ~ s(mids), family=mgcv::nb(), data=data)$fit}
 
-  if(method=="gam_po"){f <- mgcv::gam(counts ~ s(mids), family=poisson(), data=data)$fit}
+  if(method=="gam_po"){f <- mgcv::gam(counts ~ s(mids), family=stats::poisson(), data=data)$fit}
 
   if(method=="scam"){
-    f1 <- scam::scam(counts[mids >= 0] ~ s(mids[mids >= 0], bs="mpd"), family =poisson(link="log"), data = data)$fit
-    f2 <- scam::scam(counts[mids < 0] ~ s(mids[mids < 0], bs="mpi"), family = poisson(link="log"), data = data)$fit
+    f1 <- scam::scam(counts[mids >= 0] ~ s(mids[mids >= 0], bs="mpd"), family =stats::poisson(link="log"), data = data)$fit
+    f2 <- scam::scam(counts[mids < 0] ~ s(mids[mids < 0], bs="mpi"), family = stats::poisson(link="log"), data = data)$fit
     f <- c(f2,f1)
   }
 

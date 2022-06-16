@@ -17,8 +17,7 @@ Suggests:
     testthat,
     knitr (>= 1.34),
     markdown,
-    rmarkdown (>= 2.11),
-    covr
+    rmarkdown (>= 2.11)
 RoxygenNote: 7.1.2
 Imports: 
     stats,
