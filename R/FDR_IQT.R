@@ -8,9 +8,9 @@
 #'al.} (2016)}, which was established for this purpose.
 #'@param summary_data A data frame containing summary statistics from the
 #'  discovery GWAS. It must have three columns with column names \code{rsid},
-#'  \code{beta} and \code{se}, respectively, and columns \code{beta} and \code{se} must contain
-#'  numerical values. Each row must correspond to a unique SNP, identified by
-#'  the numerical value \code{rsid}.
+#'  \code{beta} and \code{se}, respectively, and columns \code{beta} and
+#'  \code{se} must contain numerical values. Each row must correspond to a
+#'  unique SNP, identified by the numerical value \code{rsid}.
 #'@param min_pval A numerical value whose purpose is to avoid zero
 #'  \eqn{p}-values as this introduces issues when \code{qnorm()} is applied. Any
 #'  SNP for which its computed \eqn{p}-value is found to be less than
@@ -19,6 +19,12 @@
 #'  the association estimate of a SNP for which this has occurred with the
 #'  presumption that in general, estimates of SNPs with \eqn{z > 8} are not
 #'  biased. The default value is \code{min_pval = 1e-15}.
+#'@param method A string which allows the user to choose if they wish to execute
+#'  the original definition of the method or an alternative form which adjusts
+#'  the effect sizes of all SNPs, not only those that have \eqn{p}-values
+#'  greater than \code{1e-15}. The default setting is \code{method="original"}
+#'  while the other form of the method can be executed using
+#'  \code{method="alt"}.
 #'
 #'@return A data frame with the inputted summary data occupying the first three
 #'  columns. The new adjusted association estimates for each SNP are returned in
@@ -36,14 +42,14 @@
 #'  \url{https://doi.org/10.1093/bioinformatics/btw303}
 #'
 #'@seealso
-#'  \url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}
-#'   for illustration of the use of \code{FDR_IQT} with a toy data set and
-#'  further information regarding the computation of the adjusted SNP-trait
-#'  association estimates.
+#'\url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}
+#'for illustration of the use of \code{FDR_IQT} with a toy data set and further
+#'information regarding the computation of the adjusted SNP-trait association
+#'estimates.
 #'@export
 #'
 #'
-FDR_IQT <- function(summary_data, min_pval=1e-15)
+FDR_IQT <- function(summary_data, min_pval=1e-15, method="original")
 
 {
 
@@ -55,15 +61,32 @@ FDR_IQT <- function(summary_data, min_pval=1e-15)
 
   z <- summary_data$beta/summary_data$se
   p_val <- 2*(1-stats::pnorm(abs(z)))
-  p_val[p_val < min_pval] <- min_pval
 
-  adj_p <- stats::p.adjust(p_val, method="fdr")
-  adj_z <- stats::qnorm(1-(adj_p/2))
-  adj_z[abs(z) > stats::qnorm(1-(min_pval/2))] <- abs(z[abs(z) > stats::qnorm(1-(min_pval/2))])
+  if(method=="original"){
+    p_val[p_val < min_pval] <- min_pval
+    adj_p <- stats::p.adjust(p_val, method="fdr")
+    adj_z <- stats::qnorm(1-(adj_p/2))
+    adj_z[abs(z) > stats::qnorm(1-(min_pval/2))] <- abs(z[abs(z) > stats::qnorm(1-(min_pval/2))])
+    beta_FIQT <- sign(summary_data$beta)*adj_z*summary_data$se
+  }
 
-  beta_FIQT <- sign(summary_data$beta)*adj_z*summary_data$se
+
+  if(method=="alt"){
+    p_val[p_val < min_pval] <- 2*(exp(-abs(z[p_val < min_pval])^2/2)/(abs(z[p_val < min_pval])*sqrt(2*pi)))
+    adj_p <- stats::p.adjust(p_val, method="fdr")
+    adj_z <- stats::qnorm(1-(adj_p/2))
+    adjusted <- data.frame(adj_p,adj_z)
+    zz <- seq(from = 8, to = floor(max(z)) + 1, by = 0.0001)
+    p_vals <- 2*(exp(-abs(zz)^2/2)/(abs(zz)*sqrt(2*pi)))
+    for (i in 1:length(p_val[p_val < min_pval])){
+      if(adjusted$adj_z[i] == Inf){
+        adjusted$adj_z[i] <- zz[which.min(abs(p_vals - c(rep(adjusted$adj_p[i],length(p_vals)))))]
+      }
+    }
+    beta_FIQT <- sign(summary_data$beta)*adjusted$adj_z*summary_data$se
+  }
+
   summary_data <- cbind(summary_data,beta_FIQT)
-
   summary_data <- dplyr::arrange(summary_data,dplyr::desc(abs(summary_data$beta/summary_data$se)))
 
   return(summary_data)

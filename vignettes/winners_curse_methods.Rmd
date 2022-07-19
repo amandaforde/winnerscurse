@@ -140,6 +140,20 @@ head(out_EB)
 
 - It also has an argument `min_pval`, for which the default setting is `1e-15`. This is included in order to avoid zero $p$-values which can prove problematic for the function when evaluating `qnorm()`. Furthermore, due to the nature of winner's curse, it is in fact rare that observations with $\mid z \mid > 8$ are biased. 
 
+- However, through the third argument `method`, this function also provides the user with an option to use an alternative form of FDR Inverse Quantile Transformation which will adjust the effect sizes of all SNPs, not only those that have $p$-values greater than `1e-15`. The default setting is `method="original"` while our modified version of the method can be executed using `method="alt"`.
+
+$~$
+
+**Alternative method description:**
+
+- As mentioned above, the current published definition of FDR Inverse Quantile Transformation contains the clause that if a certain SNP has a $p$-value which equates to 0 or indeed a $p$-value less than `1e-15`, then the association estimate of this SNP will not be adjusted. This motivated us to explore a way in which we could obtain adjusted estimates for these SNPs with very small $p$-values or equivalently, very large $z$-statistics.
+
+- It is possible to prove that for all $z > 0$, the following identity holds: $P(N(0,1) > z) \le \frac{e^-{\frac{z^2}{2}}}{z\sqrt{2\pi}}$. However, $\frac{\frac{e^-{\frac{z^2}{2}}}{z\sqrt{2\pi}}}{P(N(0,1) > z)} \rightarrow 1$ as $z \rightarrow \infty$, and therefore, we can in fact use the following as an approximation to $2 \times P(N(0,1) > |z|)$ for large $z$: $$2 \times \frac{e^{-\frac{|z|^2}{2}}}{|z|\sqrt{2\pi}}$$
+
+- Thus, using this identity, we established an alternative form of FDR IQT in which adjustments can be made to the $z$-statistics of all SNPs, including those with $p$-values less than `1e-15`. Our proposed alternative method first replaces the current $p$-values of those SNPs with very small $p$-values with substitute $p$-values using the above equation. Following this, in a similar manner to the original method, the function `p.adjust` is applied to all $p$-values. Corresponding adjusted $z$-statistics are then obtained for each SNP using the `qnorm` function. Our method then creates a look-up table which includes $z$-statistics ranging from a value of 8 up to the minimum positive integer that is greater than the maximum $z$-statistic of the data set at hand, at increments of 0.0001. For each $z$-statistic, an approximate $p$-value is obtained using the equation: $2 \times \frac{e^{-\frac{|z|^2}{2}}}{|z|\sqrt{2\pi}}$. For those adjusted $z$-statistics which have been computed as equating to infinity, this look-up table is used along with the adjusted $p$-values in order to obtain a more suitable value for the adjusted $z$-statistic. Thus, in contrast to the original definition, these SNPs with very large $z$-statistics now have been provided with values for adjusted $z$-statistics. 
+
+$~$
+
 - The function outputs a data frame similar to that inputted with an additional column containing the adjusted estimate, `beta_FIQT`, and again, the SNPs have been reordered according to their individual $z$-statistics. 
 
 ```{r}

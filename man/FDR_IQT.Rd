@@ -4,14 +4,14 @@
 \alias{FDR_IQT}
 \title{FDR IQT method for use with discovery GWAS}
 \usage{
-FDR_IQT(summary_data, min_pval = 1e-15)
+FDR_IQT(summary_data, min_pval = 1e-15, method = "original")
 }
 \arguments{
 \item{summary_data}{A data frame containing summary statistics from the
 discovery GWAS. It must have three columns with column names \code{rsid},
-\code{beta} and \code{se}, respectively, and columns \code{beta} and \code{se} must contain
-numerical values. Each row must correspond to a unique SNP, identified by
-the numerical value \code{rsid}.}
+\code{beta} and \code{se}, respectively, and columns \code{beta} and
+\code{se} must contain numerical values. Each row must correspond to a
+unique SNP, identified by the numerical value \code{rsid}.}
 
 \item{min_pval}{A numerical value whose purpose is to avoid zero
 \eqn{p}-values as this introduces issues when \code{qnorm()} is applied. Any
@@ -21,6 +21,13 @@ and the method proceeds. By definition, the method makes no adjustment to
 the association estimate of a SNP for which this has occurred with the
 presumption that in general, estimates of SNPs with \eqn{z > 8} are not
 biased. The default value is \code{min_pval = 1e-15}.}
+
+\item{method}{A string which allows the user to choose if they wish to execute
+the original definition of the method or an alternative form which adjusts
+the effect sizes of all SNPs, not only those that have \eqn{p}-values
+greater than \code{1e-15}. The default setting is \code{method="original"}
+while the other form of the method can be executed using
+\code{method="alt"}.}
 }
 \value{
 A data frame with the inputted summary data occupying the first three
@@ -48,7 +55,7 @@ Bigdeli, T. B., Lee, D., Webb, B. T., Riley, B. P., Vladimirov, V.
 }
 \seealso{
 \url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}
-  for illustration of the use of \code{FDR_IQT} with a toy data set and
- further information regarding the computation of the adjusted SNP-trait
- association estimates.
+for illustration of the use of \code{FDR_IQT} with a toy data set and further
+information regarding the computation of the adjusted SNP-trait association
+estimates.
 }
