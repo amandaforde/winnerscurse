@@ -58,7 +58,7 @@ conditional_likelihood <- function(summary_data, alpha=5e-8){
 
 
   z <- summary_data$beta/summary_data$se
-  p_val <- 2*(1-stats::pnorm(abs(z)))
+  p_val <- 2*(stats::pnorm(abs(z), lower.tail=FALSE))
   summary_data <- cbind(summary_data, z, p_val)
 
 
@@ -69,7 +69,7 @@ conditional_likelihood <- function(summary_data, alpha=5e-8){
 
   summary_data_sig <- summary_data[summary_data$p_val<alpha,]
 
-  c <- stats::qnorm(1-(alpha)/2)
+  c <- stats::qnorm((alpha)/2, lower.tail=FALSE)
 
   beta.cl1 <- c(rep(0,nrow(summary_data_sig)))
   beta.cl2 <- c(rep(0,nrow(summary_data_sig)))

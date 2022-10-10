@@ -60,7 +60,7 @@ al.</em> (2016)</a>, which was established for this purpose.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">FDR_IQT</span><span class="op">(</span><span class="va">summary_data</span>, min_pval <span class="op">=</span> <span class="fl">1e-15</span>, method <span class="op">=</span> <span class="st">"original"</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">FDR_IQT</span><span class="op">(</span><span class="va">summary_data</span>, min_pval <span class="op">=</span> <span class="fl">1e-300</span><span class="op">)</span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -78,15 +78,8 @@ SNP for which its computed \(p\)-value is found to be less than
 <code>min_pval</code> is merely re-assigned <code>min_pval</code> as its \(p\)-value
 and the method proceeds. By definition, the method makes no adjustment to
 the association estimate of a SNP for which this has occurred with the
-presumption that in general, estimates of SNPs with \(z &gt; 8\) are not
-biased. The default value is <code>min_pval = 1e-15</code>.</p></dd>
-<dt>method</dt>
-<dd><p>A string which allows the user to choose if they wish to execute
-the original definition of the method or an alternative form which adjusts
-the effect sizes of all SNPs, not only those that have \(p\)-values
-greater than <code>1e-15</code>. The default setting is <code>method="original"</code>
-while the other form of the method can be executed using
-<code>method="alt"</code>.</p></dd>
+presumption that in general, estimates of SNPs with \(z &gt; 37\) are not
+biased. The default value is <code>min_pval = 1e-300</code>.</p></dd>
 </dl></div>
     <div id="value">
     <h2>Value</h2>

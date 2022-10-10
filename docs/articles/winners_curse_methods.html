@@ -319,77 +319,26 @@ frame with three columns <code>rsid</code>, <code>beta</code> and
 values and each row must represent a unique SNP, identified by
 <code>rsid</code>.</p></li>
 <li><p>It also has an argument <code>min_pval</code>, for which the
-default setting is <code>1e-15</code>. This is included in order to
+default setting is <code>1e-300</code>. This is included in order to
 avoid zero <span class="math inline">\(p\)</span>-values which can prove
 problematic for the function when evaluating <code><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">qnorm()</a></code>.
 Furthermore, due to the nature of winner’s curse, it is in fact rare
 that observations with <span class="math inline">\(\mid z \mid &gt;
-8\)</span> are biased.</p></li>
-<li><p>However, through the third argument <code>method</code>, this
-function also provides the user with an option to use an alternative
-form of FDR Inverse Quantile Transformation which will adjust the effect
-sizes of all SNPs, not only those that have <span class="math inline">\(p\)</span>-values greater than <code>1e-15</code>.
-The default setting is <code>method="original"</code> while our modified
-version of the method can be executed using
-<code>method="alt"</code>.</p></li>
-</ul>
-<p><span class="math inline">\(~\)</span></p>
-<p><strong>Alternative method description:</strong></p>
-<ul>
-<li><p>As mentioned above, the current published definition of FDR
-Inverse Quantile Transformation contains the clause that if a certain
-SNP has a <span class="math inline">\(p\)</span>-value which equates to
-0 or indeed a <span class="math inline">\(p\)</span>-value less than
-<code>1e-15</code>, then the association estimate of this SNP will not
-be adjusted. This motivated us to explore a way in which we could obtain
-adjusted estimates for these SNPs with very small <span class="math inline">\(p\)</span>-values or equivalently, very large
-<span class="math inline">\(z\)</span>-statistics.</p></li>
-<li><p>It is possible to prove that for all <span class="math inline">\(z &gt; 0\)</span>, the following identity holds:
-<span class="math inline">\(P(N(0,1) &gt; z) \le
-\frac{e^-{\frac{z^2}{2}}}{z\sqrt{2\pi}}\)</span>. However, <span class="math inline">\(\frac{\frac{e^-{\frac{z^2}{2}}}{z\sqrt{2\pi}}}{P(N(0,1)
-&gt; z)} \rightarrow 1\)</span> as <span class="math inline">\(z
-\rightarrow \infty\)</span>, and therefore, we can in fact use the
-following as an approximation to <span class="math inline">\(2 \times
-P(N(0,1) &gt; |z|)\)</span> for large <span class="math inline">\(z\)</span>: <span class="math display">\[2 \times
-\frac{e^{-\frac{|z|^2}{2}}}{|z|\sqrt{2\pi}}\]</span></p></li>
-<li><p>Thus, using this identity, we established an alternative form of
-FDR IQT in which adjustments can be made to the <span class="math inline">\(z\)</span>-statistics of all SNPs, including those
-with <span class="math inline">\(p\)</span>-values less than
-<code>1e-15</code>. Our proposed alternative method first replaces the
-current <span class="math inline">\(p\)</span>-values of those SNPs with
-very small <span class="math inline">\(p\)</span>-values with substitute
-<span class="math inline">\(p\)</span>-values using the above equation.
-Following this, in a similar manner to the original method, the function
-<code>p.adjust</code> is applied to all <span class="math inline">\(p\)</span>-values. Corresponding adjusted <span class="math inline">\(z\)</span>-statistics are then obtained for each
-SNP using the <code>qnorm</code> function. Our method then creates a
-look-up table which includes <span class="math inline">\(z\)</span>-statistics ranging from a value of 8 up
-to the minimum positive integer that is greater than the maximum <span class="math inline">\(z\)</span>-statistic of the data set at hand, at
-increments of 0.0001. For each <span class="math inline">\(z\)</span>-statistic, an approximate <span class="math inline">\(p\)</span>-value is obtained using the equation:
-<span class="math inline">\(2 \times
-\frac{e^{-\frac{|z|^2}{2}}}{|z|\sqrt{2\pi}}\)</span>. For those adjusted
-<span class="math inline">\(z\)</span>-statistics which have been
-computed as equating to infinity, this look-up table is used along with
-the adjusted <span class="math inline">\(p\)</span>-values in order to
-obtain a more suitable value for the adjusted <span class="math inline">\(z\)</span>-statistic. Thus, in contrast to the
-original definition, these SNPs with very large <span class="math inline">\(z\)</span>-statistics now have been provided with
-values for adjusted <span class="math inline">\(z\)</span>-statistics.</p></li>
-</ul>
-<p><span class="math inline">\(~\)</span></p>
-<ul>
-<li>The function outputs a data frame similar to that inputted with an
-additional column containing the adjusted estimate,
+37\)</span> are biased.</p></li>
+<li><p>The function outputs a data frame similar to that inputted with
+an additional column containing the adjusted estimate,
 <code>beta_FIQT</code>, and again, the SNPs have been reordered
-according to their individual <span class="math inline">\(z\)</span>-statistics.</li>
+according to their individual <span class="math inline">\(z\)</span>-statistics.</p></li>
 </ul>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">out_FIQT</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/FDR_IQT.html">FDR_IQT</a></span><span class="op">(</span>summary_data <span class="op">=</span> <span class="va">summary_stats</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">out_FIQT</span><span class="op">)</span>
 <span class="co">#&gt;   rsid        beta          se   beta_FIQT</span>
-<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.04419398</span>
-<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.04574119</span>
-<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.04271559</span>
+<span class="co">#&gt; 1 3965  0.06064760 0.008191123  0.04419473</span>
+<span class="co">#&gt; 2 7815  0.06273204 0.008477889  0.04574196</span>
+<span class="co">#&gt; 3 4998 -0.05956742 0.008336576 -0.04271562</span>
 <span class="co">#&gt; 4 7261  0.05510736 0.008186396  0.03781859</span>
-<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.03875509</span>
+<span class="co">#&gt; 5 6510  0.05623389 0.008389116  0.03875510</span>
 <span class="co">#&gt; 6 9917  0.05466029 0.008176299  0.03777195</span></code></pre></div>
 </div>
 <div class="section level3">
@@ -560,21 +509,21 @@ are now less biased.</p>
 with raw <span class="math inline">\(p\)</span>-values less than
 <code>5e-8</code>.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">out_EB_sig</span> <span class="op">&lt;-</span> <span class="va">out_EB</span><span class="op">[</span><span class="fl">2</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">out_EB</span><span class="op">$</span><span class="va">beta</span><span class="op">/</span><span class="va">out_EB</span><span class="op">$</span><span class="va">se</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">5e-8</span>,<span class="op">]</span>
-<span class="va">out_FIQT_sig</span> <span class="op">&lt;-</span> <span class="va">out_FIQT</span><span class="op">[</span><span class="fl">2</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">out_FIQT</span><span class="op">$</span><span class="va">beta</span><span class="op">/</span><span class="va">out_FIQT</span><span class="op">$</span><span class="va">se</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">5e-8</span>,<span class="op">]</span>
-<span class="va">out_BR_ss_sig</span> <span class="op">&lt;-</span> <span class="va">out_BR_ss</span><span class="op">[</span><span class="fl">2</span><span class="op">*</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">out_BR_ss</span><span class="op">$</span><span class="va">beta</span><span class="op">/</span><span class="va">out_BR_ss</span><span class="op">$</span><span class="va">se</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">5e-8</span>,<span class="op">]</span>
+<code class="sourceCode R"><span class="va">out_EB_sig</span> <span class="op">&lt;-</span> <span class="va">out_EB</span><span class="op">[</span><span class="fl">2</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">out_EB</span><span class="op">$</span><span class="va">beta</span><span class="op">/</span><span class="va">out_EB</span><span class="op">$</span><span class="va">se</span><span class="op">)</span>, lower.tail <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">5e-8</span>,<span class="op">]</span>
+<span class="va">out_FIQT_sig</span> <span class="op">&lt;-</span> <span class="va">out_FIQT</span><span class="op">[</span><span class="fl">2</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">out_FIQT</span><span class="op">$</span><span class="va">beta</span><span class="op">/</span><span class="va">out_FIQT</span><span class="op">$</span><span class="va">se</span><span class="op">)</span>, lower.tail<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">5e-8</span>,<span class="op">]</span>
+<span class="va">out_BR_ss_sig</span> <span class="op">&lt;-</span> <span class="va">out_BR_ss</span><span class="op">[</span><span class="fl">2</span><span class="op">*</span><span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">pnorm</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">out_BR_ss</span><span class="op">$</span><span class="va">beta</span><span class="op">/</span><span class="va">out_BR_ss</span><span class="op">$</span><span class="va">se</span><span class="op">)</span>, lower.tail<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">&lt;</span> <span class="fl">5e-8</span>,<span class="op">]</span>
 
 <span class="va">sq_diff_3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>naive <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, beta.cl1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta.cl1</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>,  beta.cl2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta.cl2</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>,  beta.cl3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta.cl3</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, beta_EB <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_EB_sig</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_EB_sig</span><span class="op">$</span><span class="va">beta_EB</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, beta_FIQT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_FIQT_sig</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_FIQT_sig</span><span class="op">$</span><span class="va">beta_FIQT</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span>, beta_BR_ss <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_BR_ss_sig</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_BR_ss_sig</span><span class="op">$</span><span class="va">beta_BR_ss</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span>
 <span class="va">sq_diff_3</span>
 <span class="co">#&gt;        naive   beta.cl1    beta.cl2   beta.cl3     beta_EB   beta_FIQT</span>
-<span class="co">#&gt; 1 0.01315265 0.01096133 0.004872073 0.00726706 0.005337383 0.003633531</span>
+<span class="co">#&gt; 1 0.01315265 0.01096133 0.004872073 0.00726706 0.005337383 0.003633524</span>
 <span class="co">#&gt;    beta_BR_ss</span>
 <span class="co">#&gt; 1 0.003402189</span>
 
 <span class="va">mean_abs_diff_3</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span>naive <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta</span><span class="op">)</span><span class="op">)</span>, beta.cl1 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta.cl1</span><span class="op">)</span><span class="op">)</span>,  beta.cl2 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta.cl2</span><span class="op">)</span><span class="op">)</span>,  beta.cl3 <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_CL</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_CL</span><span class="op">$</span><span class="va">beta.cl3</span><span class="op">)</span><span class="op">)</span>, beta_EB <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_EB_sig</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_EB_sig</span><span class="op">$</span><span class="va">beta_EB</span><span class="op">)</span><span class="op">)</span>, beta_FIQT <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_FIQT_sig</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_FIQT_sig</span><span class="op">$</span><span class="va">beta_FIQT</span><span class="op">)</span><span class="op">)</span>, beta_BR_ss <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/mean.html" class="external-link">mean</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out_BR_ss_sig</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span> <span class="op">-</span> <span class="va">out_BR_ss_sig</span><span class="op">$</span><span class="va">beta_BR_ss</span><span class="op">)</span><span class="op">)</span><span class="op">)</span>
 <span class="va">mean_abs_diff_3</span>
 <span class="co">#&gt;        naive   beta.cl1    beta.cl2   beta.cl3     beta_EB   beta_FIQT</span>
-<span class="co">#&gt; 1 0.01655319 0.01495558 0.009610264 0.01212566 0.009245785 0.007019747</span>
+<span class="co">#&gt; 1 0.01655319 0.01495558 0.009610264 0.01212566 0.009245785 0.007019702</span>
 <span class="co">#&gt;    beta_BR_ss</span>
 <span class="co">#&gt; 1 0.006709485</span>
 

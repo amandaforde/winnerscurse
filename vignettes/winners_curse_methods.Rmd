@@ -138,21 +138,7 @@ head(out_EB)
 
 - Similar to the approaches above, the function requires a data frame with three columns `rsid`, `beta` and `se`,  all columns of the data frame must contain numerical values and each row must represent a unique SNP, identified by `rsid`. 
 
-- It also has an argument `min_pval`, for which the default setting is `1e-15`. This is included in order to avoid zero $p$-values which can prove problematic for the function when evaluating `qnorm()`. Furthermore, due to the nature of winner's curse, it is in fact rare that observations with $\mid z \mid > 8$ are biased. 
-
-- However, through the third argument `method`, this function also provides the user with an option to use an alternative form of FDR Inverse Quantile Transformation which will adjust the effect sizes of all SNPs, not only those that have $p$-values greater than `1e-15`. The default setting is `method="original"` while our modified version of the method can be executed using `method="alt"`.
-
-$~$
-
-**Alternative method description:**
-
-- As mentioned above, the current published definition of FDR Inverse Quantile Transformation contains the clause that if a certain SNP has a $p$-value which equates to 0 or indeed a $p$-value less than `1e-15`, then the association estimate of this SNP will not be adjusted. This motivated us to explore a way in which we could obtain adjusted estimates for these SNPs with very small $p$-values or equivalently, very large $z$-statistics.
-
-- It is possible to prove that for all $z > 0$, the following identity holds: $P(N(0,1) > z) \le \frac{e^-{\frac{z^2}{2}}}{z\sqrt{2\pi}}$. However, $\frac{\frac{e^-{\frac{z^2}{2}}}{z\sqrt{2\pi}}}{P(N(0,1) > z)} \rightarrow 1$ as $z \rightarrow \infty$, and therefore, we can in fact use the following as an approximation to $2 \times P(N(0,1) > |z|)$ for large $z$: $$2 \times \frac{e^{-\frac{|z|^2}{2}}}{|z|\sqrt{2\pi}}$$
-
-- Thus, using this identity, we established an alternative form of FDR IQT in which adjustments can be made to the $z$-statistics of all SNPs, including those with $p$-values less than `1e-15`. Our proposed alternative method first replaces the current $p$-values of those SNPs with very small $p$-values with substitute $p$-values using the above equation. Following this, in a similar manner to the original method, the function `p.adjust` is applied to all $p$-values. Corresponding adjusted $z$-statistics are then obtained for each SNP using the `qnorm` function. Our method then creates a look-up table which includes $z$-statistics ranging from a value of 8 up to the minimum positive integer that is greater than the maximum $z$-statistic of the data set at hand, at increments of 0.0001. For each $z$-statistic, an approximate $p$-value is obtained using the equation: $2 \times \frac{e^{-\frac{|z|^2}{2}}}{|z|\sqrt{2\pi}}$. For those adjusted $z$-statistics which have been computed as equating to infinity, this look-up table is used along with the adjusted $p$-values in order to obtain a more suitable value for the adjusted $z$-statistic. Thus, in contrast to the original definition, these SNPs with very large $z$-statistics now have been provided with values for adjusted $z$-statistics. 
-
-$~$
+- It also has an argument `min_pval`, for which the default setting is `1e-300`. This is included in order to avoid zero $p$-values which can prove problematic for the function when evaluating `qnorm()`. Furthermore, due to the nature of winner's curse, it is in fact rare that observations with $\mid z \mid > 37$ are biased. 
 
 - The function outputs a data frame similar to that inputted with an additional column containing the adjusted estimate, `beta_FIQT`, and again, the SNPs have been reordered according to their individual $z$-statistics. 
 
@@ -240,9 +226,9 @@ Again, we see that in the top two cases, the value associated with the naive est
 
 Finally, we can compare the performance of all methods for the SNPs with raw $p$-values less than `5e-8`.
 ```{r}
-out_EB_sig <- out_EB[2*(1-pnorm(abs(out_EB$beta/out_EB$se))) < 5e-8,]
-out_FIQT_sig <- out_FIQT[2*(1-pnorm(abs(out_FIQT$beta/out_FIQT$se))) < 5e-8,]
-out_BR_ss_sig <- out_BR_ss[2*(1-pnorm(abs(out_BR_ss$beta/out_BR_ss$se))) < 5e-8,]
+out_EB_sig <- out_EB[2*pnorm(abs(out_EB$beta/out_EB$se), lower.tail = FALSE) < 5e-8,]
+out_FIQT_sig <- out_FIQT[2*pnorm(abs(out_FIQT$beta/out_FIQT$se), lower.tail=FALSE) < 5e-8,]
+out_BR_ss_sig <- out_BR_ss[2*pnorm(abs(out_BR_ss$beta/out_BR_ss$se), lower.tail=FALSE) < 5e-8,]
 
 sq_diff_3 <- data.frame(naive = sum((true_beta[out_CL$rsid] - out_CL$beta)^2), beta.cl1 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl1)^2),  beta.cl2 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl2)^2),  beta.cl3 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl3)^2), beta_EB = sum((true_beta[out_EB_sig$rsid] - out_EB_sig$beta_EB)^2), beta_FIQT = sum((true_beta[out_FIQT_sig$rsid] - out_FIQT_sig$beta_FIQT)^2), beta_BR_ss = sum((true_beta[out_BR_ss_sig$rsid] - out_BR_ss_sig$beta_BR_ss)^2))
 sq_diff_3

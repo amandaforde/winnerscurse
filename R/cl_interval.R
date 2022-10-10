@@ -49,7 +49,7 @@ cl_interval <- function(summary_data,alpha=5e-8, conf_level=0.95){
 
   stopifnot(conf_level < 1 && conf_level > 0)
 
-  p_val <- 2*(1-stats::pnorm(abs(summary_data$beta/summary_data$se)))
+  p_val <- 2*(stats::pnorm(abs(summary_data$beta/summary_data$se), lower.tail=FALSE))
 
   if (sum(p_val<alpha) == 0) {
     warn <- "WARNING: There are no significant SNPs at this threshold."
@@ -59,7 +59,7 @@ cl_interval <- function(summary_data,alpha=5e-8, conf_level=0.95){
   summary_data <- conditional_likelihood(summary_data,alpha)
 
   z <- summary_data$beta/summary_data$se
-  c <- stats::qnorm(1-(alpha)/2)
+  c <- stats::qnorm((alpha)/2, lower.tail=FALSE)
 
   lower <- c(rep(0),nrow(summary_data))
   upper <- c(rep(0),nrow(summary_data))

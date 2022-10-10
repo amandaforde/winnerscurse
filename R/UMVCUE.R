@@ -68,7 +68,7 @@ UMVCUE <- function(summary_disc, summary_rep, alpha=5e-8){
   stopifnot(summary_disc$rsid == summary_rep$rsid)
 
 
-  c <- stats::qnorm(1-alpha/2)
+  c <- stats::qnorm((alpha/2), lower.tail=FALSE)
 
   if (sum(abs(summary_disc$beta/summary_disc$se) > c) == 0){
     summary_data <- cbind(summary_disc[1:3],summary_rep[2:3])

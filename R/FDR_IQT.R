@@ -17,14 +17,8 @@
 #'  \code{min_pval} is merely re-assigned \code{min_pval} as its \eqn{p}-value
 #'  and the method proceeds. By definition, the method makes no adjustment to
 #'  the association estimate of a SNP for which this has occurred with the
-#'  presumption that in general, estimates of SNPs with \eqn{z > 8} are not
-#'  biased. The default value is \code{min_pval = 1e-15}.
-#'@param method A string which allows the user to choose if they wish to execute
-#'  the original definition of the method or an alternative form which adjusts
-#'  the effect sizes of all SNPs, not only those that have \eqn{p}-values
-#'  greater than \code{1e-15}. The default setting is \code{method="original"}
-#'  while the other form of the method can be executed using
-#'  \code{method="alt"}.
+#'  presumption that in general, estimates of SNPs with \eqn{z > 37} are not
+#'  biased. The default value is \code{min_pval = 1e-300}.
 #'
 #'@return A data frame with the inputted summary data occupying the first three
 #'  columns. The new adjusted association estimates for each SNP are returned in
@@ -49,48 +43,27 @@
 #'@export
 #'
 #'
-FDR_IQT <- function(summary_data, min_pval=1e-15, method="original")
-
-{
+FDR_IQT <- function(summary_data, min_pval=1e-300){
 
   stopifnot(all(c("rsid", "beta","se") %in% names(summary_data)))
   stopifnot(!all(is.na(summary_data$rsid)) && !all(is.na(summary_data$beta)) && !all(is.na(summary_data$se)))
   stopifnot(is.numeric(summary_data$beta) && is.numeric(summary_data$se))
   stopifnot(!any(duplicated(summary_data$rsid)))
 
-
   z <- summary_data$beta/summary_data$se
-  p_val <- 2*(1-stats::pnorm(abs(z)))
+  p_val <- 2*(stats::pnorm(abs(z), lower.tail=FALSE))
 
-  if(method=="original"){
-    p_val[p_val < min_pval] <- min_pval
-    adj_p <- stats::p.adjust(p_val, method="fdr")
-    adj_z <- stats::qnorm(1-(adj_p/2))
-    adj_z[abs(z) > stats::qnorm(1-(min_pval/2))] <- abs(z[abs(z) > stats::qnorm(1-(min_pval/2))])
-    beta_FIQT <- sign(summary_data$beta)*adj_z*summary_data$se
-  }
+  p_val[p_val < min_pval] <- min_pval
+  adj_p <- stats::p.adjust(p_val, method="fdr")
+  adj_z <- stats::qnorm((adj_p/2), lower.tail=FALSE)
+  adj_z[abs(z) > stats::qnorm((min_pval/2), lower.tail=FALSE)] <- abs(z[abs(z) > stats::qnorm((min_pval/2), lower.tail=FALSE)])
+  beta_FIQT <- sign(summary_data$beta)*adj_z*summary_data$se
 
-
-  if(method=="alt"){
-    p_val[p_val < min_pval] <- 2*(exp(-abs(z[p_val < min_pval])^2/2)/(abs(z[p_val < min_pval])*sqrt(2*pi)))
-    adj_p <- stats::p.adjust(p_val, method="fdr")
-    adj_z <- stats::qnorm(1-(adj_p/2))
-    adjusted <- data.frame(adj_p,adj_z)
-    zz <- seq(from = 8, to = floor(max(z)) + 1, by = 0.0001)
-    p_vals <- 2*(exp(-abs(zz)^2/2)/(abs(zz)*sqrt(2*pi)))
-    for (i in 1:length(p_val[p_val < min_pval])){
-      if(adjusted$adj_z[i] == Inf){
-        adjusted$adj_z[i] <- zz[which.min(abs(p_vals - c(rep(adjusted$adj_p[i],length(p_vals)))))]
-      }
-    }
-    beta_FIQT <- sign(summary_data$beta)*adjusted$adj_z*summary_data$se
-  }
 
   summary_data <- cbind(summary_data,beta_FIQT)
   summary_data <- dplyr::arrange(summary_data,dplyr::desc(abs(summary_data$beta/summary_data$se)))
 
   return(summary_data)
-
 }
 
 

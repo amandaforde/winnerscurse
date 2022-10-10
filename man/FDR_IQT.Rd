@@ -4,7 +4,7 @@
 \alias{FDR_IQT}
 \title{FDR IQT method for use with discovery GWAS}
 \usage{
-FDR_IQT(summary_data, min_pval = 1e-15, method = "original")
+FDR_IQT(summary_data, min_pval = 1e-300)
 }
 \arguments{
 \item{summary_data}{A data frame containing summary statistics from the
@@ -19,15 +19,8 @@ SNP for which its computed \eqn{p}-value is found to be less than
 \code{min_pval} is merely re-assigned \code{min_pval} as its \eqn{p}-value
 and the method proceeds. By definition, the method makes no adjustment to
 the association estimate of a SNP for which this has occurred with the
-presumption that in general, estimates of SNPs with \eqn{z > 8} are not
-biased. The default value is \code{min_pval = 1e-15}.}
-
-\item{method}{A string which allows the user to choose if they wish to execute
-the original definition of the method or an alternative form which adjusts
-the effect sizes of all SNPs, not only those that have \eqn{p}-values
-greater than \code{1e-15}. The default setting is \code{method="original"}
-while the other form of the method can be executed using
-\code{method="alt"}.}
+presumption that in general, estimates of SNPs with \eqn{z > 37} are not
+biased. The default value is \code{min_pval = 1e-300}.}
 }
 \value{
 A data frame with the inputted summary data occupying the first three

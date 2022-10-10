@@ -84,7 +84,7 @@ condlike_rep <- function(summary_disc,summary_rep,alpha=5e-8, conf_interval=FALS
   se_com <- sqrt((((summary_disc$se)^2)*((summary_rep$se)^2))/(((summary_disc$se)^2) + ((summary_rep$se)^2)))
   beta_com <- ((((summary_rep$se)^2)*(summary_disc$beta))+(((summary_disc$se)^2)*(summary_rep$beta)))/(((summary_disc$se)^2) + ((summary_rep$se)^2))
   summary_com <- data.frame(rsid=summary_disc$rsid,beta=beta_com,se=se_com)
-  c_1 <- stats::qnorm(1-(alpha)/2)
+  c_1 <- stats::qnorm((alpha)/2, lower.tail=FALSE)
 
   if(sum(abs(summary_disc$beta/summary_disc$se) > c_1) == 0){
     summary_data <- cbind(summary_disc[1:3],summary_rep[2:3])
@@ -137,8 +137,8 @@ condlike_rep <- function(summary_disc,summary_rep,alpha=5e-8, conf_interval=FALS
   out <- dplyr::arrange(betas, dplyr::desc(abs(betas$beta_disc/betas$se_disc)))
 
   if (conf_interval == FALSE){return(out)}else{
-    beta_com_lower <- summary_com_sig$beta - stats::qnorm(1-(1-conf_level)/2)*summary_com_sig$se
-    beta_com_upper <- summary_com_sig$beta + stats::qnorm(1-(1-conf_level)/2)*summary_com_sig$se
+    beta_com_lower <- summary_com_sig$beta - stats::qnorm((1-conf_level)/2, lower.tail=FALSE)*summary_com_sig$se
+    beta_com_upper <- summary_com_sig$beta + stats::qnorm((1-conf_level)/2, lower.tail=FALSE)*summary_com_sig$se
 
     beta_MLE_lower <- c(rep(0,length(summary_com_sig$beta)))
     beta_MLE_upper <- c(rep(0,length(summary_com_sig$beta)))

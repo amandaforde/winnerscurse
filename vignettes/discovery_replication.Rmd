@@ -199,7 +199,7 @@ frac_less_bias  # comparison with naive replication estimate
 
   ## reorder based on significance in first set up!
   out_EB_com <- dplyr::arrange(out_EB_com, dplyr::desc(abs(out_EB_com$beta_disc/out_EB_com$se_disc)))
-  out_EB_com <- out_EB_com[abs(out_EB_com$beta_disc/out_EB_com$se_disc) > stats::qnorm(1-(10e-6)/2),]
+  out_EB_com <- out_EB_com[abs(out_EB_com$beta_disc/out_EB_com$se_disc) > stats::qnorm((10e-6)/2, lower.tail=FALSE),]
   head(out_EB_com)
 ```
 
