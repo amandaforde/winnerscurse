@@ -70,7 +70,7 @@ outputted for the second form of the adjusted estimate, namely
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">conditional_likelihood</span><span class="op">(</span><span class="va">summary_data</span>, alpha <span class="op">=</span> <span class="fl">5e-08</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">conditional_likelihood</span><span class="op">(</span><span class="va">summary_data</span>, alpha <span class="op">=</span> <span class="fl">5e-08</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -81,31 +81,42 @@ discovery GWAS. It must have three columns with column names <code>rsid</code>,
 <code>beta</code> and <code>se</code>, respectively, and columns <code>beta</code> and
 <code>se</code> must contain numerical values. Each row must correspond to a
 unique SNP, identified by <code>rsid</code>.</p></dd>
+
+
 <dt>alpha</dt>
 <dd><p>A numerical value which specifies the desired genome-wide
 significance threshold. The default is given as <code>5e-8</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A data frame with summary statistics and adjusted association
+    
+
+<p>A data frame with summary statistics and adjusted association
   estimates of only those SNPs which have been deemed significant according
   to the specified threshold, <code>alpha</code>, i.e. SNPs with \(p\)-values
   less than <code>alpha</code>. The inputted summary data occupies the first three
   columns. The new adjusted association estimates for each SNP, as defined in
-  the aforementioned paper, are contained in the next three columns, namely
-<code>beta.cl1</code>, <code>beta.cl2</code> and <code>beta.cl3</code>. The SNPs are
+  the aforementioned paper, are contained in the next three columns, namely</p>
+<p></p>
+<p><code>beta.cl1</code>, <code>beta.cl2</code> and <code>beta.cl3</code>. The SNPs are
   contained in this data frame according to their significance, with the most
   significant SNP, i.e. the SNP with the largest absolute \(z\)-statistic,
   now located in the first row of the data frame. However, if no SNPs are
-  detected as significant in the data set, <code>conditional_likelihood</code>  returns a warning message: <code>"WARNING: There are no significant SNPs at
+  detected as significant in the data set, <code>conditional_likelihood</code></p>
+
+
+<p>returns a warning message: <code>"WARNING: There are no significant SNPs at
   this threshold."</code></p>
+
+
     </div>
     <div id="references">
     <h2>References</h2>
     <p>Ghosh, A., Zou, F., &amp; Wright, F. A. (2008). Estimating odds
   ratios in genome scans: an approximate conditional likelihood approach.
   <em>American journal of human genetics</em>, <strong>82(5)</strong>, 1064\(-\)1074.
-  <a href="https://doi.org/10.1016/j.ajhg.2008.03.002" class="external-link">https://doi.org/10.1016/j.ajhg.2008.03.002</a></p>
+  <a href="https://doi.org/10.1016/j.ajhg.2008.03.002" class="external-link">doi:10.1016/j.ajhg.2008.03.002</a></p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -127,8 +138,7 @@ SNP-trait association estimates for significant SNPs.</p></div>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

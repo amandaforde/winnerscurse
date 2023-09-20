@@ -44,7 +44,7 @@ Bigdeli, T. B., Lee, D., Webb, B. T., Riley, B. P., Vladimirov, V.
  accurate correction for winner's curse can predict signals discovered in
  much larger genome scans. \emph{Bioinformatics (Oxford, England)},
  \strong{32(17)}, 2598\eqn{-}2603.
- \url{https://doi.org/10.1093/bioinformatics/btw303}
+ \doi{10.1093/bioinformatics/btw303}
 }
 \seealso{
 \url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}

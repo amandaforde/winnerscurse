@@ -64,13 +64,13 @@ association estimate, if desired by the user.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">condlike_rep</span><span class="op">(</span>
-  <span class="va">summary_disc</span>,
-  <span class="va">summary_rep</span>,
-  alpha <span class="op">=</span> <span class="fl">5e-08</span>,
-  conf_interval <span class="op">=</span> <span class="cn">FALSE</span>,
-  conf_level <span class="op">=</span> <span class="fl">0.95</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">condlike_rep</span><span class="op">(</span></span>
+<span>  <span class="va">summary_disc</span>,</span>
+<span>  <span class="va">summary_rep</span>,</span>
+<span>  alpha <span class="op">=</span> <span class="fl">5e-08</span>,</span>
+<span>  conf_interval <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  conf_level <span class="op">=</span> <span class="fl">0.95</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -81,6 +81,8 @@ association estimate, if desired by the user.</p>
 <code>rsid</code>, <code>beta</code> and <code>se</code>, respectively, and columns
 <code>beta</code> and <code>se</code> must contain numerical values. Each row must
 correspond to a unique SNP, identified by <code>rsid</code>.</p></dd>
+
+
 <dt>summary_rep</dt>
 <dd><p>A data frame containing summary statistics from the
 <em>replication</em> GWAS. It must have three columns with column names
@@ -89,34 +91,47 @@ contain numerical values. Each row must correspond to a unique SNP,
 identified by the numerical value <code>rsid</code>. SNPs must be ordered in the
 exact same manner as those in <code>summary_disc</code>, i.e.
 <code>summary_rep$rsid</code> must be equivalent to <code>summary_disc$rsid</code>.</p></dd>
+
+
 <dt>alpha</dt>
 <dd><p>A numerical value which specifies the desired genome-wide
 significance threshold for the discovery GWAS. The default is given as
 <code>5e-8</code>.</p></dd>
+
+
 <dt>conf_interval</dt>
 <dd><p>A logical value which determines whether or not
 confidence intervals for each form of adjusted association estimate is also
 to be computed and outputted. The default is <code>conf_interval=FALSE</code>.</p></dd>
+
+
 <dt>conf_level</dt>
 <dd><p>A numerical value between 0 and 1 which specifies the
 confidence interval to be computed. The default setting is <code>0.95</code>
 which results in the calculation of a 95% confidence interval for the
 adjusted association estimate for each SNP.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A data frame with summary statistics and adjusted association
+    
+
+<p>A data frame with summary statistics and adjusted association
   estimates of only those SNPs which have been deemed significant in the
   discovery GWAS according to the specified threshold, <code>alpha</code>, i.e.
   SNPs with \(p\)-values less than <code>alpha</code>. The inputted summary data
-  occupies the first five columns, in which the columns <code>beta_disc</code> and
-<code>se_disc</code> contain the statistics from the discovery GWAS and columns
-<code>beta_rep</code> and <code>se_rep</code> hold the replication GWAS statistics. For
+  occupies the first five columns, in which the columns <code>beta_disc</code> and</p>
+<p></p>
+<p><code>se_disc</code> contain the statistics from the discovery GWAS and columns</p>
+<p></p>
+<p><code>beta_rep</code> and <code>se_rep</code> hold the replication GWAS statistics. For
   the default setting of <code>conf_interval=FALSE</code>, the new adjusted
   association estimates for each SNP, as defined in the aforementioned paper,
-  are contained in the next three columns, namely <code>beta_com</code>,
-<code>beta_MLE</code> and <code>beta_MSE</code>. For the case when
-<code>conf_interval=TRUE</code>, the lower and upper boundaries of each
+  are contained in the next three columns, namely <code>beta_com</code>,</p>
+<p></p>
+<p><code>beta_MLE</code> and <code>beta_MSE</code>. For the case when</p>
+<p></p>
+<p><code>conf_interval=TRUE</code>, the lower and upper boundaries of each
   confidence interval for each form of adjusted estimate are included in the
   data frame as well as the adjusted estimates for each SNP. The SNPs are
   contained in this data frame according to their significance, with the most
@@ -130,7 +145,7 @@ adjusted association estimate for each SNP.</p></dd>
     <p>Zhong, H., &amp; Prentice, R. L. (2008). Bias-reduced estimators and
   confidence intervals for odds ratios in genome-wide association studies.
   <em>Biostatistics (Oxford, England)</em>, <strong>9(4)</strong>, 621\(-\)634.
-  <a href="https://doi.org/10.1093/biostatistics/kxn001" class="external-link">https://doi.org/10.1093/biostatistics/kxn001</a></p>
+  <a href="https://doi.org/10.1093/biostatistics/kxn001" class="external-link">doi:10.1093/biostatistics/kxn001</a></p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -153,8 +168,7 @@ significant SNPs.</p></div>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

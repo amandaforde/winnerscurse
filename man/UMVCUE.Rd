@@ -54,7 +54,7 @@ Dudbridge (2009)}, which was established for this purpose.
 Bowden, J., & Dudbridge, F. (2009). Unbiased estimation of odds
  ratios: combining genomewide association scans with replication studies.
  \emph{Genetic epidemiology}, \strong{33(5)}, 406\eqn{-}418.
- \url{https://doi.org/10.1002/gepi.20394}
+ \doi{10.1002/gepi.20394}
 }
 \seealso{
 \url{https://amandaforde.github.io/winnerscurse/articles/discovery_replication.html}

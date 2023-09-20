@@ -30,7 +30,7 @@ It is important to note that with both of these methods, adjustments are only ma
 
 A third method has been added which obtains a new association estimate for each significant SNP in the discovery data set using a combination of the discovery and replication estimates:
 
-3. MSE minimization method - based on [Ferguson et al. (2017)](https://journals.sagepub.com/doi/full/10.1177/0962280217720854)
+3. MSE minimization method - based on [Ferguson et al. (2017)](https://pubmed.ncbi.nlm.nih.gov/28745132/)
 
 ### Addition of toy replication data set 
 
@@ -119,11 +119,11 @@ head(out2)
 
 ### Method 3: MSE minimization 
 
-- The function `MSE_minimizer` implements a combination method which closely follows that described in [Ferguson *et al.* (2017)](https://journals.sagepub.com/doi/full/10.1177/0962280217720854). The function parameters used here; `summary_disc`, `summary_rep` and `alpha`, are precisely of the same form as those previously detailed in this vignette. In addition, `MSE_minimizer` has a logical parameter, namely `spline` which defaults as `spline=TRUE`. As a smoothing spline is used in the execution of this function, data corresponding to at least 5 SNPs is required. 
+- The function `MSE_minimizer` implements a combination method which closely follows that described in [Ferguson *et al.* (2017)](https://pubmed.ncbi.nlm.nih.gov/28745132/). The function parameters used here; `summary_disc`, `summary_rep` and `alpha`, are precisely of the same form as those previously detailed in this vignette. In addition, `MSE_minimizer` has a logical parameter, namely `spline` which defaults as `spline=TRUE`. As a smoothing spline is used in the execution of this function, data corresponding to at least 5 SNPs is required. 
 
 - An adjusted estimate is computed for each SNP which has been classified as significant in the discovery data set, based on the given threshold. Thus, similar to the above method, `MSE_minimizer` returns a data frame containing these significant SNPs with 6 columns in which the final column contains the new estimate, `beta_joint`.
 
-- Following the approach detailed in [Ferguson *et al.* (2017)](https://journals.sagepub.com/doi/full/10.1177/0962280217720854), we define the adjusted linear combination estimator as: $$\hat\beta_{\text{joint}} = \omega(\hat{B}) \cdot \hat\beta_{\text{rep}} + (1-\omega(\hat{B}))\cdot \hat\beta_{\text{disc}}$$ in which $$ \omega(\hat{B}) = \frac{\frac{1}{\sigma^2_{\text{rep}}}}{\frac{1}{\sigma^2_{\text{rep}}}+\frac{1}{\sigma^2_{\text{disc}}+ \hat{B}^2}}.$$ When `spline=FALSE` is used, we simply let $\hat{B} = \hat\beta_{\text{disc}} - \hat\beta_{\text{rep}}$. We make the assumptions that $\beta_{\text{rep}}$ is unbiased for $\beta$, but $\beta_{\text{disc}}$ is quite likely to be biased and that $\beta_{\text{rep}}$ and $\beta_{\text{disc}}$ are independent. 
+- Following the approach detailed in [Ferguson *et al.* (2017)](https://pubmed.ncbi.nlm.nih.gov/28745132/), we define the adjusted linear combination estimator as: $$\hat\beta_{\text{joint}} = \omega(\hat{B}) \cdot \hat\beta_{\text{rep}} + (1-\omega(\hat{B}))\cdot \hat\beta_{\text{disc}}$$ in which $$ \omega(\hat{B}) = \frac{\frac{1}{\sigma^2_{\text{rep}}}}{\frac{1}{\sigma^2_{\text{rep}}}+\frac{1}{\sigma^2_{\text{disc}}+ \hat{B}^2}}.$$ When `spline=FALSE` is used, we simply let $\hat{B} = \hat\beta_{\text{disc}} - \hat\beta_{\text{rep}}$. We make the assumptions that $\beta_{\text{rep}}$ is unbiased for $\beta$, but $\beta_{\text{disc}}$ is quite likely to be biased and that $\beta_{\text{rep}}$ and $\beta_{\text{disc}}$ are independent. 
 
 - For the default setting `spline=TRUE`, a cubic smoothing spline is applied in which the values of $z_{\text{disc}} = \frac{\hat\beta_{\text{disc}}}{\sigma_{\text{disc}}}$ are considered as inputs and $\hat{B} = \hat\beta_{\text{disc}} - \hat\beta_{\text{rep}}$, the corresponding outputs. The predicted values for $\hat{B}$ from this process, $\hat{B}^*$ say, are then used instead of $\hat{B}$ when computing $\hat\beta_{\text{joint}}$ for each SNP.
 

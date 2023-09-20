@@ -55,12 +55,12 @@ al. (2011)."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs
 Winner's Curse bias in SNP-trait association estimates, obtained from a
 discovery GWAS. The function implements an adaptation of a bootstrap
 resampling method known as BR-squared, detailed in
-<a href="https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4228" class="external-link">Faye <em>et
+<a href="https://europepmc.org/article/med/21538984" class="external-link">Faye <em>et
 al.</em> (2011)</a>.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">BR_ss</span><span class="op">(</span><span class="va">summary_data</span>, seed_opt <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">1998</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">BR_ss</span><span class="op">(</span><span class="va">summary_data</span>, seed_opt <span class="op">=</span> <span class="cn">FALSE</span>, seed <span class="op">=</span> <span class="fl">1998</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -73,20 +73,27 @@ discovery GWAS. It must have three columns with column names <code>rsid</code>,
 unique SNP, identified by <code>rsid</code>. The function requires that there must
 be at least 5 SNPs as any less will result in issues upon usage of the
 smoothing spline.</p></dd>
+
+
 <dt>seed_opt</dt>
 <dd><p>A logical value which allows the user to choose if they wish
 to set a seed, in order to ensure reproducibility of adjusted estimates.
 Small differences can occur between iterations of the function with the same
 data set due to the use of parametric bootstrapping. The default setting is
 <code>seed_opt=FALSE</code>.</p></dd>
+
+
 <dt>seed</dt>
 <dd><p>A numerical value which specifies the seed used if
 <code>seed_opt=TRUE</code>. The default setting is the arbitrary value of
 <code>1998</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A data frame with the inputted summary data occupying the first three
+    
+
+<p>A data frame with the inputted summary data occupying the first three
  columns. The new adjusted association estimates for each SNP are returned in
  the fourth column, namely <code>beta_BR_ss</code>. The SNPs are contained in this
  data frame according to their significance, with the most significant SNP,
@@ -99,7 +106,7 @@ data set due to the use of parametric bootstrapping. The default setting is
  A flexible genome-wide bootstrap method that accounts for ranking and
  threshold-selection bias in GWAS interpretation and replication study
  design. <em>Statistics in Medicine</em>, <strong>30(15)</strong>, 1898\(-\)1912.
- <a href="https://doi.org/10.1002/sim.4228" class="external-link">https://doi.org/10.1002/sim.4228</a></p>
+ <a href="https://doi.org/10.1002/sim.4228" class="external-link">doi:10.1002/sim.4228</a></p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -121,8 +128,7 @@ estimates.</p></div>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

@@ -64,7 +64,7 @@ data set, the method and the number of bootstraps chosen.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">se_adjust</span><span class="op">(</span><span class="va">summary_data</span>, <span class="va">method</span>, n_boot <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">se_adjust</span><span class="op">(</span><span class="va">summary_data</span>, <span class="va">method</span>, n_boot <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -75,18 +75,25 @@ discovery GWAS. It must have three columns with column names <code>rsid</code>,
 <code>beta</code> and <code>se</code>, respectively, and columns <code>beta</code> and
 <code>se</code> must contain numerical values. Each row must correspond to a
 unique SNP, identified by <code>rsid</code>.</p></dd>
+
+
 <dt>method</dt>
 <dd><p>A string specifying the function to be implemented on each of
 the bootstrap samples. It should take the form <code>"BR_ss"</code>,
 <code>"empirical_bayes"</code> or <code>"FDR_IQT"</code>.</p></dd>
+
+
 <dt>n_boot</dt>
 <dd><p>A numerical value which determines the number of bootstrap
 repetitions to be used. it must be greater than 1. The default value is
 <code>100</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A data frame which combines the output of the chosen method with an
+    
+
+<p>A data frame which combines the output of the chosen method with an
   additional column, namely <code>adj_se</code>. This column provides the standard
   errors of the adjusted association estimates for each SNP.</p>
     </div>
@@ -113,8 +120,7 @@ repetitions to be used. it must be greater than 1. The default value is
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

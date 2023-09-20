@@ -55,7 +55,7 @@
 #' @references Zhong, H., & Prentice, R. L. (2008). Bias-reduced estimators and
 #'   confidence intervals for odds ratios in genome-wide association studies.
 #'   \emph{Biostatistics (Oxford, England)}, \strong{9(4)}, 621\eqn{-}634.
-#'   \url{https://doi.org/10.1093/biostatistics/kxn001}
+#'   \doi{10.1093/biostatistics/kxn001}
 #'
 #' @seealso
 #'

@@ -33,7 +33,7 @@
 #'@references Ferguson, J. P., Cho, J. H., Yang, C., & Zhao, H. (2013).
 #'  Empirical Bayes correction for the Winner's Curse in genetic association
 #'  studies. \emph{Genetic epidemiology}, \strong{37(1)}, 60\eqn{-}68.
-#'  \url{https://doi.org/10.1002/gepi.21683}
+#'  \doi{10.1002/gepi.21683}
 #'
 #'@seealso
 #'\url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}

@@ -48,7 +48,7 @@ outputted for the second form of the adjusted estimate, namely
 Ghosh, A., Zou, F., & Wright, F. A. (2008). Estimating odds
   ratios in genome scans: an approximate conditional likelihood approach.
   \emph{American journal of human genetics}, \strong{82(5)}, 1064\eqn{-}1074.
-  \url{https://doi.org/10.1016/j.ajhg.2008.03.002}
+  \doi{10.1016/j.ajhg.2008.03.002}
 }
 \seealso{
 \url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}

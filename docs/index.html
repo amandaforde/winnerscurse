@@ -5,17 +5,17 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Winner's Curse Adjustment Methods for GWAS Summary Statistics • winnerscurse</title>
+<title>Winner's Curse Adjustment Methods for Summary Statistics from Genome-Wide Association Studies • winnerscurse</title>
 <!-- jquery --><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.4.0/lumen/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha256-nuL8/2cJ5NDSSwnKD8VqreErSWHtnEP9E7AySL+1ev4=" crossorigin="anonymous"></script><!-- bootstrap-toc --><link rel="stylesheet" href="bootstrap-toc.css">
 <script src="bootstrap-toc.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- pkgdown --><link href="pkgdown.css" rel="stylesheet">
-<script src="pkgdown.js"></script><meta property="og:title" content="Winner's Curse Adjustment Methods for GWAS Summary Statistics">
-<meta property="og:description" content="A package designed to provide easy access to published methods which aim to 
-  correct for Winner's Curse using only GWAS summary statistics. With merely estimates of beta and 
-  associated standard error for each SNP, users are able to implement these methods to obtain 
-  less biased estimates of the true beta values. These methods can be applied to data from both 
+<script src="pkgdown.js"></script><meta property="og:title" content="Winner's Curse Adjustment Methods for Summary Statistics from Genome-Wide Association Studies">
+<meta property="og:description" content="Designed to provide users with easy access to published methods which aim to 
+  correct for Winner's Curse using only summary statistics from genome-wide association studies. With merely estimates of effect size and
+  associated standard error for each genetic variant, users are able to implement these methods to obtain 
+  less biased estimates of the true effect sizes. These methods can be applied to data from both 
   quantitative and binary traits.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -71,124 +71,37 @@
 <div class="section level1">
 <div class="page-header"><h1 id="winners-curse-adjustment-methods-for-gwas-summary-statistics">Winner’s Curse Adjustment Methods for GWAS summary statistics<a class="anchor" aria-label="anchor" href="#winners-curse-adjustment-methods-for-gwas-summary-statistics"></a>
 </h1></div>
-<p>This package, <code>winnerscurse</code>, has been designed to provide
-easy access to published methods which aim to correct for Winner’s
-Curse, using GWAS summary statistics. With merely estimates of the
-SNP-trait association, <code>beta</code>, and corresponding standard
-error, <code>se</code>, for each SNP, this package permits users to
-implement adjustment methods to obtain less biased estimates of the true
-<code>beta</code> values. Methods can be applied to data relating to
-both quantitative and binary traits. This package contains functions
-which can be implemented with just the summary statistics from a
-discovery GWAS as well as functions which require summary data from both
-discovery and replication GWASs. Users can also obtain confidence
-intervals and standard errors for certain adjusted association
-estimates.</p>
+<p>This package, <code>winnerscurse</code>, has been designed to provide easy access to published methods which aim to correct for Winner’s Curse, using GWAS summary statistics. With merely estimates of the SNP-trait association, <code>beta</code>, and corresponding standard error, <code>se</code>, for each SNP, this package permits users to implement adjustment methods to obtain less biased estimates of the true <code>beta</code> values. Methods can be applied to data relating to both quantitative and binary traits. This package contains functions which can be implemented with just the summary statistics from a discovery GWAS as well as functions which require summary data from both discovery and replication GWASs. Users can also obtain confidence intervals and standard errors for certain adjusted association estimates.</p>
 <div class="section level3">
 <h3 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h3>
-<p>You can install the current version of <code>winnerscurse</code> from
-GitHub with:</p>
+<p>You can install the current version of <code>winnerscurse</code> from GitHub with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
-<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org/reference/remote-reexports.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"amandaforde/winnerscurse"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># install.packages("devtools")</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"amandaforde/winnerscurse"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level3">
 <h3 id="winners-curse">Winner’s Curse<a class="anchor" aria-label="anchor" href="#winners-curse"></a>
 </h3>
-<p>The Winner’s Curse is a statistical effect usually resulting in the
-exaggeration of SNP-trait association estimates in the sample in which
-these associations were discovered.</p>
-<p>However, the Winner’s Curse isn’t just a phenomenon related to GWAS.
-An understanding of Winner’s Curse may be gained through the following
-simple example. Consider rugby players who are ranked based on the
-number of points scored in one World Cup tournament. The top ranking
-players, the <em>‘winners’</em>, are most likely players who had an
-above average tournament, perhaps those who were at the peak of their
-career and fitness. However, across many tournaments, these highly
-ranked players may not score as many points nor be as outstanding
-consistently.</p>
-<p>Now, let us reframe this idea in the context of GWAS. The
-<em>‘winners’</em> here are SNPs whose effect sizes are
-<em>stochastically</em> higher in the discovery study than their true
-association values. Clearly, these raw effect estimates are therefore
-biased estimates of <code>beta</code>, especially for those SNPs who are
-ranked highly in the study - the most significant SNPs. SNPs are often
-ranked according to their <em>z</em>-statistics or corresponding
-<em>p</em>-values.</p>
-<p>The goal of the functions in this package is to adjust the raw effect
-estimates, <code>beta</code>, rendering them less biased. Several
-functions in this package can make adjustments using only the summary
-statistics obtained from the discovery study.</p>
+<p>The Winner’s Curse is a statistical effect usually resulting in the exaggeration of SNP-trait association estimates in the sample in which these associations were discovered.</p>
+<p>However, the Winner’s Curse isn’t just a phenomenon related to GWAS. An understanding of Winner’s Curse may be gained through the following simple example. Consider rugby players who are ranked based on the number of points scored in one World Cup tournament. The top ranking players, the <em>‘winners’</em>, are most likely players who had an above average tournament, perhaps those who were at the peak of their career and fitness. However, across many tournaments, these highly ranked players may not score as many points nor be as outstanding consistently.</p>
+<p>Now, let us reframe this idea in the context of GWAS. The <em>‘winners’</em> here are SNPs whose effect sizes are <em>stochastically</em> higher in the discovery study than their true association values. Clearly, these raw effect estimates are therefore biased estimates of <code>beta</code>, especially for those SNPs who are ranked highly in the study - the most significant SNPs. SNPs are often ranked according to their <em>z</em>-statistics or corresponding <em>p</em>-values.</p>
+<p>The goal of the functions in this package is to adjust the raw effect estimates, <code>beta</code>, rendering them less biased. Several functions in this package can make adjustments using only the summary statistics obtained from the discovery study.</p>
 </div>
 <div class="section level3">
 <h3 id="example">Example<a class="anchor" aria-label="anchor" href="#example"></a>
 </h3>
-<p>We will now discuss a simple simulated data set of GWAS summary
-statistics, providing an alternative manner in which to comprehend the
-Winner’s Curse with a visual representation of the bias induced. We
-simulate GWAS summary statistics for a quantitative trait with a normal
-effect size distribution under the assumption that SNPs are independent.
-We assume a fixed array of 1,000,000 SNPs, and fix the heritability of
-this trait at 0.7, the sample size to be 30,000 and the proportion of
-effect SNPs at 0.01. A more detailed description of the code used to
-simulate this data set can be viewed in the article <a href="https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html" class="external-link">‘Methods
-for use with discovery GWAS’</a>. The true effect sizes,
-<code>beta</code>, were first generated and then, used these to simulate
-<em>one</em> effect estimate, <code>beta_hat</code> for each SNP – this
-is similar to performing a single GWAS or only having access to the
-points scored by players in one World Cup tournament. In this simulation
-scenario, we can thus easily compare <code>beta_hat</code> with
-<code>beta</code> for each SNP. With real data sets, we are not as
-fortunate and hence, this provides motivation to establish suitable
-Winner’s Curse correction methods which will aim to reduce or eliminate
-the bias witnessed in the effect estimates of significant SNPs. The
-table below shows the 6 SNPs which have been deemed most extreme
-according to their z-statistic. It contains the values for
-<code>beta_hat</code> and <code>beta</code>, with the bias induced by
-Winner’s Curse evident. 5 of the <code>beta_hat</code> values are an
-<em>overestimation</em> of their corresponding true effect size.</p>
+<p>We will now discuss a simple simulated data set of GWAS summary statistics, providing an alternative manner in which to comprehend the Winner’s Curse with a visual representation of the bias induced. We simulate GWAS summary statistics for a quantitative trait with a normal effect size distribution under the assumption that SNPs are independent. We assume a fixed array of 1,000,000 SNPs, and fix the heritability of this trait at 0.7, the sample size to be 30,000 and the proportion of effect SNPs at 0.01. A more detailed description of the code used to simulate this data set can be viewed in the article <a href="https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html" class="external-link">‘Methods for use with discovery GWAS’</a>. The true effect sizes, <code>beta</code>, were first generated and then, used these to simulate <em>one</em> effect estimate, <code>beta_hat</code> for each SNP – this is similar to performing a single GWAS or only having access to the points scored by players in one World Cup tournament. In this simulation scenario, we can thus easily compare <code>beta_hat</code> with <code>beta</code> for each SNP. With real data sets, we are not as fortunate and hence, this provides motivation to establish suitable Winner’s Curse correction methods which will aim to reduce or eliminate the bias witnessed in the effect estimates of significant SNPs. The table below shows the 6 SNPs which have been deemed most extreme according to their z-statistic. It contains the values for <code>beta_hat</code> and <code>beta</code>, with the bias induced by Winner’s Curse evident. 5 of the <code>beta_hat</code> values are an <em>overestimation</em> of their corresponding true effect size.</p>
 <p align="center">
 <img src="https://raw.githubusercontent.com/amandaforde/winnerscurse_sims/main/images/winnerscurse_table.PNG" width="25%"></p>
-<p>Plotting the distribution of the true absolute effect sizes for SNPs
-which have been deemed significant according to the genome-wide
-significance threshold of <code>5e-8</code> with the estimated absolute
-effect sizes from this study allows visualise Winner’s Curse. As
-expected, we witness the orange curve of the estimated effect lying to
-the right of the true effect turquoise curve. This provides a strong
-indication that a large number of the estimated effect of these extreme
-SNPs are greater than their corresponding true value.</p>
+<p>Plotting the distribution of the true absolute effect sizes for SNPs which have been deemed significant according to the genome-wide significance threshold of <code>5e-8</code> with the estimated absolute effect sizes from this study allows visualise Winner’s Curse. As expected, we witness the orange curve of the estimated effect lying to the right of the true effect turquoise curve. This provides a strong indication that a large number of the estimated effect of these extreme SNPs are greater than their corresponding true value.</p>
 <p align="center">
 <img src="https://raw.githubusercontent.com/amandaforde/winnerscurse_sims/main/images/winnerscurse_plot.PNG" width="50%"></p>
-<p>Therefore, in visual terms, we would like the functions of our
-package to produce estimates which are more in line with the true
-values, i.e. shifted more towards the turquoise density plot on the
-left, avoiding the obvious inflation incurred by the raw
-<code>beta_hat</code> estimates here.</p>
-<p>Another interesting way in which this Winner’s curse induced bias can
-be visualised is to plot <code>z</code> vs <code>bias</code> for this
-simulated data set in which <code>z</code> =
-<code>beta_hat</code>/<code>se</code> and <code>bias</code> =
-<code>beta_hat</code> - <code>beta</code>. In the plot below, the bright
-red line corresponds to the significance threshold of <code>5e-8</code>
-while the darker red line relates to <code>5e-4</code>. The points
-corresponding to SNPs which are significantly overestimated and are
-significant at a threshold of <code>5e-4</code> are coloured in navy . A
-SNP is determined to be significantly overestimated if it satisfies the
-condition: |<code>beta_hat</code>| &gt; |<code>beta</code>| +
-1.96<code>se</code>. It can be seen clearly that significant SNPs with
-negative <em>z</em>-statistics tend to also have negative
-<code>bias</code> values and vice versa for the significant SNPs with
-positive <em>z</em>-statistics.</p>
+<p>Therefore, in visual terms, we would like the functions of our package to produce estimates which are more in line with the true values, i.e. shifted more towards the turquoise density plot on the left, avoiding the obvious inflation incurred by the raw <code>beta_hat</code> estimates here.</p>
+<p>Another interesting way in which this Winner’s curse induced bias can be visualised is to plot <code>z</code> vs <code>bias</code> for this simulated data set in which <code>z</code> = <code>beta_hat</code>/<code>se</code> and <code>bias</code> = <code>beta_hat</code> - <code>beta</code>. In the plot below, the bright red line corresponds to the significance threshold of <code>5e-8</code> while the darker red line relates to <code>5e-4</code>. The points corresponding to SNPs which are significantly overestimated and are significant at a threshold of <code>5e-4</code> are coloured in navy . A SNP is determined to be significantly overestimated if it satisfies the condition: |<code>beta_hat</code>| &gt; |<code>beta</code>| + 1.96<code>se</code>. It can be seen clearly that significant SNPs with negative <em>z</em>-statistics tend to also have negative <code>bias</code> values and vice versa for the significant SNPs with positive <em>z</em>-statistics.</p>
 <p align="center">
 <img src="https://raw.githubusercontent.com/amandaforde/winnerscurse_sims/main/images/winnerscurse_plot_2.PNG" width="50%"></p>
-<p><strong>Note:</strong> In order to appropriately use the functions in
-this package, GWAS summary statistics must be in the form of a
-<strong>data frame</strong> in which the first column, titled
-<code>rsid</code>, contains the SNP ID number, the second column, named
-<code>beta</code>, contains the effect size estimate while the third
-column, <code>se</code> holds the corresponding estimated standard
-error.</p>
+<p><strong>Note:</strong> In order to appropriately use the functions in this package, GWAS summary statistics must be in the form of a <strong>data frame</strong> in which the first column, titled <code>rsid</code>, contains the SNP ID number, the second column, named <code>beta</code>, contains the effect size estimate while the third column, <code>se</code> holds the corresponding estimated standard error.</p>
 </div>
 </div>
 
@@ -214,15 +127,15 @@ error.</p>
 <div class="developers">
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
-<li>Amanda Forde <br><small class="roles"> Author, maintainer </small>  </li>
+<li>Amanda Forde <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0000-0002-7940-3413" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a> </li>
 </ul>
 </div>
 
 <div class="dev-status">
 <h2 data-toc-skip>Dev status</h2>
 <ul class="list-unstyled">
-<li><a href="https://github.com/amandaforde/winners_curse/actions" class="external-link"><img src="https://github.com/amandaforde/winners_curse/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
-<li><a href="https://codecov.io/gh/amandaforde/winnerscurse" class="external-link"><img src="https://codecov.io/gh/amandaforde/winnerscurse/branch/main/graph/badge.svg?token=BORRC1EUZ7" alt="codecov"></a></li>
+<li><a href="https://github.com/amandaforde/winnerscurse/actions" class="external-link"><img src="https://github.com/amandaforde/winners_curse/workflows/R-CMD-check/badge.svg" alt="R-CMD-check"></a></li>
+<li><a href="https://app.codecov.io/gh/amandaforde/winnerscurse" class="external-link"><img src="https://codecov.io/gh/amandaforde/winnerscurse/branch/main/graph/badge.svg?token=BORRC1EUZ7" alt="codecov"></a></li>
 </ul>
 </div>
 
@@ -237,8 +150,7 @@ error.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

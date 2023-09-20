@@ -58,7 +58,7 @@ A data frame with summary statistics and adjusted association
 the association estimates obtained from discovery and replication GWASs to
 form a new combined estimate for each SNP. The method used by this function
 is inspired by that detailed in
-\href{https://journals.sagepub.com/doi/full/10.1177/0962280217720854}{Ferguson
+\href{https://pubmed.ncbi.nlm.nih.gov/28745132/}{Ferguson
 \emph{et al.} (2017)}.
 }
 \references{
@@ -66,7 +66,7 @@ Ferguson, J., Alvarez-Iglesias, A., Newell, J., Hinde, J., &
   O'Donnell, M. (2017).  Joint incorporation of randomised and observational
   evidence in estimating treatment effects. \emph{Statistical Methods in
   Medical Research}, \strong{28(1)}, 235\eqn{-}247.
-  \url{https://doi.org/10.1177/0962280217720854}
+  \doi{10.1177/0962280217720854}
 }
 \seealso{
 \url{https://amandaforde.github.io/winnerscurse/articles/discovery_replication.html}

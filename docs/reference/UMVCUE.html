@@ -60,7 +60,7 @@ Dudbridge (2009)</a>, which was established for this purpose.</p>
     </div>
 
     <div id="ref-usage">
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">UMVCUE</span><span class="op">(</span><span class="va">summary_disc</span>, <span class="va">summary_rep</span>, alpha <span class="op">=</span> <span class="fl">5e-08</span><span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">UMVCUE</span><span class="op">(</span><span class="va">summary_disc</span>, <span class="va">summary_rep</span>, alpha <span class="op">=</span> <span class="fl">5e-08</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div id="arguments">
@@ -71,6 +71,8 @@ Dudbridge (2009)</a>, which was established for this purpose.</p>
 <code>rsid</code>, <code>beta</code> and <code>se</code>, respectively, and columns
 <code>beta</code> and <code>se</code> must contain numerical values. Each row must
 correspond to a unique SNP, identified by <code>rsid</code>.</p></dd>
+
+
 <dt>summary_rep</dt>
 <dd><p>A data frame containing summary statistics from the
 <em>replication</em> GWAS. It must have three columns with column names
@@ -79,27 +81,37 @@ contain numerical values. Each row must correspond to a unique SNP,
 identified by the numerical value <code>rsid</code>. SNPs must be ordered in the
 exact same manner as those in <code>summary_disc</code>, i.e.
 <code>summary_rep$rsid</code> must be equivalent to <code>summary_disc$rsid</code>.</p></dd>
+
+
 <dt>alpha</dt>
 <dd><p>A numerical value which specifies the desired genome-wide
 significance threshold for the discovery GWAS. The default is given as
 <code>5e-8</code>.</p></dd>
+
 </dl></div>
     <div id="value">
     <h2>Value</h2>
-    <p>A data frame with summary statistics and adjusted association estimate
+    
+
+<p>A data frame with summary statistics and adjusted association estimate
  of only those SNPs which have been deemed significant in the discovery GWAS
- according to the specified threshold, <code>alpha</code>, i.e. SNPs with
-\(p\)-values less than <code>alpha</code>. The inputted summary data occupies
- the first five columns, in which the columns <code>beta_disc</code> and
-<code>se_disc</code> contain the statistics from the discovery GWAS and columns
-<code>beta_rep</code> and <code>se_rep</code> hold the replication GWAS statistics. The
+ according to the specified threshold, <code>alpha</code>, i.e. SNPs with</p>
+<p></p>
+<p>\(p\)-values less than <code>alpha</code>. The inputted summary data occupies
+ the first five columns, in which the columns <code>beta_disc</code> and</p>
+<p></p>
+<p><code>se_disc</code> contain the statistics from the discovery GWAS and columns</p>
+<p></p>
+<p><code>beta_rep</code> and <code>se_rep</code> hold the replication GWAS statistics. The
  new adjusted association estimate for each SNP, as defined in the
- aforementioned paper, is contained in the final column, namely
-<code>beta_UMVCUE</code>. The SNPs are contained in this data frame according to
+ aforementioned paper, is contained in the final column, namely</p>
+<p></p>
+<p><code>beta_UMVCUE</code>. The SNPs are contained in this data frame according to
  their significance, with the most significant SNP, i.e. the SNP with the
  largest absolute \(z\)-statistic, now located in the first row of the data
- frame. If no SNPs are detected as significant in the discovery GWAS,
-<code>UMVCUE</code> merely returns a data frame which combines the two inputted
+ frame. If no SNPs are detected as significant in the discovery GWAS,</p>
+<p></p>
+<p><code>UMVCUE</code> merely returns a data frame which combines the two inputted
  data sets.</p>
     </div>
     <div id="references">
@@ -107,7 +119,7 @@ significance threshold for the discovery GWAS. The default is given as
     <p>Bowden, J., &amp; Dudbridge, F. (2009). Unbiased estimation of odds
  ratios: combining genomewide association scans with replication studies.
  <em>Genetic epidemiology</em>, <strong>33(5)</strong>, 406\(-\)418.
- <a href="https://doi.org/10.1002/gepi.20394" class="external-link">https://doi.org/10.1002/gepi.20394</a></p>
+ <a href="https://doi.org/10.1002/gepi.20394" class="external-link">doi:10.1002/gepi.20394</a></p>
     </div>
     <div id="see-also">
     <h2>See also</h2>
@@ -129,8 +141,7 @@ estimates for significant SNPs.</p></div>
 </div>
 
 <div class="pkgdown">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
-2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer></div>

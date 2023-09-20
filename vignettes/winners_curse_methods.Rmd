@@ -26,7 +26,7 @@ In order to demonstrate how this package can be used to obtain new adjusted $\ha
 1. Conditional Likelihood methods - [Ghosh *et al.* (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/)
 2. Empirical Bayes method - [Ferguson *et al.* (2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/) 
 3. FDR Inverse Quantile Transformation method - [Bigdeli *et al.* (2016)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/) 
-4. Bootstrap method - adapted from [Faye *et al.* (2011)](https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4228)
+4. Bootstrap method - adapted from [Faye *et al.* (2011)](https://europepmc.org/article/med/21538984)
 
 
 An important feature which distinguishes these four methods is detailed in the table below: 
@@ -151,7 +151,7 @@ head(out_FIQT)
 
 ### Method 4: Bootstrap 
 
-- Inspired by the bootstrap resampling method detailed in [Faye *et al.* (2011)](https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4228), the function `BR_ss` implements a similar approach which can be easily applied to published sets of GWAS summary statistics without the requirement of access to original individual-level data. The major advantage of our alternative suggested method is the considerable improvement in computational efficiency, with a reasonably low level of conceptual difficulty being maintained. 
+- Inspired by the bootstrap resampling method detailed in [Faye *et al.* (2011)](https://europepmc.org/article/med/21538984), the function `BR_ss` implements a similar approach which can be easily applied to published sets of GWAS summary statistics without the requirement of access to original individual-level data. The major advantage of our alternative suggested method is the considerable improvement in computational efficiency, with a reasonably low level of conceptual difficulty being maintained. 
 
 - `BR_ss` takes a data frame `summary_data` with three columns: `rsid`, `beta`, `se`, and returns the inputted data frame along with the adjusted estimate for $\beta$, `beta_BR_ss`. Note that all columns of the data frame, `summary data` must contain numerical values, each row must represent a unique SNP, identified by `rsid` and the function requires that there must be at least 5 unique SNPs so that the smoothing spline can be implemented successfully.  The function also has a logical parameter `seed_opt` which can be set to `TRUE` by the user to permit reproducibility. Its default setting is `seed_opt=FALSE`. As this method involves bootstrap implementation, the use of a seed can allow the user to obtain the exact same results for `beta_BR_ss` when running the function many times on the same dataset. The parameter `seed` provides the user with an option to set their desired value for the seed when using `seed_opt=TRUE`. The default for `seed` is the arbitrary value of `1998`. 
 

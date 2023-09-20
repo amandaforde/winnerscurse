@@ -38,7 +38,7 @@ A data frame with the inputted summary data occupying the first three
 Winner's Curse bias in SNP-trait association estimates, obtained from a
 discovery GWAS. The function implements an adaptation of a bootstrap
 resampling method known as BR-squared, detailed in
-\href{https://onlinelibrary.wiley.com/doi/abs/10.1002/sim.4228}{Faye \emph{et
+\href{https://europepmc.org/article/med/21538984}{Faye \emph{et
 al.} (2011)}.
 }
 \references{
@@ -46,7 +46,7 @@ Faye, L. L., Sun, L., Dimitromanolakis, A., & Bull, S. B. (2011).
  A flexible genome-wide bootstrap method that accounts for ranking and
  threshold-selection bias in GWAS interpretation and replication study
  design. \emph{Statistics in Medicine}, \strong{30(15)}, 1898\eqn{-}1912.
- \url{https://doi.org/10.1002/sim.4228}
+ \doi{10.1002/sim.4228}
 }
 \seealso{
 \url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}
