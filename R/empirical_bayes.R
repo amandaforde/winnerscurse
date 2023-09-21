@@ -3,9 +3,10 @@
 #'\code{empirical_bayes} is a function which uses summary statistics to correct
 #'for bias induced by Winner's Curse in SNP-trait association estimates,
 #'obtained from a discovery GWAS. The function is strongly based on the method
-#'detailed in
+#'originally detailed in
 #'\href{https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/}{Ferguson \emph{et
-#'al.} (2013)}.
+#'al.} (2013)}. However, the function also includes all potential adaptations to the empirical Bayes method
+#'discussed in \href{https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1010546}{Forde \emph{et al.} (2023)}.
 #'@param summary_data A data frame containing summary statistics from the
 #'  discovery GWAS. It must have three columns with column names \code{rsid},
 #'  \code{beta} and \code{se}, respectively, and columns \code{beta} and
@@ -33,7 +34,9 @@
 #'@references Ferguson, J. P., Cho, J. H., Yang, C., & Zhao, H. (2013).
 #'  Empirical Bayes correction for the Winner's Curse in genetic association
 #'  studies. \emph{Genetic epidemiology}, \strong{37(1)}, 60\eqn{-}68.
-#'  \doi{10.1002/gepi.21683}
+#'@references Forde, A., Hemani, G., & Ferguson, J. (2023).
+#'  Review and further developments in statistical corrections for Winner’s Curse in genetic association studies. \emph{PLoS Genetics}, \strong{19(9)}, e1010546.
+
 #'
 #'@seealso
 #'\url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}

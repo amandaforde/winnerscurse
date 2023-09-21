@@ -2,10 +2,10 @@
 #'
 #'\code{BR_ss} is a function which aims to use summary statistics to alleviate
 #'Winner's Curse bias in SNP-trait association estimates, obtained from a
-#'discovery GWAS. The function implements an adaptation of a bootstrap
-#'resampling method known as BR-squared, detailed in
-#'\href{https://europepmc.org/article/med/21538984}{Faye \emph{et
-#'al.} (2011)}.
+#'discovery GWAS. The function implements a parametric bootstrap approach, proposed
+#'by \href{https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1010546}{Forde \emph{et al.} (2023)}. This approach was inspired by the bootstrap
+#'resampling method detailed in \href{https://europepmc.org/article/med/21538984}{Faye \emph{et
+#'al.} (2011)}, which requires original individual-level data.
 #'
 #'@param summary_data A data frame containing summary statistics from the
 #'  discovery GWAS. It must have three columns with column names \code{rsid},
@@ -29,18 +29,14 @@
 #'  data frame according to their significance, with the most significant SNP,
 #'  i.e. the SNP with the largest absolute \eqn{z}-statistic, now located in the
 #'  first row of the data frame.
-#'@references Faye, L. L., Sun, L., Dimitromanolakis, A., & Bull, S. B. (2011).
-#'  A flexible genome-wide bootstrap method that accounts for ranking and
-#'  threshold-selection bias in GWAS interpretation and replication study
-#'  design. \emph{Statistics in Medicine}, \strong{30(15)}, 1898\eqn{-}1912.
-#'  \doi{10.1002/sim.4228}
+#'@references Forde, A., Hemani, G., & Ferguson, J. (2023).
+#'  Review and further developments in statistical corrections for Winner’s Curse in genetic association studies. \emph{PLoS Genetics}, \strong{19(9)}, e1010546.
 #'
 #'@seealso
 #'\url{https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html}
 #'for illustration of the use of \code{BR_ss} with a toy data set and further
 #'information regarding the computation of the adjusted SNP-trait association
 #'estimates.
-#'
 #'
 #'@export
 
