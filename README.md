@@ -1,7 +1,6 @@
 <!-- badges: start -->
   [![R-CMD-check](https://github.com/amandaforde/winners_curse/workflows/R-CMD-check/badge.svg)](https://github.com/amandaforde/winnerscurse/actions)
   [![codecov](https://codecov.io/gh/amandaforde/winnerscurse/branch/main/graph/badge.svg?token=BORRC1EUZ7)](https://app.codecov.io/gh/amandaforde/winnerscurse)
-[![Codecov test coverage](https://codecov.io/gh/amandaforde/winners_curse/branch/main/graph/badge.svg)](https://app.codecov.io/gh/amandaforde/winners_curse?branch=main)
 <!-- badges: end -->
 
 
