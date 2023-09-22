@@ -18,5 +18,9 @@ test_that("testing if conditional likelihood confidence intervals outputted corr
             test <- sum(out$lower < out$upper) == length(out$rsid)
             expect_true(identical(test,TRUE)==1)
 
+            out <- cl_interval(summary_data,alpha=1e-10)
+            test1 <- out == "WARNING: There are no significant SNPs at this threshold."
+            expect_true(identical(test1,TRUE)==1)
+
           })
 

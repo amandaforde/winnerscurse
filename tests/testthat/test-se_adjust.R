@@ -31,5 +31,22 @@ test_that("testing if se_adjust gives bootstrap standard errors of adjusted esti
             expect_true(identical(test,TRUE) == 1)
             expect_true(identical(test2,TRUE) == 1)
 
+
+            out <- se_adjust(summary_stats, method="FDR_IQT", n_boot=10)
+
+            test3 <- sum(abs(round(out$beta,6)) >= abs(round(out$beta_FIQT,6))) >= 0.9*length(out$beta)
+            test4 <- sum(out$adj_se <= out$se) >= 0.5*length(out$se)
+
+            expect_true(identical(test3,TRUE) == 1)
+            expect_true(identical(test4,TRUE) == 1)
+
+            out <- se_adjust(summary_stats, method="BR_ss", n_boot=10)
+
+            test5 <- sum(abs(round(out$beta,6)) >= abs(round(out$beta_BR_ss,6))) >= 0.9*length(out$beta)
+            test6 <- sum(out$adj_se <= out$se) >= 0.5*length(out$se)
+
+            expect_true(identical(test5,TRUE) == 1)
+            expect_true(identical(test6,TRUE) == 1)
+
           })
 

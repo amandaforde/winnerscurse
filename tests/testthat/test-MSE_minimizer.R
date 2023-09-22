@@ -31,8 +31,15 @@ test_that("testing if MSE minimization method gives appropriate estimates when g
             test1 <- sum(round(max(abs(out$beta_disc),abs(out$beta_rep)),6) >= abs(round(out$beta_joint,6))) == length(out$beta_disc)
             expect_true(identical(test1,TRUE) == 1)
 
-            out <- MSE_minimizer(summary_disc, summary_rep, alpha=5e-8, spline=TRUE)
+            out <- MSE_minimizer(summary_disc, summary_rep, alpha=5e-8, spline=FALSE)
             test2 <- sum(round(max(abs(out$beta_disc),abs(out$beta_rep)),6) >= abs(round(out$beta_joint,6))) == length(out$beta_disc)
             expect_true(identical(test2,TRUE) == 1)
+
+            summary_disc <- summary_disc[abs(summary_disc$beta/summary_disc$se) < stats::qnorm((5e-8)/2, lower.tail=FALSE),]
+            summary_rep <- summary_disc[abs(summary_disc$beta/summary_disc$se) < stats::qnorm((5e-8)/2, lower.tail=FALSE),]
+
+            out <- MSE_minimizer(summary_disc, summary_rep, alpha=5e-8)
+            test3 <- sum(colnames(out) == c("rsid","beta_disc","se_disc","beta_rep","se_rep")) == 5
+            expect_true(identical(test3,TRUE) == 1)
 
           })

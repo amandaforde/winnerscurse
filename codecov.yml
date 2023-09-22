@@ -14,7 +14,6 @@ coverage:
         informational: true
 
 
-
 comment: false
 
 language: R

@@ -39,6 +39,15 @@ test_that("testing if conditional likelihood with replication data set gives app
             expect_true(identical(test2,TRUE) == 1)
             expect_true(identical(test3,TRUE) == 1)
             expect_true(identical(test4,TRUE) == 1)
+
+
+            summary_disc_1 <- summary_disc[abs(summary_disc$beta/summary_disc$se) < stats::qnorm((5e-8)/2, lower.tail=FALSE),]
+            summary_rep_1 <- summary_disc[abs(summary_disc$beta/summary_disc$se) < stats::qnorm((5e-8)/2, lower.tail=FALSE),]
+
+            out <- condlike_rep(summary_disc_1, summary_rep_1, alpha=5e-8)
+            test5 <- sum(colnames(out) == c("rsid","beta_disc","se_disc","beta_rep","se_rep")) == 5
+            expect_true(identical(test5,TRUE) == 1)
+
           })
 
 

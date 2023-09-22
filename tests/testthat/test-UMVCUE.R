@@ -33,6 +33,24 @@ test_that("testing if UMVCUE gives appropriate estimates when given two data set
 
             expect_true(identical(test,TRUE) == 1)
 
+
+            summary_disc_1 <- summary_disc[abs(summary_disc$beta/summary_disc$se) < stats::qnorm((5e-8)/2, lower.tail=FALSE),]
+            summary_rep_1 <- summary_disc[abs(summary_disc$beta/summary_disc$se) < stats::qnorm((5e-8)/2, lower.tail=FALSE),]
+
+            out <- UMVCUE(summary_disc_1, summary_rep_1, alpha=5e-8)
+            test2 <- sum(colnames(out) == c("rsid","beta_disc","se_disc","beta_rep","se_rep")) == 5
+            expect_true(identical(test2,TRUE) == 1)
+
+
+            sig1 <- which(abs(summary_disc$beta/summary_disc$se) > stats::qnorm((5e-8)/2, lower.tail=FALSE))[1]
+            summary_disc_2 <- rbind(summary_disc_1,summary_disc[sig1,])
+            summary_rep_2 <-  rbind(summary_rep_1,summary_rep[sig1,])
+
+            out <- UMVCUE(summary_disc_2, summary_rep_2, alpha=5e-8)
+            test3 <- nrow(out) == 1 && ncol(out) == 6
+            expect_true(identical(test3,TRUE) == 1)
+
+
           })
 
 
