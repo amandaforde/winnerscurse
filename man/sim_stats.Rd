@@ -8,9 +8,9 @@ sim_stats(
   nsnp = 10^6,
   h2 = 0.4,
   prop_effect = 0.01,
-  nid = 20000,
+  nid = 50000,
   rep = FALSE,
-  rep_nid = 20000
+  rep_nid = 50000
 )
 }
 \arguments{
@@ -28,7 +28,7 @@ trait's polygenicity, the fraction of the total number of SNPs which are truly a
 trait. The default setting is \code{prop_effect = 0.01}.}
 
 \item{nid}{A numerical value which specifies the number of individuals that
-the discovery GWAS has been performed with. This value defaults to 20,000 individuals, \code{nid=20000}.}
+the discovery GWAS has been performed with. This value defaults to 50,000 individuals, \code{nid=50000}.}
 
 \item{rep}{A logical value which allows the user to state whether they would
 also like to simulate summary statistics for a replication GWAS based on
@@ -37,7 +37,7 @@ the same parameters and true effect sizes. The default setting is
 
 \item{rep_nid}{A numerical value which specifies the number of individuals
 that the replication GWAS has been performed with. Similar to \code{nid},
-this value defaults to 20,000 individuals, \code{nid=20000}.}
+this value defaults to 50,000 individuals, \code{nid=50000}.}
 }
 \value{
 A list containing three different components in the form of data

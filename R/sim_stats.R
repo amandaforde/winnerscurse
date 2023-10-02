@@ -16,14 +16,14 @@
 #'   trait's polygenicity, the fraction of the total number of SNPs which are truly associated with the
 #'   trait. The default setting is \code{prop_effect = 0.01}.
 #' @param nid A numerical value which specifies the number of individuals that
-#'   the discovery GWAS has been performed with. This value defaults to 20,000 individuals, \code{nid=20000}.
+#'   the discovery GWAS has been performed with. This value defaults to 50,000 individuals, \code{nid=50000}.
 #' @param rep A logical value which allows the user to state whether they would
 #'   also like to simulate summary statistics for a replication GWAS based on
 #'   the same parameters and true effect sizes. The default setting is
 #'   \code{rep=FALSE}.
 #' @param rep_nid A numerical value which specifies the number of individuals
 #'   that the replication GWAS has been performed with. Similar to \code{nid},
-#'   this value defaults to 20,000 individuals, \code{nid=20000}.
+#'   this value defaults to 50,000 individuals, \code{nid=50000}.
 #'
 #' @return A list containing three different components in the form of data
 #'   frames, \code{true}, \code{disc} and \code{rep}. The first element,
@@ -42,10 +42,10 @@
 #'
 
 
-sim_stats <- function(nsnp=10^6,h2=0.4,prop_effect=0.01,nid=20000,rep=FALSE,rep_nid=20000){
+sim_stats <- function(nsnp=10^6,h2=0.4,prop_effect=0.01,nid=50000,rep=FALSE,rep_nid=50000){
   effect_snps <- prop_effect*nsnp
-  maf <- runif(nsnp,0.01,0.5)
-  true_beta <- rnorm(effect_snps,0,sd=sqrt((2*maf*(1-maf))))
+  maf <- stats::runif(nsnp,0.01,0.5)
+  true_beta <- stats::rnorm(effect_snps,0,sd=sqrt((2*maf*(1-maf))))
   var_y <- sum(2*maf[1:effect_snps]*(1-maf[1:effect_snps])*true_beta^2)/h2
   true_beta <- true_beta/sqrt(var_y)
   true_beta <- c(true_beta, rep(0,nsnp-effect_snps))
@@ -53,11 +53,11 @@ sim_stats <- function(nsnp=10^6,h2=0.4,prop_effect=0.01,nid=20000,rep=FALSE,rep_
 
   true <- data.frame(rsid=seq(1,nsnp),true_beta=true_beta)
 
-  disc <- data.frame(rsid=seq(1,nsnp),beta=rnorm(n=nsnp,mean=true_beta,sd=se),se=se)
+  disc <- data.frame(rsid=seq(1,nsnp),beta=stats::rnorm(n=nsnp,mean=true_beta,sd=se),se=se)
 
   if(rep==TRUE){
     se_rep <-  sqrt((1 - 2*maf*(1-maf)*true_beta^2)/(2*(rep_nid-2)*maf*(1-maf)))
-    rep <- data.frame(rsid=seq(1,nsnp),beta=rnorm(n=nsnp,mean=true_beta,sd=se_rep),se=se_rep)
+    rep <- data.frame(rsid=seq(1,nsnp),beta=stats::rnorm(n=nsnp,mean=true_beta,sd=se_rep),se=se_rep)
   }else{rep <- NULL}
 
   return(list("true"=true,"disc"=disc,"rep"=rep))

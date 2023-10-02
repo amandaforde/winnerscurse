@@ -21,12 +21,14 @@ library(winnerscurse)
 ```
 
 
-In order to demonstrate how this package can be used to obtain new adjusted $\hat\beta$ estimates, we first create a toy data set and subsequently, illustrate how a user could engage with each of the package's functions using this data set. The methods currently available for implementation are: 
+This vignette demonstrates how our R package, `winnerscurse`, can be used to obtain new adjusted association estimates for each SNP when only the summary statistics from a single genetic association study, namely the discovery GWAS, are available. In order to do so, we create a toy data set using the function `sim_stats`, which is included in the package, and subsequently, illustrate how a user could engage with each of the package's winner's curse correction functions using this data set.
+
+The methods currently available for implementation are: 
 
 1. Conditional Likelihood methods - [Ghosh *et al.* (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/)
 2. Empirical Bayes method - [Ferguson *et al.* (2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/) 
 3. FDR Inverse Quantile Transformation method - [Bigdeli *et al.* (2016)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/) 
-4. Bootstrap method - adapted from [Faye *et al.* (2011)](https://europepmc.org/article/med/21538984)
+4. Bootstrap method - [Forde *et al.* (2023)](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1010546)
 
 
 An important feature which distinguishes these four methods is detailed in the table below: 
@@ -48,36 +50,30 @@ An important feature which distinguishes these four methods is detailed in the t
 
 ### Creating a toy data set
 
-- We wish to generate summary statistics for 1 million SNPs, in which there exists a polygenic background of 10,000 SNPs while all others have no effects.
 
-- We specify:
-  1. the total number of SNPs
-  2. the number of SNPs truly associated with the trait
-  3. the number of samples
-  4. the minor allele frequency of each SNP 
-  5. the variance explained in the trait by all SNPs, $h^2$ 
+- The function `sim_stats` provides users with an opportunity to construct various simulated data sets of GWAS summary statistics which the correction methods can then be applied to. This allows users to perhaps gain a better understanding of each method before applying them to their own real data sets. 
 
+- `sim_stats` constructs a large set of independent SNPs, in which there exists a polygenic background of a specified portion of these SNPs for the trait of interest while all other SNPs demonstrate no effect. When considering obtaining a simulated set of summary statistics for solely the discovery GWAS, `sim_stats` requires the user to specify four arguments, namely `nsnp`, `h2`, `prop_effect` and `nid`: 
+  1. `nsnp`: the total number of SNPs
+  2. `h2`: the heritability of the trait, i.e. the variance explained in the trait by all SNPs 
+  3. `prop_effect`: the proportion of the total number of SNPs truly associated with the trait
+  4. `nid`: the number of samples in the study
+ 
+- With the above specifications, a set of rather realistic summary statistics can be obtained as shown below. For convenience purposes, the following default values have been supplied for the function's arguments: `nsnp=10^6`, `h2=0.4`, `prop_effect=0.01`, `nid=50000`. These values simulate summary statistics for 1,000,000 independent SNPs in which 1% have a true effect on this trait with moderate heritability and a total of 50,000 individuals have been sampled in the study.
 
-- With these specifications, we can obtain quite realistic summary statistics as shown below.
+- **Note:** For further information regarding simulating GWAS summary statistics, refer to the [text supplement](https://doi.org/10.1371/journal.pgen.1010546.s039) of [Forde *et al.* (2023)](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1010546). This function has been designed based on the details described under the heading *'Quantitative trait with independence assumed'*.
 
-- The summary statistics have been arranged here in a suitable way for each method - in the form of a **data frame with columns `rsid`, `beta` and `se`.** 
+- `sim_stats` outputs a list with three components. When only the discovery GWAS is considered, the third element in this list is merely `NULL`, and so we are just concerned with the first two, `true` and `disc`. `true` is a data frame with two columns, `rsid` which contains identification numbers for each SNP and `true_beta` which is each SNP's simulated true association value. This data frame is most useful if we wish to check how well our winner's curse correction methods are performing. `disc` has three columns representing the summary statistics one would obtain in a discovery GWAS. For each SNP, this data frame contains its ID number, its estimated effect size and associated standard error. We note that this function outputs the set of summary statistics, `disc`, in a suitable way so that the winner's curse correction methods can be directly applied, i.e. in the form of a **data frame with three columns `rsid`, `beta` and `se`.** 
 
 ```{r}
 set.seed(1998)
 
-n_snps <- 10^6
-n_samples <- 30000
-effect_snps <- 0.01*n_snps
-maf <- runif(n_snps,0.01,0.5)
-true_beta <- rnorm(effect_snps,0,1)
-h2 <- 0.7  # variance explained by effect SNPs
-var_y <- sum(2*maf[1:effect_snps]*(1-maf[1:effect_snps])*true_beta^2)/h2
-true_beta <- true_beta/sqrt(var_y) # scaling to represent a phenotype with variance 1
-true_beta <- c(true_beta, rep(0,n_snps-effect_snps))
-se <- sqrt((1 - 2*maf*(1-maf)*true_beta^2)/(2*(n_samples-2)*maf*(1-maf)))
+sim_dataset <- sim_stats(nsnp=10^6,h2=0.4,prop_effect=0.01,nid=50000)
 
-summary_stats <- data.frame(rsid=seq(1,n_snps),beta=rnorm(n=n_snps,mean=true_beta,sd=se),se=se)
+## simulated GWAS summary statistics
+summary_stats <- sim_dataset$disc
 head(summary_stats)
+
 ```
 
 ### Method 1: Conditional Likelihood
@@ -86,8 +82,8 @@ head(summary_stats)
 
 - As the conditional likelihood methods have been designed to be only used for SNPs which are deemed significant, the data frame returned contains only SNPs that have $p$-values below the inputted genome-wide significance threshold value, `alpha`.
 
-- **Note:**  If the \eqn{z}-statistic of a particular SNP is greater than 100, then merely the original naive estimate will be outputted for the second form of the adjusted estimate, namely
-\code{beta.cl2}, for that SNP.
+- **Note:**  If the $z$-statistic of a particular SNP is greater than 100, then merely the original naive estimate will be outputted for the second form of the adjusted estimate, namely
+`beta.cl2`, for that SNP.
 
 - If no SNPs are detected as significant, the function returns a warning message: `WARNING: There are no significant SNPs at this threshold`. 
 
@@ -107,15 +103,15 @@ head(out_CL)
 
 ### Method 2: Empirical Bayes 
 
-- The function `empirical_bayes` implements the Empirical Bayes method for correcting for Winner's Curse, detailed in [Ferguson *et al.* (2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/), with a slight modification. 
+- The function `empirical_bayes` implements the empirical Bayes method for correcting for Winner's Curse, detailed in [Ferguson *et al.* (2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/), with a slight modification. 
 
-- The function has two arguments with the first being `summary_data`, the data frame containing `rsid`, `beta` and `se` columns. Again, all columns of the data frame must contain numerical values and each row must represent a unique SNP, identified by `rsid`. In addition, the function requires that the data frame must contain at least 50 rows corresponding to 50 unique SNPs. This requirement is included as the Empirical Bayes method performs poorly when only data of a small number of SNPs is available. The second argument, `method`, is a string parameter which allows the user to choose what modelling approach to take for the purpose of estimating the log density function. The default setting is `method="AIC"`, which is the current published method. Other options include `method="fix_df"`, `method="scam"`, `method="gam_nb"` and `method="gam_po"`. If `method="fix_df"`, the degrees of freedom is set to 7. The other three options all enforce additional constraints on the shape of the estimated log density function by i) fitting a generalized additive model (GAM), with integrated smoothness estimation, (`method="gam_nb"` and `method="gam_po"`) and ii) applying two shape constrained additive models (SCAMs) (`method="scam"`). 
+- The function has two arguments with the first being `summary_data`, the data frame containing `rsid`, `beta` and `se` columns. Again, all columns of the data frame must contain numerical values and each row must represent a unique SNP, identified by `rsid`. In addition, the function requires that the data frame must contain at least 50 rows corresponding to 50 unique SNPs. This requirement is included as the empirical Bayes method performs poorly when only data of a small number of SNPs is available. The second argument, `method`, is a string parameter which allows the user to choose what modelling approach to take for the purpose of estimating the log density function. The default setting is `method="AIC"`, which is a method very similar to that described by [Ferguson *et al.* (2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/). Other options include `method="fix_df"`, `method="scam"`, `method="gam_nb"` and `method="gam_po"`. If `method="fix_df"`, the degrees of freedom is set to 7. The other three options all enforce additional constraints on the shape of the estimated log density function by i) fitting a generalized additive model (GAM), with integrated smoothness estimation, (`method="gam_nb"` and `method="gam_po"`) and ii) applying two shape constrained additive models (SCAMs) (`method="scam"`). These additional variations of the empirical Bayes approach are detailed in the *'Materials and methods'* section of [Forde *et al.* (2023)](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1010546).
 
-- It returns the above described data frame but with a fourth column, `beta_EB` in which the adjusted estimates of this procedure have been added. 
+- `empirical_Bayes` returns the above described data frame but with a fourth column, `beta_EB` in which the adjusted estimates of this procedure have been added. 
 
-- As the Empirical Bayes method makes adjustments to all SNPs, not only those that have been considered significant, this data frame contains all SNPs.  
+- As the empirical Bayes method makes adjustments to all SNPs, not only those that have been considered significant, this data frame contains all SNPs.  
 
-- **Note:** The conditional likelihood methods adjust each statistic one at a time, and so summary statistics of one individual SNP can easily be inputted into the `conditional_likelihood` function. However, the Empirical Bayes method requires many SNPs as the more information given to the function, the more accurate it will be at modelling the distribution and thus, making adjustments. Thus, as mentioned above, `summary_data` must contain information related to more than 50 SNPs.
+- **Note:** The conditional likelihood methods adjust each statistic one at a time, and so summary statistics of one individual SNP can easily be inputted into the `conditional_likelihood` function. However, the empirical Bayes method requires many SNPs as the more information given to the function, the more accurate it will be at modelling the distribution and thus, making adjustments. Thus, as mentioned above, `summary_data` must contain information related to more than 50 SNPs.
 
 
 - Below is a demonstration of using `empirical_bayes` with our toy data set with the default setting for `method`:
@@ -126,9 +122,9 @@ head(out_EB)
 ```
 
 
-- Unfortunately, the Empirical Bayes estimator described by Ferguson *et al.* (2013) is known to perform poorly in the extreme tails of the distribution. Therefore, it is quite possible that a lack of adjustment for the $\beta$ values of SNPs with the most extreme $z$-statistics could be witnessed with this method. A somewhat ad hoc approach to overcome this issue of combining the Empirical Bayes and the conditional likelihood methods was suggested by Ferguson *et al.* (2013). 
+- Unfortunately, the Empirical Bayes estimator originally described by Ferguson *et al.* (2013) is known to perform poorly in the extreme tails of the distribution. Therefore, it is quite possible that a lack of adjustment for the $\beta$ values of SNPs with the most extreme $z$-statistics could be witnessed with this method. A somewhat ad hoc approach to overcome this issue of combining the Empirical Bayes and the conditional likelihood methods was suggested by Ferguson *et al.* (2013). 
 
-- In order to ensure that shrinkage does occur for the $\beta$ values of these extreme SNPs, it was decided that the following modification would be added to the `empirical_bayes` function detailed here. The basis function of the natural cubic spline has been altered so that the boundary knots are no longer the most extreme $z$-values. Instead, the lower boundary knot is defined as the $10^{\text{th}}$ $z$-statistic when the $z$-statistics lie in increasing order while the upper boundary knot is the $10^{\text{th}}$ $z$-statistic when the $z$-statistics have been arranged in decreasing order. The natural cubic spline is then merely linear beyond these boundary knots. This assists in fixing the 'tails' issue discussed above. We see that the reduction of the estimated $\beta$ values for all of the top 6 most significant SNPs has occurred. 
+- In order to ensure that shrinkage does occur for the $\beta$ values of these extreme SNPs, it was decided that the following modification would be added to the `empirical_bayes` function with `method="AIC"`. The basis function of the natural cubic spline has been altered so that the boundary knots are no longer the most extreme $z$-values. Instead, the lower boundary knot is defined as the $10^{\text{th}}$ $z$-statistic when the $z$-statistics lie in increasing order while the upper boundary knot is the $10^{\text{th}}$ $z$-statistic when the $z$-statistics have been arranged in decreasing order. The natural cubic spline is then merely linear beyond these boundary knots. This assists in fixing the 'tails' issue discussed above. We see that the reduction of the estimated $\beta$ values for all of the top 6 most significant SNPs has occurred. 
 
 
 
@@ -151,13 +147,13 @@ head(out_FIQT)
 
 ### Method 4: Bootstrap 
 
-- Inspired by the bootstrap resampling method detailed in [Faye *et al.* (2011)](https://europepmc.org/article/med/21538984), the function `BR_ss` implements a similar approach which can be easily applied to published sets of GWAS summary statistics without the requirement of access to original individual-level data. The major advantage of our alternative suggested method is the considerable improvement in computational efficiency, with a reasonably low level of conceptual difficulty being maintained. 
+- Inspired by the bootstrap resampling method first detailed in [Faye *et al.* (2011)](https://europepmc.org/article/med/21538984), the function `BR_ss` implements a similar approach which can be easily applied to published sets of GWAS summary statistics without the requirement of access to original individual-level data. The major advantage of our alternative suggested method is the considerable improvement in computational efficiency, with a reasonably low level of conceptual difficulty being maintained. A comprehensive description of this new bootstrap method can be found in the *'Materials and methods'* section of [Forde *et al.* (2023)](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1010546).
 
 - `BR_ss` takes a data frame `summary_data` with three columns: `rsid`, `beta`, `se`, and returns the inputted data frame along with the adjusted estimate for $\beta$, `beta_BR_ss`. Note that all columns of the data frame, `summary data` must contain numerical values, each row must represent a unique SNP, identified by `rsid` and the function requires that there must be at least 5 unique SNPs so that the smoothing spline can be implemented successfully.  The function also has a logical parameter `seed_opt` which can be set to `TRUE` by the user to permit reproducibility. Its default setting is `seed_opt=FALSE`. As this method involves bootstrap implementation, the use of a seed can allow the user to obtain the exact same results for `beta_BR_ss` when running the function many times on the same dataset. The parameter `seed` provides the user with an option to set their desired value for the seed when using `seed_opt=TRUE`. The default for `seed` is the arbitrary value of `1998`. 
 
 $~$
 
-**Method description:**
+**Brief method description:**
 
 - This procedure begins with arranging all $N$ SNPs according to their original $z$-statistics, $z_i = \frac{\hat\beta_i}{\hat{\text{se}(\hat\beta_i)}}$, in descending order. A randomized estimate of the extent of ranking bias for the $k^{th}$ largest $z$-statistic is calculated by means of the parametric bootstrap as follows: 
 
@@ -167,9 +163,9 @@ $~$
 
     3) Then, the estimated bias of SNP $k$, the SNP with the $k^{th}$ largest original $z$-statistic, takes the following form: $$\text{bias}_k = \frac{\hat\beta_{A(k)}^{\text{b}}- \hat\beta_{A(k)}^{\text{oob}}}{\hat{\text{se}(\hat\beta_{A(k)})}} = \frac{\hat\beta_{A(k)}^{\text{b}}- \hat\beta_{A(k)}}{\hat{\text{se}(\hat\beta_{A(k)})}},$$in which $\hat\beta_{A(k)}^{\text{b}}$ is the bootstrap value of the SNP ranked in position $k$ in the ordering of $z_i^{\text{b}}$-statistics, $\hat\beta_{A(k)}^{\text{oob}} = \hat\beta_{A(k)}$ is that same SNP's original $\beta$ estimate and $\hat{\text{se}(\hat\beta_{A(k)})}$ its standard error.
 
-- In the next step of the process, a cubic smoothing spline is fitted to the data in which the $z$-statistics are considered as the inputs and $\text{bias}_k$, their corresponding outputs. The predicted values from this model fitting provides new estimates for the bias correction, $\text{bias}_k^*$ for each SNP. This additional stage in which $\text{bias}_k^*$ is obtained eliminates the need for more than one bootstrap iteration for each SNP in order to ensure competitive performance of the method. This results in a faster approach with increased accuracy. 
+- In the next step of the process, a cubic smoothing spline is fitted to the data in which the $z$-statistics are considered as the inputs and $\text{bias}_k$, their corresponding outputs. The predicted values from this model fitting provides new estimates for the bias correction, $\text{bias}_k^*$ for each SNP. This additional stage in which $\text{bias}_k^*$ is obtained eliminates the need for several bootstrap iterations for each SNP in order to ensure competitive performance of the method. Thus, this results in an approach that is faster as only one bootstrap iteration is required per SNP, while using $\text{bias}_k^*$ instead of $\text{bias}_k$ ensures that the method has greater accuracy. 
 
-- Finally, the new estimate for the true effect size of SNP k, the SNP with the kth largest original z-statistic, is defined as $\hat\beta_k^* = \hat\beta_k - \hat{\text{se}(\hat\beta_k)} \cdot \text{bias}_k^*$. 
+- Finally, the new estimate for the true effect size of SNP k, the SNP with the $k^{\text{th}}$ largest original $z$-statistic, is defined as $\hat\beta_k^* = \hat\beta_k - \hat{\text{se}(\hat\beta_k)} \cdot \text{bias}_k^*$. 
 
 
 
@@ -186,82 +182,91 @@ head(out_BR_ss)
 
 ### Comparing Results
 
-As we have simulated our data set, we have the ability to quantify the amount of bias present in the original naive $\beta$ estimates and also, in our adjusted estimates for each method. We can use measures such as the sum of squared differences (`sq_diff`) and mean of absolute differences (`mean_abs_diff`) to assess this bias. Furthermore, we can also simply obtain the fraction of SNPs which are now *less* biased after adjustment (`frac_less_bias`). These three evaluation metrics can be be mathematically defined as follows, in which there are $n$ significant SNPs: 
+As we have simulated our data set, we have the ability to quantify the amount of bias present in the original naive $\beta$ estimates and also, in our adjusted estimates for each method. Thus, we can briefly examine how each correction method performed with respect to our simulated data set. Similar to [Forde *et al.* (2023)](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1010546), assessment can take place using measures such as the estimated root mean square error of significant SNPs (`rmse`) and the estimated average bias over all significant SNPs (`bias`). These two evaluation metrics can be be mathematically defined as follows, in which there are $N_{\text{sig}}$ significant SNPs: 
 
-- `sq_diff` $= \sum_{i=1}^n (\beta_i - \hat\beta_{\text{adj},i})^2$
-- `mean_abs_diff` $= \frac{1}{n} \sum_{i=1}^n |\beta_i - \hat\beta_{\text{adj},i}|$ 
-- `frac_less_bias` $= \frac{1}{n} \sum_{i=1}^n \text{I} \{ |\beta_i - \hat\beta_{i}| \gt |\beta_i - \hat\beta_{\text{adj},i}| \}$
+- `rmse` $= \sqrt{\frac{1}{N_{\text{sig}}}\sum_{i=1}^{N_{\text{sig}}} (\hat\beta_{\text{adj},i} - \beta_i)^2}$
+- `bias` $= \frac{1}{N_{\text{sig}}} \sum_{i=1}^{N_{\text{sig}}} ( \hat\beta_{\text{adj},i}- \beta_i)$ 
 
-First, we take a look at the conditional likelihood method as follows, in which only SNPs that are originally deemed significant are included: 
+
+[$\star$]{style="color: blue;"} **Note:** This average bias will be computed separately for significant SNPs with positive and negative true effects to avoid the bias in either direction simply cancelling each other out. 
+
+[$\star$]{style="color: blue;"} **Note:** We compare our methods based on their performance with respect to SNPs that pass a certain threshold as these are the SNPs that have association estimates affected by winner's curse and most often, it is the effect sizes of these SNPs that researchers are most interested in. 
+
+
+We consider a significance threshold of $\alpha = 5 \times 10^{-8}$ and subset the outputted data frames as required. 
+
 
 ```{r}
-sq_diff_1 <- data.frame(naive = sum((true_beta[out_CL$rsid] - out_CL$beta)^2), beta.cl1 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl1)^2),  beta.cl2 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl2)^2),  beta.cl3 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl3)^2))
-sq_diff_1
+## Simulated true effect sizes:
+true_beta <- sim_dataset$true$true_beta 
 
-mean_abs_diff_1 <- data.frame(naive = mean(abs(true_beta[out_CL$rsid] - out_CL$beta)), beta.cl1 = mean(abs(true_beta[out_CL$rsid] - out_CL$beta.cl1)),  beta.cl2 = mean(abs(true_beta[out_CL$rsid] - out_CL$beta.cl2)),  beta.cl3 = mean(abs(true_beta[out_CL$rsid] - out_CL$beta.cl3)))
-mean_abs_diff_1
-
-frac_less_bias_1 <- data.frame(beta.cl1 = (sum(abs(true_beta[out_CL$rsid] - out_CL$beta) > abs(true_beta[out_CL$rsid] - out_CL$beta.cl1)))/nrow(out_CL), beta.cl2 = (sum(abs(true_beta[out_CL$rsid] - out_CL$beta) > abs(true_beta[out_CL$rsid] - out_CL$beta.cl2)))/nrow(out_CL), beta.cl3 = (sum(abs(true_beta[out_CL$rsid] - out_CL$beta) > abs(true_beta[out_CL$rsid] - out_CL$beta.cl3)))/nrow(out_CL))
-frac_less_bias_1
-```
-
-For the first two quantities, the values for all three conditional likelihood methods are less than that of the naive estimate and we find that at least `r round(frac_less_bias_1[1,1],2)*100`% of the significant SNPs are now less biased.
-
-
-Next, we investigate the other three methods described above which take into account all SNPs, not just those with $p$-values less than a specified threshold. Thus, when computing the values below, $n$ is now equal to the total number of SNPs, i.e. $n = 1,000,000$.
-
-```{r}
-sq_diff_2 <- data.frame(naive = sum((true_beta[out_EB$rsid] - out_EB$beta)^2), beta_EB = sum((true_beta[out_EB$rsid] - out_EB$beta_EB)^2), beta_FIQT = sum((true_beta[out_FIQT$rsid] - out_FIQT$beta_FIQT)^2), beta_BR_ss = sum((true_beta[out_BR_ss$rsid] - out_BR_ss$beta_BR_ss)^2))
-sq_diff_2
-
-mean_abs_diff_2 <- data.frame(naive = mean(abs(true_beta[out_EB$rsid] - out_EB$beta)), beta_EB = mean(abs(true_beta[out_EB$rsid] - out_EB$beta_EB)), beta_FIQT = mean(abs(true_beta[out_FIQT$rsid] - out_FIQT$beta_FIQT)), beta_BR_ss = mean(abs(true_beta[out_BR_ss$rsid] - out_BR_ss$beta_BR_ss)))
-mean_abs_diff_2
-
-frac_less_bias_2 <- data.frame(beta_EB = (sum(abs(true_beta[out_EB$rsid] - out_EB$beta) > abs(true_beta[out_EB$rsid] - out_EB$beta_EB)))/nrow(out_EB), beta_FIQT = (sum(abs(true_beta[out_FIQT$rsid] - out_FIQT$beta) > abs(true_beta[out_FIQT$rsid] - out_FIQT$beta_FIQT)))/nrow(out_FIQT), beta_BR_ss = (sum(abs(true_beta[out_BR_ss$rsid] - out_BR_ss$beta) > abs(true_beta[out_BR_ss$rsid] - out_BR_ss$beta_BR_ss)))/nrow(out_BR_ss))
-frac_less_bias_2
-
-```
-Again, we see that in the top two cases, the value associated with the naive estimate is greatest. This assures us that the new adjusted estimates provided by each method are indeed less biased than the original $\beta$ estimate. In fact, for each method, at least `r round(min(frac_less_bias_2[1,]),2)*100`% of the association estimates of all SNPs are now less biased. 
-
-
-Finally, we can compare the performance of all methods for the SNPs with raw $p$-values less than `5e-8`.
-```{r}
+## Subset required data sets:
 out_EB_sig <- out_EB[2*pnorm(abs(out_EB$beta/out_EB$se), lower.tail = FALSE) < 5e-8,]
 out_FIQT_sig <- out_FIQT[2*pnorm(abs(out_FIQT$beta/out_FIQT$se), lower.tail=FALSE) < 5e-8,]
 out_BR_ss_sig <- out_BR_ss[2*pnorm(abs(out_BR_ss$beta/out_BR_ss$se), lower.tail=FALSE) < 5e-8,]
-
-sq_diff_3 <- data.frame(naive = sum((true_beta[out_CL$rsid] - out_CL$beta)^2), beta.cl1 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl1)^2),  beta.cl2 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl2)^2),  beta.cl3 = sum((true_beta[out_CL$rsid] - out_CL$beta.cl3)^2), beta_EB = sum((true_beta[out_EB_sig$rsid] - out_EB_sig$beta_EB)^2), beta_FIQT = sum((true_beta[out_FIQT_sig$rsid] - out_FIQT_sig$beta_FIQT)^2), beta_BR_ss = sum((true_beta[out_BR_ss_sig$rsid] - out_BR_ss_sig$beta_BR_ss)^2))
-sq_diff_3
-
-mean_abs_diff_3 <- data.frame(naive = mean(abs(true_beta[out_CL$rsid] - out_CL$beta)), beta.cl1 = mean(abs(true_beta[out_CL$rsid] - out_CL$beta.cl1)),  beta.cl2 = mean(abs(true_beta[out_CL$rsid] - out_CL$beta.cl2)),  beta.cl3 = mean(abs(true_beta[out_CL$rsid] - out_CL$beta.cl3)), beta_EB = mean(abs(true_beta[out_EB_sig$rsid] - out_EB_sig$beta_EB)), beta_FIQT = mean(abs(true_beta[out_FIQT_sig$rsid] - out_FIQT_sig$beta_FIQT)), beta_BR_ss = mean(abs(true_beta[out_BR_ss_sig$rsid] - out_BR_ss_sig$beta_BR_ss)))
-mean_abs_diff_3
-
-frac_less_bias_3 <- data.frame(beta.cl1 = (sum(abs(true_beta[out_CL$rsid] - out_CL$beta) > abs(true_beta[out_CL$rsid] - out_CL$beta.cl1)))/nrow(out_CL), beta.cl2 = (sum(abs(true_beta[out_CL$rsid] - out_CL$beta) > abs(true_beta[out_CL$rsid] - out_CL$beta.cl2)))/nrow(out_CL), beta.cl3 = (sum(abs(true_beta[out_CL$rsid] - out_CL$beta) > abs(true_beta[out_CL$rsid] - out_CL$beta.cl3)))/nrow(out_CL), beta_EB = (sum(abs(true_beta[out_EB_sig$rsid] - out_EB_sig$beta) > abs(true_beta[out_EB_sig$rsid] - out_EB_sig$beta_EB)))/nrow(out_EB_sig), beta_FIQT = (sum(abs(true_beta[out_FIQT_sig$rsid] - out_FIQT_sig$beta) > abs(true_beta[out_FIQT_sig$rsid] - out_FIQT_sig$beta_FIQT)))/nrow(out_FIQT_sig), beta_BR_ss = (sum(abs(true_beta[out_BR_ss_sig$rsid] - out_BR_ss_sig$beta) > abs(true_beta[out_BR_ss_sig$rsid] - out_BR_ss_sig$beta_BR_ss)))/nrow(out_BR_ss_sig))
-frac_less_bias_3
-
 ```
 
 
-$~$
-$~$
+The estimated root mean square error of significant SNPs for each method is computed below. It can be seen that all methods demonstrate improvements over merely using the naive unadjusted association estimates as the `rmse` values for each method are lower than that of `naive`. The bootstrap method provides the lowest value for `rmse`.
 
-In addition, we can gain a visual insight into the adjustments made by these functions by plotting the adjusted *absolute* values along with the naive estimates and the true *absolute* $\beta$ values of SNPs which are originally deemed as significant, i.e. those with raw $p$-values less than `5e-8`, as follows: 
+```{r}
+## rmse
+rmse <- data.frame(naive = sqrt(mean((out_CL$beta - true_beta[out_CL$rsid])^2)), CL1 = sqrt(mean((out_CL$beta.cl1 - true_beta[out_CL$rsid])^2)), CL2 = sqrt(mean((out_CL$beta.cl2 - true_beta[out_CL$rsid])^2)), CL3= sqrt(mean((out_CL$beta.cl3 - true_beta[out_CL$rsid])^2)),EB = sqrt(mean((out_EB_sig$beta_EB - true_beta[out_EB_sig$rsid])^2)), FIQT = sqrt(mean((out_FIQT_sig$beta_FIQT - true_beta[out_FIQT_sig$rsid])^2)), boot= sqrt(mean((out_BR_ss_sig$beta_BR_ss - true_beta[out_BR_ss_sig$rsid])^2)))
+rmse
+```
+
+The next metric, the average bias over all significant SNPs with positive association estimates, is included below. Here, we wish to obtain values closer to zero than the `naive` approach and it can be seen that all methods achieve this.  
+
+
+```{r}
+## bias positive
+pos_sig <- out_CL$rsid[out_CL$beta > 0]
+pos_sigA <- which(out_CL$rsid %in% pos_sig)
+
+bias_up <- data.frame(naive = mean(out_CL$beta[pos_sigA] - true_beta[pos_sig]), CL1 = mean(out_CL$beta.cl1[pos_sigA] - true_beta[pos_sig]), CL2 = mean(out_CL$beta.cl2[pos_sigA] - true_beta[pos_sig]), CL3= mean(out_CL$beta.cl3[pos_sigA] - true_beta[pos_sig]),EB = mean(out_EB_sig$beta_EB[pos_sigA] - true_beta[pos_sig]), FIQT = mean(out_FIQT_sig$beta_FIQT[pos_sigA] - true_beta[pos_sig]), boot= mean(out_BR_ss_sig$beta_BR_ss[pos_sigA] - true_beta[pos_sig]))
+bias_up
+```
+
+In a similar manner, the average bias over all significant SNPs with negative association estimates, is computed. Again, we see that the application of all methods result in, on average, less biased association estimates for these SNPs, as desired. 
+
+
+```{r}
+## bias negative
+neg_sig <- out_CL$rsid[out_CL$beta < 0]
+neg_sigA <- which(out_CL$rsid %in% neg_sig)
+
+bias_down <- data.frame(naive = mean(out_CL$beta[neg_sigA] - true_beta[neg_sig]), CL1 = mean(out_CL$beta.cl1[neg_sigA] - true_beta[neg_sig]), CL2 = mean(out_CL$beta.cl2[neg_sigA] - true_beta[neg_sig]), CL3= mean(out_CL$beta.cl3[neg_sigA] - true_beta[neg_sig]),EB = mean(out_EB_sig$beta_EB[neg_sigA] - true_beta[neg_sig]), FIQT = mean(out_FIQT_sig$beta_FIQT[neg_sigA] - true_beta[neg_sig]), boot= mean(out_BR_ss_sig$beta_BR_ss[neg_sigA] - true_beta[neg_sig]))
+bias_down
+```
+
+
+[$\star$]{style="color: blue;"} **Note:** In the above results, it is seen that the empirical Bayes method doesn't seem to be performing as well as the other methods, i.e. the reductions in `rmse` and `bias` are small in comparison. The reason for this is perhaps that it is the original form of the empirical Bayes method that has been used here. It is possible that using another variation of the method, for example setting `method="gam_nb"` or `method="scam"`, would result in improvements, as shown in [Forde *et al.* (2023)](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1010546).
+
+To complement the above, we provide an illustration of boxplots obtained for the root mean square error of significant SNPs (**RMSE of sig. SNPs at $5 \times 10^{-8}$**), plotted for each winner's curse correction method (**Method**). 
+
 
 ```{r, fig.height=4.5,fig.width=6.5, warning=FALSE}
-library("RColorBrewer")
+library(RColorBrewer)
+library(ggplot2)
 col <- brewer.pal(8,"Dark2")
-  
-plot(density(abs(out_EB_sig$beta)),ylim=c(0,80),xlim=c(-0.01,0.09),main="Comparing Winner's Curse Methods",col=col[1],lwd=2)
-lines(density(abs(true_beta[out_CL$rsid])),col=col[2],lwd=2)
-lines(density(abs(out_FIQT_sig$beta_FIQT)),col=col[3],lwd=2)
-lines(density(abs(out_CL$beta.cl1)),col=col[4],lwd=2)
-lines(density(abs(out_CL$beta.cl2)),col=col[5],lwd=2)
-lines(density(abs(out_CL$beta.cl3)),col=col[6],lwd=2)
-lines(density(abs(out_EB_sig$beta_EB)),col=col[7],lwd=2)
-lines(density(abs(out_BR_ss_sig$beta_BR_ss)),col=col[8],lwd=2)
-legend(-0.008, 77.5, legend=c("beta_naive", "true_beta","beta_FIQT","beta.cl1","beta.cl2","beta.cl3","beta_EB", "beta_BR_ss"),
-       col=col,lty=1,lwd=2,cex=0.75)
 
+all_results <- data.frame(rsid = c(rep(out_CL$rsid,7)), beta = c(rep(out_CL$beta,7)), se = c(rep(out_CL$se,7)), adj_beta = c(out_CL$beta,out_CL$beta.cl1,out_CL$beta.cl2,out_CL$beta.cl3,out_EB_sig$beta_EB,out_FIQT_sig$beta_FIQT,out_BR_ss_sig$beta_BR_ss), method = c(rep("naive",34),rep("CL1",34),rep("CL2",34),rep("CL3",34),rep("EB",34),rep("FIQT",34),rep("boot",34)))
+all_results$rmse <- sqrt((all_results$adj_beta - true_beta[all_results$rsid])^2)
+all_results$method <- factor(all_results$method, levels=c("naive","CL1", "CL2", "CL3", "EB", "boot", "FIQT"))
+
+ggplot(all_results,aes(x=method,y=rmse,fill=method, color=method)) + geom_boxplot(size=0.7,aes(fill=method, color=method, alpha=0.2)) + scale_fill_manual(values=c(col[1],col[2],col[3],col[4],col[5],col[6],col[7])) + scale_color_manual(values=c(col[1],col[2],col[3],col[4],col[5],col[6],col[7]))  + xlab("Method") +
+  ylab(expression(paste("RMSE of sig. SNPs at  ", 5%*%10^-8))) + theme_bw() + geom_hline(yintercept=0, colour="black") +  theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1),text = element_text(size=12),legend.position = "none", strip.text = element_text(face="italic")) 
+```
+
+
+In addition, we can gain a visual insight into the adjustments made by these functions by constructing a **density** plot with the adjusted *absolute* values along with the naive estimates and the true *absolute* $\beta$ values of significant SNPs, as follows: 
+
+```{r, fig.height=4.5,fig.width=6.5, warning=FALSE}
+true <- data.frame(rsid = c(out_CL$rsid), beta=c(out_CL$beta), se=c(out_CL$se),adj_beta=true_beta[all_results$rsid],method=c(rep("true",34)))
+all_resultsA <- rbind(all_results[,1:5],true)
+
+ggplot(all_resultsA, aes(x=abs(adj_beta),colour=method,fill=method)) + geom_density(alpha=0.05,size=1) + scale_color_brewer(palette="Dark2") + scale_fill_brewer(palette="Dark2") + xlim(-0.01,0.08) +
+  ylab("Density") + xlab(expression(paste("|", beta, "| " , "of sig. SNPs at  ", 5%*%10^-8))) + theme_bw() +  theme(text = element_text(size=12)) + labs(fill = "Method",colour="Method")
 ```
 
 
@@ -270,3 +275,57 @@ $~$
 $~$
 
 
+### Application of methods to a real data set
+
+In this final section, we will provide a short demonstration of applying these winner's curse correction methods to a real data set. 
+
+Briefly, the data set we will use is a subset of the first BMI data set used in [Forde *et al.* (2023)](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1010546), which was obtained from the UK Biobank. In order to obtain a smaller data set suitable for demonstration purposes in this vignette, LD clumping was performed on the data set used in the aforementioned paper using the `ld_clump()` function from the [ieugwasr R package](https://mrcieu.github.io/ieugwasr/). The LD (*r*-squared) threshold for clumping was set to 0.01 while the physical distance threshold used was 100 kb. This procedure provided a data set of 272,604 SNPs with corresponding association estimates (`beta`) and standard errors (`se`) as well as association estimates obtained in an independent *replication* GWAS of a similar size (`beta_rep`). The first six rows of this data set are outputted below. 
+
+
+```{r}
+BMI_UKBB <- read.csv("https://raw.githubusercontent.com/amandaforde/winnerscurse_realdata/main/data/summary_stats_BMI.txt",quote = "", row.names = NULL, col.names = c("chr","pos","rsid","beta","se","beta_rep"), stringsAsFactors = FALSE) 
+
+head(BMI_UKBB)
+```
+
+
+We apply the correction methods to this data set as follows and obtain adjusted association estimates for significant SNPs at the genome-wide significance threshold of $5 \times 10^{-8}$.
+
+```{r}
+BMI_data <- BMI_UKBB[,3:5]
+
+out_CL_BMI <- conditional_likelihood(summary_data = BMI_data, alpha = 5e-8)
+out_EB_BMI <- empirical_bayes(summary_data = BMI_data)
+out_FIQT_BMI <- FDR_IQT(summary_data = BMI_data)
+out_boot_BMI <- BR_ss(summary_data = BMI_data, seed=2020)
+
+## Subset required data sets:
+out_EB_BMI_sig <- out_EB_BMI[2*pnorm(abs(out_EB_BMI$beta/out_EB_BMI$se), lower.tail = FALSE) < 5e-8,]
+out_FIQT_BMI_sig <- out_FIQT_BMI[2*pnorm(abs(out_FIQT_BMI$beta/out_FIQT_BMI$se), lower.tail=FALSE) < 5e-8,]
+out_boot_BMI_sig <- out_boot_BMI[2*pnorm(abs(out_boot_BMI$beta/out_boot_BMI$se), lower.tail=FALSE) < 5e-8,]
+```
+
+[$\star$]{style="color: blue;"} **Note:** In the case of real data, the ***true*** association values are unknown. Therefore, in order to evaluate the performance of methods, we will make use of `beta_rep`, the association estimates obtained in an independent *replication* GWAS of a similar size. These association estimates are considered to be ***unbiased***, and thus can be used to obtain an expression for the estimated mean square error (MSE) of significant SNPs. This expression is given in *Eq [14]* of [Forde *et al.* (2023)](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1010546) and can be computed for each method as shown below. It can be seen that each method provides an estimated MSE value lower than that of the naive approach of using the unadjusted association estimates from the discovery GWAS.  
+
+
+```{r}
+## mse
+beta_rep <- BMI_UKBB$beta_rep[BMI_UKBB$rsid %in% out_CL_BMI$rsid]
+
+mse <- data.frame(naive = mean((beta_rep - out_CL_BMI$beta)^2) - mean(out_CL_BMI$se^2), CL1 = mean((beta_rep - out_CL_BMI$beta.cl1)^2) - mean(out_CL_BMI$se^2), CL2 = mean((beta_rep - out_CL_BMI$beta.cl2)^2) - mean(out_CL_BMI$se^2), CL3 = mean((beta_rep - out_CL_BMI$beta.cl3)^2) - mean(out_CL_BMI$se^2), EB = mean((beta_rep - out_EB_BMI_sig$beta_EB)^2) - mean(out_EB_BMI_sig$se^2), boot = mean((beta_rep - out_boot_BMI_sig$beta_BR_ss)^2) - mean(out_boot_BMI_sig$se^2), FIQT = mean((beta_rep - out_FIQT_BMI_sig$beta_FIQT)^2) - mean(out_FIQT_BMI_sig$se^2))
+
+mse
+```
+
+For illustration purposes, we again simply produce a **density** plot with the adjusted *absolute* values along with the naive estimates and the true *absolute* $\beta$ values of significant SNPs.
+
+
+```{r, fig.height=4.5,fig.width=6.5, warning=FALSE}
+all_results <- data.frame(rsid = c(rep(out_CL_BMI$rsid,7)), beta = c(rep(out_CL_BMI$beta,7)), se = c(rep(out_CL_BMI$se,7)), adj_beta = c(out_CL_BMI$beta,out_CL_BMI$beta.cl1,out_CL_BMI$beta.cl2,out_CL_BMI$beta.cl3,out_EB_BMI_sig$beta_EB,out_FIQT_BMI_sig$beta_FIQT,out_boot_BMI_sig$beta_BR_ss), method = c(rep("naive",214),rep("CL1",214),rep("CL2",214),rep("CL3",214),rep("EB",214),rep("FIQT",214),rep("boot",214)))
+all_results$method <- factor(all_results$method, levels=c("naive","CL1", "CL2", "CL3", "EB", "boot", "FIQT"))
+rep <- data.frame(rsid = c(out_CL_BMI$rsid), beta=c(out_CL_BMI$beta), se=c(out_CL_BMI$se),adj_beta=beta_rep,method=c(rep("rep",214)))
+all_resultsA <- rbind(all_results[,1:5],rep)
+
+ggplot(all_resultsA, aes(x=abs(adj_beta),colour=method,fill=method)) + geom_density(alpha=0.05,size=1) + scale_color_brewer(palette="Dark2") + scale_fill_brewer(palette="Dark2") + xlim(-0.1,0.4) +
+  ylab("Density") + xlab(expression(paste("|", beta, "| " , "of sig. SNPs at  ", 5%*%10^-8))) + theme_bw() +  theme(text = element_text(size=12)) + labs(fill = "Method",colour="Method")
+```
