@@ -21,24 +21,19 @@ library(winnerscurse)
 ```
 
 
+This third vignette briefly illustrates how our R package, `winnerscurse`, can be used to generate **standard errors** and **confidence intervals** for certain adjusted association estimates, obtained using the *'discovery only'* winner's curse correction methods. In order to demonstrate how the functionality of the functions, `se_adjust`
+
+
+
 Using the same toy data set as was used to demonstrate the application of the adjustment functions, we will show how two other functions included in the package; `se_adjust` and `cl_interval`, may be implemented and discuss the properties of each.  
 
-Firstly, the toy data set is created as before - a data frame with columns `rsid`, `beta` and `se`:
+We create the same toy data set as that used in the [first vignette](https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html):
+
 ```{r}
 set.seed(1998)
-
-n_snps <- 10^6
-effect_snps <- 10000
-n_samples <- 30000
-maf <- runif(n_snps,0.01,0.5)
-true_beta <- rnorm(effect_snps,0,1)
-h2 <- 0.7 # variance explained by effect SNPs
-var_y <- sum(2*maf[1:effect_snps]*(1-maf[1:effect_snps])*true_beta^2)/h2
-true_beta <- true_beta/sqrt(var_y) # scaling to represent a phenotype with variance 1
-true_beta <- c(true_beta, rep(0,n_snps-effect_snps))
-se <- sqrt((1 - 2*maf*(1-maf)*true_beta^2)/(2*(n_samples-2)*maf*(1-maf)))
-
-summary_stats <- data.frame(rsid=seq(1,n_snps),beta=rnorm(n=n_snps,mean=true_beta,sd=se),se=se)
+sim_dataset <- sim_stats(nsnp=10^6,h2=0.4,prop_effect=0.01,nid=50000)
+## simulated GWAS summary statistics
+summary_stats <- sim_dataset$disc
 ```
 
 

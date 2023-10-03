@@ -172,7 +172,7 @@ $~$
 
 
 ```{r}
-out_BR_ss <- BR_ss(summary_data = summary_stats, seed=2020)
+out_BR_ss <- BR_ss(summary_data = summary_stats, seed_opt=TRUE, seed=2020)
 head(out_BR_ss)
 ```
 
@@ -262,7 +262,7 @@ ggplot(all_results,aes(x=method,y=rmse,fill=method, color=method)) + geom_boxplo
 In addition, we can gain a visual insight into the adjustments made by these functions by constructing a **density** plot with the adjusted *absolute* values along with the naive estimates and the true *absolute* $\beta$ values of significant SNPs, as follows: 
 
 ```{r, fig.height=4.5,fig.width=6.5, warning=FALSE}
-true <- data.frame(rsid = c(out_CL$rsid), beta=c(out_CL$beta), se=c(out_CL$se),adj_beta=true_beta[all_results$rsid],method=c(rep("true",34)))
+true <- data.frame(rsid = c(out_CL$rsid), beta=c(out_CL$beta), se=c(out_CL$se),adj_beta=true_beta[out_CL$rsid],method=c(rep("true",34)))
 all_resultsA <- rbind(all_results[,1:5],true)
 
 ggplot(all_resultsA, aes(x=abs(adj_beta),colour=method,fill=method)) + geom_density(alpha=0.05,size=1) + scale_color_brewer(palette="Dark2") + scale_fill_brewer(palette="Dark2") + xlim(-0.01,0.08) +

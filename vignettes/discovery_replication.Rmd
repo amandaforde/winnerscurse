@@ -21,47 +21,53 @@ library(winnerscurse)
 ```
 
 
-This package also includes methods which use both a discovery data set and a replication data set in order to obtain a less biased estimate of $\beta$. Similar to the demonstration of methods which use just the discovery data set, we will first create two toy data sets and then, illustrate how a user may employ the package's functions to adjust for the bias imposed by winner's curse. The methods that are currently accessible include: 
+Our R package, `winnerscurse`, also contains several functions which have the ability to obtain more accurate SNP-trait association estimates when the summary statistics from two genetic association studies, namely the discovery and replication GWASs, are available. Thus, this second vignette demonstrates how the package can be used to obtain new adjusted association estimates for each SNP using these two data sets. Similar to the [first vignette](https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html) which focused on *'discovery only'* methods, we first use the function `sim_stats` to create two toy data sets and then, illustrate how a user may employ the package's functions to adjust for the bias imposed by winner's curse. 
+
+The methods that are currently available for implementation include: 
 
 1. Conditional Likelihood method - adapted from [Zhong and Prentice (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2536726/)
 2. UMVCUE method - [Bowden and Dudbridge (2009)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2726957/)
 
-It is important to note that with both of these methods, adjustments are only made to SNPs that are deemed significant in the discovery data set, i.e. these SNPs have a $p$-value less than that of the specified threshold, $\alpha$. 
+It is important to note that with both of these methods, adjustments are only made to SNPs that are deemed significant in the discovery data set, i.e. the $p$-values in the discovery data set of these SNPs are less than that of the specified threshold, $\alpha$. 
 
-A third method has been added which obtains a new association estimate for each significant SNP in the discovery data set using a combination of the discovery and replication estimates:
+A third method has also been added which obtains a new association estimate for each significant SNP in the discovery data set using a combination of the discovery and replication estimates:
 
 3. MSE minimization method - based on [Ferguson et al. (2017)](https://pubmed.ncbi.nlm.nih.gov/28745132/)
 
-### Addition of toy replication data set 
+### Creating two toy data sets
+
+- The function `sim_stats` allows users to simulate two data sets of GWAS summary statistics which are based on the same true underlying SNP-trait association values. This provides users with simulated discovery and replication GWAS summary statistics to which the aforementioned correction methods can then be applied.
+
+- When considering obtaining a simulated set of summary statistics for both discovery and replication GWASs, `sim_stats` requires the user to specify **six** arguments, namely `nsnp`, `h2`, `prop_effect`, `nid`, `rep` and `rep_nid`. The first four arguments are defined just as in the first vignette, while `rep` and `rep_nid` are defined as follows:
+
+1. `rep`: a logical parameter, i.e. `TRUE` or `FALSE`, which allows the user to specify if they wish to simulate summary statistics for a replication GWAS as well
+2. `rep_nid`: the number of samples in the replication study
+
+- In order to obtain summary statistics for a replication GWAS, the user must change `rep` from its default setting of `rep=FALSE` to `rep=TRUE`. It is noted that the default value for `rep_nid` is `rep_nid=50000`. Thus, if the default values are used in `sim_stats` for every argument except `rep`, two sets of summary statistics will be simulated for 1,000,000 independent SNPs in which 1% have a true effect on this trait with moderate heritability and a total of 50,000 individuals have been sampled in both the discovery and replication studies. 
+
+- As mentioned in the first vignette, `sim_stats` outputs a list with three components, `true`, `disc` and `rep`. When both discovery and replication GWASs are considered and the function parameter `rep` has been set to `TRUE`, the third element of this list will no longer be `NULL`. Instead, a data frame with three columns is outputted. Similar to `disc`, for each SNP, the `rep` data frame contains its ID number, its estimated effect size obtained in this replication study and associated standard error. We again note that this function outputs both sets of summary statistics in a suitable way so that the winner's curse correction methods can be directly applied, i.e. in the form of a **data frame with three columns `rsid`, `beta` and `se`**.
+
 
 ```{r}
 set.seed(1998)
-n_snps <- 10^6
-effect_snps <- 0.01*n_snps
-n_samples <- 30000
-maf <- runif(n_snps,0.01,0.5)
-true_beta <- rnorm(effect_snps,0,1)
-h2 <- 0.7 # variance explained by effect SNPs
-var_y <- sum(2*maf[1:effect_snps]*(1-maf[1:effect_snps])*true_beta^2)/h2
-true_beta <- true_beta/sqrt(var_y) # scaling to represent a phenotype with variance 1
-true_beta <- c(true_beta, rep(0,n_snps-effect_snps))
-se <- sqrt((1 - 2*maf*(1-maf)*true_beta^2)/(2*(n_samples-2)*maf*(1-maf)))
-stats_disc <- data.frame(rsid=seq(1,n_snps),beta=rnorm(n=n_snps,mean=true_beta,sd=se),se=se)
 
-n_samples_rep <- 300000
-se_rep <- sqrt((1 - 2*maf*(1-maf)*true_beta^2)/(2*(n_samples_rep-2)*maf*(1-maf)))
-stats_rep <- data.frame(rsid=seq(1,n_snps),beta=rnorm(n=n_snps,mean=true_beta,sd=se_rep),se=se_rep)
+sim_dataset <- sim_stats(nsnp=10^6,h2=0.4,prop_effect=0.01,nid=50000,rep=TRUE,rep_nid=50000)
 
-head(stats_disc)
-head(stats_rep)
+## simulated discovery GWAS summary statistics
+disc_stats <- sim_dataset$disc
+head(disc_stats)
+
+## simulated replication GWAS summary statistics
+rep_stats <- sim_dataset$rep
+head(rep_stats)
 ```
 
 
 ### Method 1: Conditional Likelihood 
 
-- The function `condlike_rep` implements a version of the conditional likelihood method for obtaining bias-reduced estimates of $\beta$ described in [Zhong and Prentice (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2536726/). 
+- The function `condlike_rep` implements a version of the conditional likelihood method for obtaining bias-reduced association estimates described in [Zhong and Prentice (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2536726/). 
 
-- The function requires as inputs two independent data sets, one representing a discovery GWAS, `summary_disc`, and the other a replication study with identical SNPs, `summary_rep`, as well as a specification of the significance threshold, `alpha`, to be used. As before, the data sets must be in the form of data frames with columns `rsid`, `beta` and `se`, all columns of the data frames must contain numerical values and each row of both data frames must represent a unique SNP, identified by `rsid`.  SNPs must be in the exact same order in both data sets, i.e. the identity `summary_rep$rsid == summary_disc$rsid` must evaluate to `TRUE`. 
+- The function requires as inputs two independent data sets, one representing a discovery GWAS, `summary_disc`, and the other a replication study with identical SNPs, `summary_rep`, as well as a specification of the significance threshold, `alpha`, to be used. As before, the data sets must be in the form of data frames with columns `rsid`, `beta` and `se`, all columns of the data frames must contain numerical values and each row of both data frames must represent a unique SNP, identified by `rsid`. SNPs must be in the exact same order in both data sets, i.e. the identity `summary_rep$rsid == summary_disc$rsid` must evaluate to `TRUE`. 
 
 - Furthermore, the parameter `conf_interval` in `condlike_rep` provides the user with the option to obtain confidence intervals for each of the adjusted association estimates. The default setting is `conf_interval=FALSE`. Inserting `conf_interval=TRUE` when using the function will return three sets of lower and upper confidence interval boundaries for each SNP, each set corresponding to a particular form of adjusted estimate. The final parameter `conf_level` takes a numerical value between 0 and 1 which specifies the confidence interval, with the default being `0.95`.
 
@@ -76,14 +82,14 @@ $$f(x;\beta) = \frac{\frac{1}{\sigma_{\text{com}}} \phi\left(\frac{x-\beta}{\sig
  
 - Note that this function, $f(x;\beta)$ is slightly different from that given in the paper as only one selection cut-point is imposed here. 
 
-- Finally, Zhong and Prectice (2008) noted that simulation studies showed that $\hat\beta_{\text{com}}$ tended to have upward bias while $\hat\beta_{\text{MLE}}$ over-corrected and therefore, a combination of the two in the following form was proposed: 
+- Finally, Zhong and Prentice (2008) noted that simulation studies showed that $\hat\beta_{\text{com}}$ tended to have upward bias while $\hat\beta_{\text{MLE}}$ over-corrected and therefore, a combination of the two in the following form was proposed: 
 $$\hat\beta_{\text{MSE}} = \frac{\hat\sigma^2_{\text{com}}\cdot \hat\beta_{\text{com}} + (\hat\beta_{\text{com}} - \hat\beta_{\text{MLE}})^2\cdot\hat\beta_{\text{MLE}}}{\sigma^2_{\text{com}}+(\hat\beta_{\text{com}} - \hat\beta_{\text{MLE}})^2}.$$
 This $\hat\beta_{\text{MSE}}$ holds the final column of the outputted data frame in the default setting. 
 
-- The use of `condlike_rep` with our toy data sets in which `conf_interval=FALSE` is demonstrated below, with a significance threshold value of `10e-6`:
+- The use of `condlike_rep` with our toy data sets in which `conf_interval=FALSE` is demonstrated below, with a significance threshold value of `5e-8`:
 ```{r}
-out1 <- condlike_rep(summary_disc=stats_disc, summary_rep=stats_rep, alpha=10e-6)
-head(out1)
+out_CL <- condlike_rep(summary_disc=disc_stats, summary_rep=rep_stats, alpha=5e-8)
+head(out_CL)
 ```
 
 $~$
@@ -95,26 +101,27 @@ $~$
 - We implement `condlike_rep` on our toy data sets with `conf_interval` now set to `TRUE` to show the form in which the output now takes. A similar data frame to that above is returned with 95% confidence intervals also included for each adjusted association estimate for each SNP.
 
 ```{r}
-out1_conf <- condlike_rep(summary_disc=stats_disc, summary_rep=stats_rep, alpha=10e-6, conf_interval=TRUE, conf_level=0.95)
-head(out1_conf)
+out_CL_conf <- condlike_rep(summary_disc=disc_stats, summary_rep=rep_stats, alpha=5e-8, conf_interval=TRUE, conf_level=0.95)
+head(out_CL_conf)
 ```
 
-- **Note:** The current computation of confidence intervals may not work in every situation and thus, ongoing work is being done to resolve this. 
+[$\star$]{style="color: blue;"} **Note:** As the current form of `condlike_rep` uses the R function `uniroot` which aims to find values for `beta_MLE_lower` and `beta_MLE_upper` numerically, it is possible that `uniroot` may fail to successfully achieve this in some situations. We thus urge users to take care when using `condlike_rep` to obtain confidence intervals and to be mindful of this potential failure of `uniroot`.
+
 
 ### Method 2: UMVCUE
 
 - The implementation of `UMVCUE` is very similar to the function described above in the sense that `UMVCUE` requires the same inputs; discovery and replication data sets in the form of three-columned data frames together with a threshold value, `alpha`. Furthermore, the outputted data frame is in the same form with just one extra column providing the adjusted estimate, `beta_UMVCUE`.
 
-- Selection also occurs here at just one stage - SNPs are deemed as significant if their $p$-values corresponding to $\mid \frac{\hat\beta_1}{\sigma_1}\mid$ are smaller than the given threshold. 
+- Selection also occurs here at just one stage as SNPs are deemed as significant if their $p$-values corresponding to $\mid \frac{\hat\beta_1}{\sigma_1}\mid$ are smaller than the given threshold. 
 
 - The function `UMVCUE` executes the method detailed in [Bowden and Dudbridge (2009)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2726957/). No adaptations have been made to the method described. 
 
 - It is worth noting that, as with all conditional likelihood methods, the method used in `condlike_rep` makes adjustments to each SNP one at a time with no information relating to other SNPs required for this adjustment. However, after ordering SNPs based on significance, for a single SNP, `UMVCUE` also uses the data of SNPs on either side of it to assist with the adjustment.
 
-- `UMVCUE` can be applied to the toy data sets as followed, with `alpha` again specified as `10e-6`:
+- `UMVCUE` can be applied to the toy data sets as followed, with `alpha` again specified as `5e-8`:
 ```{r}
-out2 <- UMVCUE(summary_disc = stats_disc, summary_rep = stats_rep, alpha = 10e-6)
-head(out2)
+out_UMVCUE <- UMVCUE(summary_disc = disc_stats, summary_rep = rep_stats, alpha = 5e-8)
+head(out_UMVCUE)
 ```
 
 ### Method 3: MSE minimization 
@@ -127,102 +134,148 @@ head(out2)
 
 - For the default setting `spline=TRUE`, a cubic smoothing spline is applied in which the values of $z_{\text{disc}} = \frac{\hat\beta_{\text{disc}}}{\sigma_{\text{disc}}}$ are considered as inputs and $\hat{B} = \hat\beta_{\text{disc}} - \hat\beta_{\text{rep}}$, the corresponding outputs. The predicted values for $\hat{B}$ from this process, $\hat{B}^*$ say, are then used instead of $\hat{B}$ when computing $\hat\beta_{\text{joint}}$ for each SNP.
 
-- We apply `MSE_minimizer` to our toy data sets, once with the default setting for `spline` and once with `spline=FALSE`. Again for convenient demonstration purposes, we specify the significance threshold as `10e-6`.
+- We apply `MSE_minimizer` to our toy data sets, once with the default setting for `spline` and once with `spline=FALSE`. Again for convenient demonstration purposes, we specify the significance threshold as `5e-8`.
 ```{r}
-out3 <- MSE_minimizer(summary_disc = stats_disc, summary_rep = stats_rep, alpha=10e-6, spline=FALSE)
-out4 <- MSE_minimizer(summary_disc = stats_disc, summary_rep = stats_rep, alpha=10e-6)
+out_minimizerA <- MSE_minimizer(summary_disc = disc_stats, summary_rep = rep_stats, alpha=5e-8, spline=FALSE)
+out_minimizerB <- MSE_minimizer(summary_disc = disc_stats, summary_rep = rep_stats, alpha=5e-8)
 
-head(out3)
-head(out4)
+head(out_minimizerA)
+head(out_minimizerB)
 ```
 
 
 
 
 
-### Visualisation
+### Comparing Results
 
 
-- We can illustrate the performance of these three functions; `condlike_rep`, `UMVCUE` and `MSE_minimizer`, as follows. It is clear that all methods show an improvement on the estimates obtained from the discovery data set. However, the plots show that a further investigation will be required in order to evaluate if the adjusted estimates are less biased than the mere use of replication estimates. 
+Just as in the first vignette, we can briefly compare the performance of our correct methods using measures such as the estimated root mean square error of significant SNPs (`rmse`) and the estimated average bias over all significant SNPs (`bias`). The significant SNPs we refer to here are those that have been deemed significant at a threshold of $\alpha=5 \times 10^{-8}$ in the discovery GWAS. 
 
-- In the second graph, it can be seen that there must be very little difference between the replication estimates and those obtained using `UMVCUE` as the density curves of `beta_rep` and `beta_UMVCUE` nearly overlap completely. 
+```{r}
+## Simulated true effect sizes:
+true_beta <- sim_dataset$true$true_beta
+```
 
-```{r, warning = FALSE}
-library("RColorBrewer")
+
+The estimated root mean square error of significant SNPs for each method is computed below. It is clear that all methods show an improvement on the estimates obtained from the discovery data set. However, certain further investigation will be required in order to evaluate if the adjusted estimates are less biased or more accurate than the mere use of replication estimates.
+
+```{r}
+## rmse
+rmse <- data.frame(disc = sqrt(mean((out_CL$beta_disc - true_beta[out_CL$rsid])^2)), rep = sqrt(mean((out_CL$beta_rep - true_beta[out_CL$rsid])^2)), CL_com = sqrt(mean((out_CL$beta_com - true_beta[out_CL$rsid])^2)), CL_MLE = sqrt(mean((out_CL$beta_MLE - true_beta[out_CL$rsid])^2)), CL_MSE = sqrt(mean((out_CL$beta_MSE - true_beta[out_CL$rsid])^2)), UMVCUE = sqrt(mean((out_UMVCUE$beta_UMVCUE - true_beta[out_UMVCUE$rsid])^2)), minimizerA = sqrt(mean((out_minimizerA$beta_joint - true_beta[out_minimizerA$rsid])^2)), minimizerB = sqrt(mean((out_minimizerB$beta_joint - true_beta[out_minimizerB$rsid])^2)))
+rmse
+```
+
+The next metric, the average bias over all significant SNPs with positive association estimates, is included below. 
+```{r}
+## bias positive
+pos_sig <- out_CL$rsid[out_CL$beta_disc > 0]
+pos_sigA <- which(out_CL$rsid %in% pos_sig)
+
+bias_up <- data.frame(disc = mean(out_CL$beta_disc[pos_sigA] - true_beta[pos_sig]), rep = mean(out_CL$beta_rep[pos_sigA] - true_beta[pos_sig]), CL_com = mean(out_CL$beta_com[pos_sigA] - true_beta[pos_sig]), CL_MLE = mean(out_CL$beta_MLE[pos_sigA] - true_beta[pos_sig]), CL_MSE = mean(out_CL$beta_MSE[pos_sigA] - true_beta[pos_sig]), UMVCUE = mean(out_UMVCUE$beta_UMVCUE[pos_sigA] - true_beta[pos_sig]), minimizerA = mean(out_minimizerA$beta_joint[pos_sigA] - true_beta[pos_sig]), minimizerB = mean(out_minimizerB$beta_joint[pos_sigA] - true_beta[pos_sig]))
+bias_up
+```
+
+In a similar manner, the average bias over all significant SNPs with negative association estimates, is computed. 
+
+```{r}
+## bias negative
+neg_sig <- out_CL$rsid[out_CL$beta_disc < 0]
+neg_sigA <- which(out_CL$rsid %in% neg_sig)
+
+bias_down <- data.frame(disc = mean(out_CL$beta_disc[neg_sigA] - true_beta[neg_sig]), rep = mean(out_CL$beta_rep[neg_sigA] - true_beta[neg_sig]), CL_com = mean(out_CL$beta_com[neg_sigA] - true_beta[neg_sig]), CL_MLE = mean(out_CL$beta_MLE[neg_sigA] - true_beta[neg_sig]), CL_MSE = mean(out_CL$beta_MSE[neg_sigA] - true_beta[neg_sig]), UMVCUE = mean(out_UMVCUE$beta_UMVCUE[neg_sigA] - true_beta[neg_sig]), minimizerA = mean(out_minimizerA$beta_joint[neg_sigA] - true_beta[neg_sig]), minimizerB = mean(out_minimizerB$beta_joint[neg_sigA] - true_beta[neg_sig]))
+bias_down
+```
+
+To complement the above, we provide an illustration of boxplots obtained for the root mean square error of significant SNPs (**RMSE of sig. SNPs at $5 \times 10^{-8}$**), plotted for each winner's curse correction method (**Method**). 
+
+```{r, fig.height=4.5,fig.width=6.5, warning=FALSE}
+library(RColorBrewer)
+library(ggplot2)
 col <- brewer.pal(8,"Dark2")
+col1 <- brewer.pal(11,"RdYlBu")
 
-plot(density(abs(out1$beta_disc)),ylim=c(0,68),xlim=c(-0.01,0.08),main="Conditional Likelihood Winner's Curse Adjustment",col=col[1],lwd=2)
-lines(density(abs(true_beta[out1$rsid])),col=col[2],lwd=2)
-lines(density(abs(out1$beta_rep)),col=col[3],lwd=2)
-lines(density(abs(out1$beta_com)),col=col[4],lwd=2)
-lines(density(abs(out1$beta_MLE)),col=col[5],lwd=2)
-lines(density(abs(out1$beta_MSE)),col=col[8],lwd=2)
-legend(0.05, 67.5, legend=c("beta_disc", "true_beta","beta_rep","beta_com", "beta_MLE", "beta_MSE"),col=c(col[1:5],col[8]),lty=1,lwd=2)
+all_results <- data.frame(rsid = c(rep(out_CL$rsid,8)), beta_disc = c(rep(out_CL$beta_disc,8)), se_disc = c(rep(out_CL$se_disc,8)), adj_beta = c(out_CL$beta_disc,out_CL$beta_rep,out_CL$beta_com,out_CL$beta_MLE,out_CL$beta_MSE,out_UMVCUE$beta_UMVCUE,out_minimizerA$beta_joint,out_minimizerB$beta_joint), method = c(rep("disc",34),rep("rep",34),rep("CL_com",34),rep("CL_MLE",34),rep("CL_MSE",34),rep("UMVCUE",34),rep("minimizerA",34),rep("minimizerB",34)))
+all_results$rmse <- sqrt((all_results$adj_beta - true_beta[all_results$rsid])^2)
+all_results$method <- factor(all_results$method, levels=c("disc","rep","CL_com", "CL_MLE", "CL_MSE", "UMVCUE", "minimizerA", "minimizerB"))
 
-plot(density(abs(out2$beta_disc)),ylim=c(0,72),xlim=c(-0.01,0.08),main="UMVCUE and MSE-minimizer Winner's Curse Adjustment",col=col[1],lwd=2)
-lines(density(abs(true_beta[out2$rsid])),col=col[2],lwd=2)
-lines(density(abs(out2$beta_rep)),col=col[3],lwd=2)
-lines(density(abs(out2$beta_UMVCUE)),col=col[4],lwd=2)
-lines(density(abs(out3$beta_joint)),col=col[5],lwd=2)
-lines(density(abs(out4$beta_joint)),col=col[6],lwd=2)
-legend(0.05, 70.5, legend=c("beta_disc", "true_beta","beta_rep","beta_UMVCUE", "beta_joint", "beta_joint_sp"),
-       col=col,lty=1,lwd=2)
+ggplot(all_results,aes(x=method,y=rmse,fill=method, color=method)) + geom_boxplot(size=0.7,aes(fill=method, color=method, alpha=0.2)) + scale_fill_manual(values=c(col[1],col[2],col[3],col[4],col[5],col[6],col[7],col[8])) + scale_color_manual(values=c(col[1],col[2],col[3],col[4],col[5],col[6],col[7],col[8]))  + xlab("Method") +
+  ylab(expression(paste("RMSE of sig. SNPs at  ", 5%*%10^-8))) + theme_bw() + geom_hline(yintercept=0, colour="black") +  theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1),text = element_text(size=12),legend.position = "none", strip.text = element_text(face="italic")) 
 ```
 
-- In addition, as the data sets are simulated, we can obtain measures such as sum of squared differences and mean of absolute differences for the various estimates, in a similar fashion to as we did in the previous article describing 'discovery only' methods: 
+In addition, we can gain a visual insight into the adjustments made by these functions by constructing a **density** plot with the adjusted *absolute* values along with the naive estimates and the true *absolute $\beta$* values of significant SNPs, as follows:
 
+```{r, fig.height=4.5,fig.width=6.5, warning=FALSE}
+true <- data.frame(rsid = c(out_CL$rsid), beta_disc =c(out_CL$beta_disc), se_disc =c(out_CL$se_disc),adj_beta=true_beta[out_CL$rsid],method=c(rep("true",34)))
+all_resultsA <- rbind(all_results[,1:5],true)
+
+ggplot(all_resultsA, aes(x=abs(adj_beta),colour=method,fill=method)) + geom_density(alpha=0.05,size=1) + scale_fill_manual(values=c(col[1],col[2],col[3],col[4],col[5],col[6],col[7],col[8],col1[11])) + scale_color_manual(values=c(col[1],col[2],col[3],col[4],col[5],col[6],col[7],col[8],col1[11])) + xlim(-0.01,0.08) +
+  ylab("Density") + xlab(expression(paste("|", beta, "| " , "of sig. SNPs at  ", 5%*%10^-8))) + theme_bw() +  theme(text = element_text(size=12)) + labs(fill = "Method",colour="Method")
+```
+
+[$\star$]{style="color: blue;"} **Note:** In the above plot, it can be seen that there must be very little difference between the replication estimates and the adjusted estimates obtained using the UMVCUE method as the density curves of `rep` and `UMVCUE` can be seen to nearly overlap completely. 
+
+
+$~$
+$~$
+
+
+### Using empirical Bayes and bootstrap methods with replication data sets
+
+When a replication data set is also available, as has been described throughout this vignette, we also potentially have the option to employ the empirical Bayes and bootstrap methods. We have seen this work well in simulations, especially in terms of reducing the mean square error (MSE) and thus, consider exploration of their implementation in this setting. With data in the form described above similar to `disc_stats` and `rep_stats`, implementation of both methods could take place on the combined estimator as shown below: 
 
 ```{r}
-sq_diff <- data.frame(disc_naive = sum((true_beta[out2$rsid] - out2$beta_disc)^2), rep_naive = sum((true_beta[out2$rsid] - out2$beta_rep)^2),  beta_UMVCUE = sum((true_beta[out2$rsid] - out2$beta_UMVCUE)^2), beta_com = sum((true_beta[out1$rsid] - out1$beta_com)^2), beta_MLE = sum((true_beta[out1$rsid] - out1$beta_MLE)^2), beta_MSE = sum((true_beta[out1$rsid] - out1$beta_MSE)^2), beta_joint = sum((true_beta[out3$rsid] - out3$beta_joint)^2), beta_joint_sp = sum((true_beta[out4$rsid] - out4$beta_joint)^2))
-sq_diff
+## combined estimator:
+com_stats <- data.frame(rsid = disc_stats$rsid, beta = ((((rep_stats$se)^2)*(disc_stats$beta))+(((disc_stats$se)^2)*(rep_stats$beta)))/(((disc_stats$se)^2) + ((rep_stats$se)^2)), se = sqrt((((disc_stats$se)^2)*((rep_stats$se)^2))/(((disc_stats$se)^2) + ((rep_stats$se)^2))))
 
-mean_abs_diff <- data.frame(disc_naive = mean(abs(true_beta[out2$rsid] - out2$beta_disc)), rep_naive = mean(abs(true_beta[out2$rsid] - out2$beta_rep)),  beta_UMVCUE = mean(abs(true_beta[out2$rsid] - out2$beta_UMVCUE)), beta_com = mean(abs(true_beta[out1$rsid] - out1$beta_com)),beta_MLE = mean(abs(true_beta[out1$rsid] - out1$beta_MLE)), beta_MSE = mean(abs(true_beta[out1$rsid] - out1$beta_MSE)), beta_joint = mean(abs(true_beta[out3$rsid] - out3$beta_joint)), beta_joint_sp = mean(abs(true_beta[out4$rsid] - out4$beta_joint)))
-mean_abs_diff
+## apply methods:
+out_EB_com <- empirical_bayes(com_stats)
+out_boot_com <- BR_ss(com_stats,seed_opt=TRUE,seed=2020)
 
-frac_less_bias <- data.frame(beta_UMVCUE = (sum(abs(true_beta[out2$rsid] - out2$beta_rep) > abs(true_beta[out2$rsid] - out2$beta_UMVCUE)))/nrow(out2), beta_com = (sum(abs(true_beta[out1$rsid] - out1$beta_rep) > abs(true_beta[out1$rsid] - out1$beta_com)))/nrow(out1), beta_MLE = (sum(abs(true_beta[out1$rsid] - out1$beta_rep) > abs(true_beta[out1$rsid] - out1$beta_MLE)))/nrow(out1), beta_MSE = (sum(abs(true_beta[out1$rsid] - out1$beta_rep) > abs(true_beta[out1$rsid] - out1$beta_MSE)))/nrow(out1), beta_joint = (sum(abs(true_beta[out3$rsid] - out3$beta_rep) > abs(true_beta[out3$rsid] - out3$beta_joint)))/nrow(out3), beta_joint_sp = (sum(abs(true_beta[out4$rsid] - out4$beta_rep) > abs(true_beta[out4$rsid] - out4$beta_joint)))/nrow(out4))
-frac_less_bias  # comparison with naive replication estimate
+## rearrange data frames with SNPs ordered 1,2,3.. 
+out_EB_com <- dplyr::arrange(out_EB_com,out_EB_com$rsid)
+out_boot_com <- dplyr::arrange(out_boot_com,out_boot_com$rsid)
+out_EB_com <- data.frame(rsid = disc_stats$rsid, beta_disc = disc_stats$beta, se_disc  = disc_stats$se, beta_rep =rep_stats$beta, se_rep = rep_stats$se, beta_EB=out_EB_com$beta_EB)
+out_boot_com <- data.frame(rsid = disc_stats$rsid, beta_disc = disc_stats$beta, se_disc  = disc_stats$se, beta_rep =rep_stats$beta, se_rep = rep_stats$se, beta_boot=out_boot_com$beta_BR_ss)
+
+## reorder data frames based on significance in discovery data set:
+out_EB_com <- dplyr::arrange(out_EB_com, dplyr::desc(abs(out_EB_com$beta_disc/out_EB_com$se_disc)))
+out_EB_com <- out_EB_com[abs(out_EB_com$beta_disc/out_EB_com$se_disc) > stats::qnorm((5e-8)/2, lower.tail=FALSE),]
+head(out_EB_com)
+
+out_boot_com <- dplyr::arrange(out_boot_com, dplyr::desc(abs(out_boot_com$beta_disc/out_boot_com$se_disc)))
+out_boot_com <- out_boot_com[abs(out_boot_com$beta_disc/out_boot_com$se_disc) > stats::qnorm((5e-8)/2, lower.tail=FALSE),]
+head(out_boot_com)
 ```
 
-### Using Empirical Bayes method when a replication data set is available
 
-- When a replication data set is also available, as has been described throughout this document, we also have the option to employ the empirical Bayes method. We have seen this work considerably well in simulations and thus advise exploration of its implementation in this setting. 
-
-- With data in the form described above similar to `stats_disc` and `stats_rep`, implementation of the empirical Bayes method could take place on the combined estimator as shown below: 
-
-```{r, warning=FALSE}
-  com_stats <- stats_disc
-  com_stats$beta <- ((((stats_rep$se)^2)*(stats_disc$beta))+(((stats_disc$se)^2)*(stats_rep$beta)))/(((stats_disc$se)^2) + ((stats_rep$se)^2))
-  com_stats$se <- sqrt((((stats_disc$se)^2)*((stats_rep$se)^2))/(((stats_disc$se)^2) + ((stats_rep$se)^2)))
-  out_EB_com <- empirical_bayes(com_stats)
-  out_EB_com <- dplyr::arrange(out_EB_com,out_EB_com$rsid)
-  out_EB_com <- data.frame(rsid = stats_disc$rsid, beta_disc = stats_disc$beta, se_disc  = stats_disc$se, beta_rep = stats_rep$beta, se_rep = stats_rep$se, beta_EB=out_EB_com$beta_EB)
-
-  ## reorder based on significance in first set up!
-  out_EB_com <- dplyr::arrange(out_EB_com, dplyr::desc(abs(out_EB_com$beta_disc/out_EB_com$se_disc)))
-  out_EB_com <- out_EB_com[abs(out_EB_com$beta_disc/out_EB_com$se_disc) > stats::qnorm((10e-6)/2, lower.tail=FALSE),]
-  head(out_EB_com)
-```
-
-- We then compute the evaluation metrics as considered above as well as create a plot depicting the results. 
+We now compute similar evaluation metrics to above and produce the two plots in order to demonstrate the performance of the above approaches. 
 
 ```{r}
-sq_diff <- data.frame(disc_naive = sum((true_beta[out2$rsid] - out2$beta_disc)^2), rep_naive = sum((true_beta[out2$rsid] - out2$beta_rep)^2),  beta_EB_joint = sum((true_beta[out_EB_com$rsid] - out_EB_com$beta_EB)^2))
-sq_diff
+## rmse
+rmse <- data.frame(disc = sqrt(mean((out_CL$beta_disc - true_beta[out_CL$rsid])^2)), rep = sqrt(mean((out_CL$beta_rep - true_beta[out_CL$rsid])^2)), EB_com = sqrt(mean((out_EB_com$beta_EB - true_beta[out_CL$rsid])^2)), boot_com = sqrt(mean((out_boot_com$beta_boot - true_beta[out_CL$rsid])^2)))
+rmse
 
-mean_abs_diff <- data.frame(disc_naive = mean(abs(true_beta[out2$rsid] - out2$beta_disc)), rep_naive = mean(abs(true_beta[out2$rsid] - out2$beta_rep)),  beta_EB_joint = mean(abs(true_beta[out_EB_com$rsid] - out_EB_com$beta_EB)))
-mean_abs_diff
+## bias positive
+bias_up <- data.frame(disc = mean(out_CL$beta_disc[pos_sigA] - true_beta[pos_sig]), rep = mean(out_CL$beta_rep[pos_sigA] - true_beta[pos_sig]), EB_com = mean(out_EB_com$beta_EB[pos_sigA] - true_beta[pos_sig]), boot_com = mean(out_boot_com$beta_boot[pos_sigA] - true_beta[pos_sig]))
+bias_up
 
-frac_less_bias <- data.frame(beta_EB_joint = (sum(abs(true_beta[out_EB_com$rsid] - out_EB_com$beta_rep) > abs(true_beta[out_EB_com$rsid] - out_EB_com$beta_EB)))/nrow(out_EB_com))
-frac_less_bias  # comparison with naive replication estimate
+## bias negative
+bias_down <- data.frame(disc = mean(out_CL$beta_disc[neg_sigA] - true_beta[neg_sig]), rep = mean(out_CL$beta_rep[neg_sigA] - true_beta[neg_sig]), EB_com = mean(out_EB_com$beta_EB[neg_sigA] - true_beta[neg_sig]), boot_com = mean(out_boot_com$beta_boot[neg_sigA] - true_beta[neg_sig]))
+bias_down
 ```
 
 
-```{r}
-plot(density(abs(out_EB_com$beta_disc)),ylim=c(0,72),xlim=c(-0.01,0.08),main="Empirical Bayes Winner's Curse Adjustment",col=col[1],lwd=2)
-lines(density(abs(true_beta[out_EB_com$rsid])),col=col[2],lwd=2)
-lines(density(abs(out_EB_com$beta_rep)),col=col[3],lwd=2)
-lines(density(abs(out_EB_com$beta_EB)),col=col[4],lwd=2)
-legend(0.05, 70.5, legend=c("beta_disc", "true_beta","beta_rep","beta_EB_joint"),
-       col=col,lty=1,lwd=2)
+```{r, fig.height=4, fig.width=3.6, warning=FALSE,fig.show='hold'}
+par(mfrow = c(2, 1))
+all_results <- data.frame(rsid = c(rep(out_CL$rsid,4)), beta_disc = c(rep(out_CL$beta_disc,4)), se_disc = c(rep(out_CL$se_disc,4)), adj_beta = c(out_CL$beta_disc,out_CL$beta_rep,out_EB_com$beta_EB,out_boot_com$beta_boot), method = c(rep("disc",34),rep("rep",34),rep("EB_com",34),rep("boot_com",34)))
+all_results$rmse <- sqrt((all_results$adj_beta - true_beta[all_results$rsid])^2)
+all_results$method <- factor(all_results$method, levels=c("disc","rep","EB_com", "boot_com"))
+ggplot(all_results,aes(x=method,y=rmse,fill=method, color=method)) + geom_boxplot(size=0.7,aes(fill=method, color=method, alpha=0.2)) + scale_fill_manual(values=c(col[1],col[2],col[3],col[4])) + scale_color_manual(values=c(col[1],col[2],col[3],col[4]))  + xlab("Method") +
+  ylab(expression(paste("RMSE of sig. SNPs at  ", 5%*%10^-8))) + theme_bw() + geom_hline(yintercept=0, colour="black") +  theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1),text = element_text(size=10),legend.position = "none", strip.text = element_text(face="italic")) 
+true <- data.frame(rsid = c(out_CL$rsid), beta_disc =c(out_CL$beta_disc), se_disc =c(out_CL$se_disc),adj_beta=true_beta[out_CL$rsid],method=c(rep("true",34)))
+all_resultsA <- rbind(all_results[,1:5],true)
+ggplot(all_resultsA, aes(x=abs(adj_beta),colour=method,fill=method)) + geom_density(alpha=0.05,size=1) + scale_fill_manual(values=c(col[1],col[2],col[3],col[4],col[8])) + scale_color_manual(values=c(col[1],col[2],col[3],col[4],col[8])) + xlim(-0.01,0.08) +
+  ylab("Density") + xlab(expression(paste("|", beta, "| " , "of sig. SNPs at  ", 5%*%10^-8))) + theme_bw() +  theme(text = element_text(size=10),legend.position="bottom") + labs(fill = "Method",colour="Method") +guides(fill=guide_legend(nrow=2,byrow=TRUE))
 ```
 
