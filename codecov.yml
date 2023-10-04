@@ -1,27 +1,26 @@
+codecov:
+  bot: codecov-io
+  ci:
+  - travis.org
+  disable_default_path_fixes: false
+  max_report_age: 24
+  notify:
+    after_n_builds: 2
+    wait_for_ci: true
+  require_ci_to_pass: true
+  strict_yaml_branch: yaml-config
+  token: 94d17dd7-4617-4051-9e15-aa2b09fb2f67
 comment: false
-
 coverage:
   status:
-    project:
-      default:
-        target: auto
-        threshold: 1%
-        informational: true
     patch:
       default:
-        target: auto
-        threshold: 1%
         informational: true
+        target: auto
+        threshold: 1.0
+    project:
+      default:
+        informational: true
+        target: auto
+        threshold: 1.0
 
-
-comment: false
-
-language: R
-
-sudo: false
-
-cache: packages
-
-after_success:
-
-- Rscript -e 'covr::codecov()'

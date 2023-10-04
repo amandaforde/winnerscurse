@@ -21,7 +21,7 @@ library(winnerscurse)
 ```
 
 
-This vignette demonstrates how our R package, `winnerscurse`, can be used to obtain new adjusted association estimates for each SNP when only the summary statistics from a single genetic association study, namely the discovery GWAS, are available. In order to do so, we create a toy data set using the function `sim_stats`, which is included in the package, and subsequently, illustrate how a user could engage with each of the package's winner's curse correction functions using this data set.
+This vignette demonstrates how our R package, `winnerscurse`, can be used to obtain new adjusted association estimates for each SNP when only the summary statistics from a single genetic association study, namely the discovery GWAS, are available. In order to do so, we create a toy data set using the function `sim_stats`, which is included in the package, and subsequently, illustrate how a user could engage with each of the package's *Winner's Curse* correction functions using this data set.
 
 The methods currently available for implementation are: 
 
@@ -63,7 +63,7 @@ An important feature which distinguishes these four methods is detailed in the t
 
 - **Note:** For further information regarding simulating GWAS summary statistics, refer to the [text supplement](https://doi.org/10.1371/journal.pgen.1010546.s039) of [Forde *et al.* (2023)](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1010546). This function has been designed based on the details described under the heading *'Quantitative trait with independence assumed'*.
 
-- `sim_stats` outputs a list with three components. When only the discovery GWAS is considered, the third element in this list is merely `NULL`, and so we are just concerned with the first two, `true` and `disc`. `true` is a data frame with two columns, `rsid` which contains identification numbers for each SNP and `true_beta` which is each SNP's simulated true association value. This data frame is most useful if we wish to check how well our winner's curse correction methods are performing. `disc` has three columns representing the summary statistics one would obtain in a discovery GWAS. For each SNP, this data frame contains its ID number, its estimated effect size and associated standard error. We note that this function outputs the set of summary statistics, `disc`, in a suitable way so that the winner's curse correction methods can be directly applied, i.e. in the form of a **data frame with three columns `rsid`, `beta` and `se`.** 
+- `sim_stats` outputs a list with three components. When only the discovery GWAS is considered, the third element in this list is merely `NULL`, and so we are just concerned with the first two, `true` and `disc`. `true` is a data frame with two columns, `rsid` which contains identification numbers for each SNP and `true_beta` which is each SNP's simulated true association value. This data frame is most useful if we wish to check how well our *Winner's Curse* correction methods are performing. `disc` has three columns representing the summary statistics one would obtain in a discovery GWAS. For each SNP, this data frame contains its ID number, its estimated effect size and associated standard error. We note that this function outputs the set of summary statistics, `disc`, in a suitable way so that the *Winner's Curse* correction methods can be directly applied, i.e. in the form of a **data frame with three columns `rsid`, `beta` and `se`.** 
 
 ```{r}
 set.seed(1998)
@@ -103,7 +103,7 @@ head(out_CL)
 
 ### Method 2: Empirical Bayes 
 
-- The function `empirical_bayes` implements the empirical Bayes method for correcting for Winner's Curse, detailed in [Ferguson *et al.* (2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/), with a slight modification. 
+- The function `empirical_bayes` implements the empirical Bayes method for correcting for *Winner's Curse*, detailed in [Ferguson *et al.* (2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/), with a slight modification. 
 
 - The function has two arguments with the first being `summary_data`, the data frame containing `rsid`, `beta` and `se` columns. Again, all columns of the data frame must contain numerical values and each row must represent a unique SNP, identified by `rsid`. In addition, the function requires that the data frame must contain at least 50 rows corresponding to 50 unique SNPs. This requirement is included as the empirical Bayes method performs poorly when only data of a small number of SNPs is available. The second argument, `method`, is a string parameter which allows the user to choose what modelling approach to take for the purpose of estimating the log density function. The default setting is `method="AIC"`, which is a method very similar to that described by [Ferguson *et al.* (2013)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/). Other options include `method="fix_df"`, `method="scam"`, `method="gam_nb"` and `method="gam_po"`. If `method="fix_df"`, the degrees of freedom is set to 7. The other three options all enforce additional constraints on the shape of the estimated log density function by i) fitting a generalized additive model (GAM), with integrated smoothness estimation, (`method="gam_nb"` and `method="gam_po"`) and ii) applying two shape constrained additive models (SCAMs) (`method="scam"`). These additional variations of the empirical Bayes approach are detailed in the *'Materials and methods'* section of [Forde *et al.* (2023)](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1010546).
 
@@ -130,11 +130,11 @@ head(out_EB)
 
 ### Method 3: FDR Inverse Quantile Transformation 
 
-- The function `FDR_IQT` implements the winner's curse adjustment method detailed in [Bigdeli *et al.* (2016)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/). 
+- The function `FDR_IQT` implements the *Winner's Curse* adjustment method detailed in [Bigdeli *et al.* (2016)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/). 
 
 - Similar to the approaches above, the function requires a data frame with three columns `rsid`, `beta` and `se`,  all columns of the data frame must contain numerical values and each row must represent a unique SNP, identified by `rsid`. 
 
-- It also has an argument `min_pval`, for which the default setting is `1e-300`. This is included in order to avoid zero $p$-values which can prove problematic for the function when evaluating `qnorm()`. Furthermore, due to the nature of winner's curse, it is in fact rare that observations with $\mid z \mid > 37$ are biased. 
+- It also has an argument `min_pval`, for which the default setting is `1e-300`. This is included in order to avoid zero $p$-values which can prove problematic for the function when evaluating `qnorm()`. Furthermore, due to the nature of *Winner's Curse*, it is in fact rare that observations with $\mid z \mid > 37$ are biased. 
 
 - The function outputs a data frame similar to that inputted with an additional column containing the adjusted estimate, `beta_FIQT`, and again, the SNPs have been reordered according to their individual $z$-statistics. 
 
@@ -190,7 +190,7 @@ As we have simulated our data set, we have the ability to quantify the amount of
 
 [$\star$]{style="color: blue;"} **Note:** This average bias will be computed separately for significant SNPs with positive and negative true effects to avoid the bias in either direction simply cancelling each other out. 
 
-[$\star$]{style="color: blue;"} **Note:** We compare our methods based on their performance with respect to SNPs that pass a certain threshold as these are the SNPs that have association estimates affected by winner's curse and most often, it is the effect sizes of these SNPs that researchers are most interested in. 
+[$\star$]{style="color: blue;"} **Note:** We compare our methods based on their performance with respect to SNPs that pass a certain threshold as these are the SNPs that have association estimates affected by *Winner's Curse* and most often, it is the effect sizes of these SNPs that researchers are most interested in. 
 
 
 We consider a significance threshold of $\alpha = 5 \times 10^{-8}$ and subset the outputted data frames as required. 
@@ -242,7 +242,7 @@ bias_down
 
 [$\star$]{style="color: blue;"} **Note:** In the above results, it is seen that the empirical Bayes method doesn't seem to be performing as well as the other methods, i.e. the reductions in `rmse` and `bias` are small in comparison. The reason for this is perhaps that it is the original form of the empirical Bayes method that has been used here. It is possible that using another variation of the method, for example setting `method="gam_nb"` or `method="scam"`, would result in improvements, as shown in [Forde *et al.* (2023)](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1010546).
 
-To complement the above, we provide an illustration of boxplots obtained for the root mean square error of significant SNPs (**RMSE of sig. SNPs at $5 \times 10^{-8}$**), plotted for each winner's curse correction method (**Method**). 
+To complement the above, we provide an illustration of boxplots obtained for the root mean square error of significant SNPs (**RMSE of sig. SNPs at $5 \times 10^{-8}$**), plotted for each *Winner's Curse* correction method (**Method**). 
 
 
 ```{r, fig.height=4.5,fig.width=6.5, warning=FALSE}
@@ -277,7 +277,7 @@ $~$
 
 ### Application of methods to a real data set
 
-In this final section, we will provide a short demonstration of applying these winner's curse correction methods to a real data set. 
+In this final section, we will provide a short demonstration of applying these *Winner's Curse* correction methods to a real data set. 
 
 Briefly, the data set we will use is a subset of the first BMI data set used in [Forde *et al.* (2023)](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1010546), which was obtained from the UK Biobank. In order to obtain a smaller data set suitable for demonstration purposes in this vignette, LD clumping was performed on the data set used in the aforementioned paper using the `ld_clump()` function from the [ieugwasr R package](https://mrcieu.github.io/ieugwasr/). The LD (*r*-squared) threshold for clumping was set to 0.01 while the physical distance threshold used was 100 kb. This procedure provided a data set of 272,604 SNPs with corresponding association estimates (`beta`) and standard errors (`se`) as well as association estimates obtained in an independent *replication* GWAS of a similar size (`beta_rep`). The first six rows of this data set are outputted below. 
 

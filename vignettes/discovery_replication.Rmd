@@ -21,7 +21,7 @@ library(winnerscurse)
 ```
 
 
-Our R package, `winnerscurse`, also contains several functions which have the ability to obtain more accurate SNP-trait association estimates when the summary statistics from two genetic association studies, namely the discovery and replication GWASs, are available. Thus, this second vignette demonstrates how the package can be used to obtain new adjusted association estimates for each SNP using these two data sets. Similar to the [first vignette](https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html) which focused on *'discovery only'* methods, we first use the function `sim_stats` to create two toy data sets and then, illustrate how a user may employ the package's functions to adjust for the bias imposed by winner's curse. 
+Our R package, `winnerscurse`, also contains several functions which have the ability to obtain more accurate SNP-trait association estimates when the summary statistics from two genetic association studies, namely the discovery and replication GWASs, are available. Thus, this second vignette demonstrates how the package can be used to obtain new adjusted association estimates for each SNP using these two data sets. Similar to the [first vignette](https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html) which focused on *'discovery only'* methods, we first use the function `sim_stats` to create two toy data sets and then, illustrate how a user may employ the package's functions to adjust for the bias imposed by *Winner's Curse*. 
 
 The methods that are currently available for implementation include: 
 
@@ -45,7 +45,7 @@ A third method has also been added which obtains a new association estimate for 
 
 - In order to obtain summary statistics for a replication GWAS, the user must change `rep` from its default setting of `rep=FALSE` to `rep=TRUE`. It is noted that the default value for `rep_nid` is `rep_nid=50000`. Thus, if the default values are used in `sim_stats` for every argument except `rep`, two sets of summary statistics will be simulated for 1,000,000 independent SNPs in which 1% have a true effect on this trait with moderate heritability and a total of 50,000 individuals have been sampled in both the discovery and replication studies. 
 
-- As mentioned in the first vignette, `sim_stats` outputs a list with three components, `true`, `disc` and `rep`. When both discovery and replication GWASs are considered and the function parameter `rep` has been set to `TRUE`, the third element of this list will no longer be `NULL`. Instead, a data frame with three columns is outputted. Similar to `disc`, for each SNP, the `rep` data frame contains its ID number, its estimated effect size obtained in this replication study and associated standard error. We again note that this function outputs both sets of summary statistics in a suitable way so that the winner's curse correction methods can be directly applied, i.e. in the form of a **data frame with three columns `rsid`, `beta` and `se`**.
+- As mentioned in the first vignette, `sim_stats` outputs a list with three components, `true`, `disc` and `rep`. When both discovery and replication GWASs are considered and the function parameter `rep` has been set to `TRUE`, the third element of this list will no longer be `NULL`. Instead, a data frame with three columns is outputted. Similar to `disc`, for each SNP, the `rep` data frame contains its ID number, its estimated effect size obtained in this replication study and associated standard error. We again note that this function outputs both sets of summary statistics in a suitable way so that the *Winner's Curse* correction methods can be directly applied, i.e. in the form of a **data frame with three columns `rsid`, `beta` and `se`**.
 
 
 ```{r}
@@ -187,7 +187,7 @@ bias_down <- data.frame(disc = mean(out_CL$beta_disc[neg_sigA] - true_beta[neg_s
 bias_down
 ```
 
-To complement the above, we provide an illustration of boxplots obtained for the root mean square error of significant SNPs (**RMSE of sig. SNPs at $5 \times 10^{-8}$**), plotted for each winner's curse correction method (**Method**). 
+To complement the above, we provide an illustration of boxplots obtained for the root mean square error of significant SNPs (**RMSE of sig. SNPs at $5 \times 10^{-8}$**), plotted for each *Winner's Curse* correction method (**Method**). 
 
 ```{r, fig.height=4.5,fig.width=6.5, warning=FALSE}
 library(RColorBrewer)

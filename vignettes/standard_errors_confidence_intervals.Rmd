@@ -21,13 +21,7 @@ library(winnerscurse)
 ```
 
 
-This third vignette briefly illustrates how our R package, `winnerscurse`, can be used to generate **standard errors** and **confidence intervals** for certain adjusted association estimates, obtained using the *'discovery only'* winner's curse correction methods. In order to demonstrate how the functionality of the functions, `se_adjust`
-
-
-
-Using the same toy data set as was used to demonstrate the application of the adjustment functions, we will show how two other functions included in the package; `se_adjust` and `cl_interval`, may be implemented and discuss the properties of each.  
-
-We create the same toy data set as that used in the [first vignette](https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html):
+This third vignette briefly illustrates how our R package, `winnerscurse`, can be used to generate **standard errors** and **confidence intervals** for certain adjusted association estimates, obtained using the *'discovery only'* *Winner's Curse* correction methods. Here, we demonstrate the functionality of the functions, `se_adjust` and `cl_interval`, using a simulated data set of GWAS summary statistics and discuss the properties of each function. We create the same toy data set as that used in the [first vignette](https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html):
 
 ```{r}
 set.seed(1998)
@@ -37,24 +31,21 @@ summary_stats <- sim_dataset$disc
 ```
 
 
-
-### Obtaining standard errors of adjusted estimates 
+### Standard errors of adjusted estimates 
 
 - The function `se_adjust` has three parameters: 
   1. `summary_data`: a data frame in the form as described previously, with columns `rsid`, `beta` and `se`
-  2. `method`: the user is required to specify which method they wish to implement in order to obtain standard errors; `"empirical_bayes"`, `"BR_ss"`, `"FDR_IQT"` 
-  3. `n_boot`: a numerical value which defines the number of bootstraps to be used, the default option is 100 bootstraps. The function requires that this number is greater than 1. 
+  2. `method`: the user is required to specify which *'discovery only'* method they wish to implement in order to obtain standard errors; `"empirical_bayes"`, `"BR_ss"` or `"FDR_IQT"`, which represent the use of the empirical Bayes method, the bootstrap method, or FDR Inverse Quantile Transformation, respectively. All three *Winner's Curse* correction methods are detailed in the [first vignette](https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html). 
+  3. `n_boot`: a numerical value which defines the number of bootstraps to be used, the default option is 100 bootstraps, `n_boot=100`. The function requires that this number is greater than 1. 
 
 
-
-
--  `se_adjust` outputs a data frame in a similar format to other functions included in the package. It includes the `beta` estimates obtained after adjustment using the specified method as well as an additional column `adj_se`. This column contains a value which approximates the standard error of the adjusted estimate of $\beta$.   
+-  `se_adjust` outputs a data frame in a similar format to other functions included in this R package. It includes the `beta` estimates obtained after adjustment using the specified method, `method`, as well as an additional column `adj_se`. This column contains a value which approximates the standard error of the adjusted association estimate.   
  
 - `se_adjust` uses a parametric bootstrap approach. Firstly, using the inputted data set, `n_boot` individual data sets are created as follows. For each bootstrap $\text{b} = 1, \dots$`n_boot`, a value for $\hat\beta^{(\text{b})}$ is generated for each SNP from a normal distribution centred at the naive $\hat\beta$ with standard error, $\text{se}(\hat\beta)$: $$\hat\beta^{(\text{b})} \sim N(\hat\beta, \text{se}(\hat\beta)).$$
 
-- The specified method is then implemented on each of the `n_boot` data sets and so for each SNP, we now have `n_boot` *adjusted* 'bootstrapped' $\hat\beta$ estimates. The standard error is then easily obtained by applying `sd` to this set of adjusted estimates for each SNP.
+- The specified method, `method`, is then implemented on each of the `n_boot` data sets and so for each SNP, we now have `n_boot` *adjusted 'bootstrapped'* $\hat\beta$ estimates. The standard error is then easily obtained by applying the function `sd` to this set of adjusted estimates for each SNP.
 
-- It is important to note that the use of bootstrapping with large data sets can be quite computationally intensive. On a personal computer, executing 100 bootstraps can result in `se_adjust` taking between 1 and 3 minutes to provide an output with a data set such as the one described here. As expected, `BR_ss` tends to take the longest of the three methods.
+- It is important to note that the use of bootstrapping with large data sets can be quite ***computationally intensive***. On a personal computer, executing 100 bootstraps can result in `se_adjust` taking between 1 and 3 minutes to provide an output with a data set such as the one described here. As expected, `BR_ss` tends to take the longest of the three methods.
 
 - An example of the implementation of this function for each of the three methods is given below. For ease of demonstration, a mere 10 bootstraps is used on all occasions. However, a value of `n_boot` as small as this is not advised in practice.
 
@@ -69,14 +60,14 @@ out_FIQT <- se_adjust(summary_data = summary_stats, method = "FDR_IQT", n_boot=1
 head(out_FIQT)
 ```
 
-- Due to the nature of the conditional likelihood methods, we cannot obtain standard errors of the adjusted `beta` estimates in this manner. 
+[$\star$]{style="color: blue;"} **Note:** Due to the nature of the conditional likelihood methods, i.e. adjustments are only made to association estimates of SNPs with $p$-values less than a chosen significance threshold, it is not possible to obtain standard errors of the conditional likelihood adjusted association estimates in the above manner. 
+
+[$\star$]{style="color: blue;"} **Note:** Currently, this package does not provide a way to create confidence intervals for adjusted association estimates obtained using the three methods mentioned above, empirical Bayes, FDR Inverse Quantile Transformation and bootstrap. However, one option that could be considered is to take an approach similar to that of `se_adjust` and obtain quantiles by means of parametric bootstrap. Unfortunately, in order to ensure accurate quantiles, this would require many `n_boot` simulated data sets to which the correction method of choice is applied, resulting in a very computationally intensive process. For this reason, a function that would generate suitable quantiles for each adjusted association estimate has been omitted from the R package for now.  
+
 
 ### Confidence intervals for estimates adjusted by conditional likelihood methods 
 
 - The function `cl_interval` implements the conditional likelihood methods described in [Ghosh *et al.* (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/) for each significant SNP and together with the three adjusted estimates, provides a single confidence interval for each SNP. As well as a data set in the form of a data frame with columns `rsid`, `beta` and `se`, `cl_interval` requires `alpha`, a value which specifies the significance threshold and `conf`, a value between 0 and 1 which determines the confidence interval. The default setting for `conf` is 0.95. 
-
-- **Note:** In order for this function to output an appropriate confidence interval for each significant SNP, the absolute value of the largest
-$z$-statistic in the data set must be less than 150.
 
 - This confidence interval for the adjusted estimate is specified in [Ghosh *et al.* (2008)](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/). With $\mu = \frac{\beta}{\text{se}(\beta)}$ and $z = \frac{\hat\beta}{\hat{\text{se}(\hat\beta)}}$, consider the acceptance region $A(\mu,1-\eta)$, which is defined as the interval between the $\eta/2$ and $1-\eta/2$ quantiles of the conditional density, $p_{\mu}(z | \mid Z \mid > c )$. Having obtained the lower and upper boundaries of this acceptance region, the desired confidence interval is given as: $$(\mu_{\text{lower}}\hat{\text{se}(\hat\beta)}, \mu_{\text{upper}}\hat{\text{se}(\hat\beta)}).$$                           
 
@@ -84,7 +75,7 @@ $z$-statistic in the data set must be less than 150.
 
 - If no SNPs are detected as significant, the function returns a warning message: `WARNING: There are no significant SNPs at this threshold`. 
 
-- `cl_interval` can be used in conjunction with the toy data set as shown below, in which `alpha` is specified as `5e-8` and a 95% confidence interval is desired: 
+- `cl_interval` can be used in conjunction with the toy data set as shown below, in which `alpha` is specified as `5e-8` and a **95%** confidence interval is desired: 
 
 ```{r}
 out <- cl_interval(summary_data=summary_stats, alpha = 5e-8, conf_level=0.95)
@@ -92,10 +83,37 @@ head(out)
 ```
 
 
+[$\star$]{style="color: blue;"} **Note:** Similar to `condlike_rep` discussed in the [second vignette](https://amandaforde.github.io/winnerscurse/articles/discovery_replication.html), `cl_interval` also uses the R function `uniroot` which generates values for `upper` and `lower` numerically and thus, we advise users to be cautious of `uniroot`'s possible failure to obtain appropriate values in certain circumstances. In practice, this failure has been witnessed to occur very rarely. However, in order to ensure a greater possibility that `cl_interval` will produce appropriate confidence intervals for each significant SNPs, `cl_interval` can only be used with data sets in which the absolute value of the **largest naive $z$-statistic is less than 150**. 
+
+
+In the final part of this vignette, we will evaluate and visualise the above obtained confidence intervals. Firstly, we will consider computing the ***coverage*** of these confidence intervals for the significant SNPs, i.e. we calculate what percentage of these confidence intervals contain the true association estimate, as shown below.
+
+```{r}
+## Simulated true effect sizes:
+true_beta <- sim_dataset$true$true_beta[out$rsid]
+
+## coverage
+coverage <- (sum((true_beta > out$lower) & (true_beta < out$upper))/length(true_beta))*100
+coverage
+```
+Next, we construct a *simple forest plot* to illustrate the adjusted association estimates and corresponding confidence intervals for each SNP in our simulated data set. Of the three conditional likelihood adjusted estimates, we include `beta.cl2` as the **effect size** in our plot. 
+
+```{r, fig.height=4.5,fig.width=6.5, warning=FALSE}
+library(ggplot2)
+library(RColorBrewer)
+col <- brewer.pal(8,"Dark2")
+out$index <- c(34:1)
+out$pos <- out$beta > 0
+ggplot(data=out, aes(y=index, x=beta.cl2, xmin=lower, xmax=upper, color=pos)) +
+  geom_point() +
+  geom_errorbarh(height=.5) +
+  scale_color_manual(values=c(col[1],col[2])) +
+  scale_y_continuous(name = "SNP ID", breaks=1:nrow(out), labels=out$rsid) + xlab(expression(paste("Effect size of sig. SNPs at  ", 5%*%10^-8))) + theme_bw() + geom_vline(xintercept=0, colour="black",linetype='dashed', alpha=.5) +  theme(text = element_text(size=10),legend.position="none") 
+```
+
+
 $~$
 $~$
 
-**NOTE:** 
 
-- Future work includes creating confidence intervals for the other three methods. However, we have noted that the adjusted estimates of `BR_ss` do not tend to be normally distributed. One option that we could consider is to obtain quantiles by means of parametric bootstrap, similar to the implementation of `se_adjust`. Unfortunately, this would be very computationally intensive. 
 

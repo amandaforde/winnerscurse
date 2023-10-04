@@ -82,7 +82,8 @@ a single genetic association study, namely the discovery GWAS, are
 available. In order to do so, we create a toy data set using the
 function <code>sim_stats</code>, which is included in the package, and
 subsequently, illustrate how a user could engage with each of the
-package’s winner’s curse correction functions using this data set.</p>
+package’s <em>Winner’s Curse</em> correction functions using this data
+set.</p>
 <p>The methods currently available for implementation are:</p>
 <ol style="list-style-type: decimal">
 <li>Conditional Likelihood methods - <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/" class="external-link">Ghosh
@@ -175,15 +176,16 @@ two, <code>true</code> and <code>disc</code>. <code>true</code> is a
 data frame with two columns, <code>rsid</code> which contains
 identification numbers for each SNP and <code>true_beta</code> which is
 each SNP’s simulated true association value. This data frame is most
-useful if we wish to check how well our winner’s curse correction
-methods are performing. <code>disc</code> has three columns representing
-the summary statistics one would obtain in a discovery GWAS. For each
-SNP, this data frame contains its ID number, its estimated effect size
-and associated standard error. We note that this function outputs the
-set of summary statistics, <code>disc</code>, in a suitable way so that
-the winner’s curse correction methods can be directly applied, i.e. in
-the form of a <strong>data frame with three columns <code>rsid</code>,
-<code>beta</code> and <code>se</code>.</strong></p></li>
+useful if we wish to check how well our <em>Winner’s Curse</em>
+correction methods are performing. <code>disc</code> has three columns
+representing the summary statistics one would obtain in a discovery
+GWAS. For each SNP, this data frame contains its ID number, its
+estimated effect size and associated standard error. We note that this
+function outputs the set of summary statistics, <code>disc</code>, in a
+suitable way so that the <em>Winner’s Curse</em> correction methods can
+be directly applied, i.e. in the form of a <strong>data frame with three
+columns <code>rsid</code>, <code>beta</code> and
+<code>se</code>.</strong></p></li>
 </ul>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1998</span><span class="op">)</span></span>
@@ -264,7 +266,8 @@ appropriate.</p></li>
 </h3>
 <ul>
 <li><p>The function <code>empirical_bayes</code> implements the
-empirical Bayes method for correcting for Winner’s Curse, detailed in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/" class="external-link">Ferguson
+empirical Bayes method for correcting for <em>Winner’s Curse</em>,
+detailed in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4048064/" class="external-link">Ferguson
 <em>et al.</em> (2013)</a>, with a slight modification.</p></li>
 <li><p>The function has two arguments with the first being
 <code>summary_data</code>, the data frame containing <code>rsid</code>,
@@ -347,8 +350,8 @@ significant SNPs has occurred.</p></li>
 <h3 id="method-3-fdr-inverse-quantile-transformation">Method 3: FDR Inverse Quantile Transformation<a class="anchor" aria-label="anchor" href="#method-3-fdr-inverse-quantile-transformation"></a>
 </h3>
 <ul>
-<li><p>The function <code>FDR_IQT</code> implements the winner’s curse
-adjustment method detailed in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/" class="external-link">Bigdeli
+<li><p>The function <code>FDR_IQT</code> implements the <em>Winner’s
+Curse</em> adjustment method detailed in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5013908/" class="external-link">Bigdeli
 <em>et al.</em> (2016)</a>.</p></li>
 <li><p>Similar to the approaches above, the function requires a data
 frame with three columns <code>rsid</code>, <code>beta</code> and
@@ -359,8 +362,8 @@ values and each row must represent a unique SNP, identified by
 default setting is <code>1e-300</code>. This is included in order to
 avoid zero <span class="math inline">\(p\)</span>-values which can prove
 problematic for the function when evaluating <code><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">qnorm()</a></code>.
-Furthermore, due to the nature of winner’s curse, it is in fact rare
-that observations with <span class="math inline">\(\mid z \mid &gt;
+Furthermore, due to the nature of <em>Winner’s Curse</em>, it is in fact
+rare that observations with <span class="math inline">\(\mid z \mid &gt;
 37\)</span> are biased.</p></li>
 <li><p>The function outputs a data frame similar to that inputted with
 an additional column containing the adjusted estimate,
@@ -507,8 +510,8 @@ simply cancelling each other out.</p>
 <p><span style="color: blue;"><span class="math inline">\(\star\)</span></span> <strong>Note:</strong> We
 compare our methods based on their performance with respect to SNPs that
 pass a certain threshold as these are the SNPs that have association
-estimates affected by winner’s curse and most often, it is the effect
-sizes of these SNPs that researchers are most interested in.</p>
+estimates affected by <em>Winner’s Curse</em> and most often, it is the
+effect sizes of these SNPs that researchers are most interested in.</p>
 <p>We consider a significance threshold of <span class="math inline">\(\alpha = 5 \times 10^{-8}\)</span> and subset the
 outputted data frames as required.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
@@ -576,8 +579,8 @@ in improvements, as shown in <a href="https://journals.plos.org/plosgenetics/art
 <p>To complement the above, we provide an illustration of boxplots
 obtained for the root mean square error of significant SNPs
 (<strong>RMSE of sig. SNPs at <span class="math inline">\(5 \times
-10^{-8}\)</span></strong>), plotted for each winner’s curse correction
-method (<strong>Method</strong>).</p>
+10^{-8}\)</span></strong>), plotted for each <em>Winner’s Curse</em>
+correction method (<strong>Method</strong>).</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">RColorBrewer</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
@@ -608,7 +611,8 @@ values of significant SNPs, as follows:</p>
 <h3 id="application-of-methods-to-a-real-data-set">Application of methods to a real data set<a class="anchor" aria-label="anchor" href="#application-of-methods-to-a-real-data-set"></a>
 </h3>
 <p>In this final section, we will provide a short demonstration of
-applying these winner’s curse correction methods to a real data set.</p>
+applying these <em>Winner’s Curse</em> correction methods to a real data
+set.</p>
 <p>Briefly, the data set we will use is a subset of the first BMI data
 set used in <a href="https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1010546" class="external-link">Forde
 <em>et al.</em> (2023)</a>, which was obtained from the UK Biobank. In

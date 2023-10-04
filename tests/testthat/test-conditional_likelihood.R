@@ -16,8 +16,14 @@ test_that("testing if conditional likelihood functions adjust correctly",
 
             expect_true(identical(round(out[,4:6]/out[,3],2),testdf)==1)
 
-            out <- cl_interval(summary_data,alpha=1e-10)
+            out <- conditional_likelihood(summary_data,alpha=1e-10)
             test1 <- out == "WARNING: There are no significant SNPs at this threshold."
             expect_true(identical(test1,TRUE)==1)
+
+
+            summary_data <- data.frame(rsid = c(1,2),beta = c(1.5,1.3), se =c(0.014,0.012))
+            out <- cl_interval(summary_data,alpha)
+            test <- sum(out$beta.cl1 <= out$beta & out$beta.cl2 <= out$beta & out$beta.cl3 <= out$beta)
+            expect_true(identical(as.numeric(test),2)==1)
 
           })

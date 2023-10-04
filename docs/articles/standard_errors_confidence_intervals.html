@@ -80,21 +80,19 @@ adjusted estimates</h1>
 <code>winnerscurse</code>, can be used to generate <strong>standard
 errors</strong> and <strong>confidence intervals</strong> for certain
 adjusted association estimates, obtained using the <em>‘discovery
-only’</em> winner’s curse correction methods.</p>
-<p>Using the same toy data set as was used to demonstrate the
-application of the adjustment functions, we will show how two other
-functions included in the package; <code>se_adjust</code> and
-<code>cl_interval</code>, may be implemented and discuss the properties
-of each.</p>
-<p>Firstly, the toy data set is created as before - a data frame with
-columns <code>rsid</code>, <code>beta</code> and <code>se</code>:</p>
+only’</em> <em>Winner’s Curse</em> correction methods. Here, we
+demonstrate the functionality of the functions, <code>se_adjust</code>
+and <code>cl_interval</code>, using a simulated data set of GWAS summary
+statistics and discuss the properties of each function. We create the
+same toy data set as that used in the <a href="https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html" class="external-link">first
+vignette</a>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1998</span><span class="op">)</span></span>
 <span><span class="va">sim_dataset</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/sim_stats.html">sim_stats</a></span><span class="op">(</span>nsnp<span class="op">=</span><span class="fl">10</span><span class="op">^</span><span class="fl">6</span>,h2<span class="op">=</span><span class="fl">0.4</span>,prop_effect<span class="op">=</span><span class="fl">0.01</span>,nid<span class="op">=</span><span class="fl">50000</span><span class="op">)</span></span>
 <span><span class="co">## simulated GWAS summary statistics</span></span>
 <span><span class="va">summary_stats</span> <span class="op">&lt;-</span> <span class="va">sim_dataset</span><span class="op">$</span><span class="va">disc</span></span></code></pre></div>
 <div class="section level3">
-<h3 id="obtaining-standard-errors-of-adjusted-estimates">Obtaining standard errors of adjusted estimates<a class="anchor" aria-label="anchor" href="#obtaining-standard-errors-of-adjusted-estimates"></a>
+<h3 id="standard-errors-of-adjusted-estimates">Standard errors of adjusted estimates<a class="anchor" aria-label="anchor" href="#standard-errors-of-adjusted-estimates"></a>
 </h3>
 <ul>
 <li>
@@ -106,23 +104,27 @@ previously, with columns <code>rsid</code>, <code>beta</code> and
 <code>se</code>
 </li>
 <li>
-<code>method</code>: the user is required to specify which method
-they wish to implement in order to obtain standard errors;
-<code>"empirical_bayes"</code>, <code>"BR_ss"</code>,
-<code>"FDR_IQT"</code>
-</li>
+<code>method</code>: the user is required to specify which
+<em>‘discovery only’</em> method they wish to implement in order to
+obtain standard errors; <code>"empirical_bayes"</code>,
+<code>"BR_ss"</code> or <code>"FDR_IQT"</code>, which represent the use
+of the empirical Bayes method, the bootstrap method, or FDR Inverse
+Quantile Transformation, respectively. All three <em>Winner’s Curse</em>
+correction methods are detailed in the <a href="https://amandaforde.github.io/winnerscurse/articles/winners_curse_methods.html" class="external-link">first
+vignette</a>.</li>
 <li>
 <code>n_boot</code>: a numerical value which defines the number of
-bootstraps to be used, the default option is 100 bootstraps. The
-function requires that this number is greater than 1.</li>
+bootstraps to be used, the default option is 100 bootstraps,
+<code>n_boot=100</code>. The function requires that this number is
+greater than 1.</li>
 </ol>
 </li>
 <li><p><code>se_adjust</code> outputs a data frame in a similar format
-to other functions included in the package. It includes the
+to other functions included in this R package. It includes the
 <code>beta</code> estimates obtained after adjustment using the
-specified method as well as an additional column <code>adj_se</code>.
-This column contains a value which approximates the standard error of
-the adjusted estimate of <span class="math inline">\(\beta\)</span>.</p></li>
+specified method, <code>method</code>, as well as an additional column
+<code>adj_se</code>. This column contains a value which approximates the
+standard error of the adjusted association estimate.</p></li>
 <li><p><code>se_adjust</code> uses a parametric bootstrap approach.
 Firstly, using the inputted data set, <code>n_boot</code> individual
 data sets are created as follows. For each bootstrap <span class="math inline">\(\text{b} = 1, \dots\)</span><code>n_boot</code>, a
@@ -131,17 +133,18 @@ generated for each SNP from a normal distribution centred at the naive
 <span class="math inline">\(\hat\beta\)</span> with standard error,
 <span class="math inline">\(\text{se}(\hat\beta)\)</span>: <span class="math display">\[\hat\beta^{(\text{b})} \sim N(\hat\beta,
 \text{se}(\hat\beta)).\]</span></p></li>
-<li><p>The specified method is then implemented on each of the
-<code>n_boot</code> data sets and so for each SNP, we now have
-<code>n_boot</code> <em>adjusted</em> ‘bootstrapped’ <span class="math inline">\(\hat\beta\)</span> estimates. The standard error
-is then easily obtained by applying <code>sd</code> to this set of
-adjusted estimates for each SNP.</p></li>
+<li><p>The specified method, <code>method</code>, is then implemented on
+each of the <code>n_boot</code> data sets and so for each SNP, we now
+have <code>n_boot</code> <em>adjusted ‘bootstrapped’</em> <span class="math inline">\(\hat\beta\)</span> estimates. The standard error
+is then easily obtained by applying the function <code>sd</code> to this
+set of adjusted estimates for each SNP.</p></li>
 <li><p>It is important to note that the use of bootstrapping with large
-data sets can be quite computationally intensive. On a personal
-computer, executing 100 bootstraps can result in <code>se_adjust</code>
-taking between 1 and 3 minutes to provide an output with a data set such
-as the one described here. As expected, <code>BR_ss</code> tends to take
-the longest of the three methods.</p></li>
+data sets can be quite <strong><em>computationally
+intensive</em></strong>. On a personal computer, executing 100
+bootstraps can result in <code>se_adjust</code> taking between 1 and 3
+minutes to provide an output with a data set such as the one described
+here. As expected, <code>BR_ss</code> tends to take the longest of the
+three methods.</p></li>
 <li><p>An example of the implementation of this function for each of the
 three methods is given below. For ease of demonstration, a mere 10
 bootstraps is used on all occasions. However, a value of
@@ -178,11 +181,25 @@ practice.</p></li>
 <span><span class="co">#&gt; 4 7261  0.04649358 0.006342549  0.03442008 0.006929783</span></span>
 <span><span class="co">#&gt; 5 6510  0.04611661 0.006499584  0.03364166 0.004833401</span></span>
 <span><span class="co">#&gt; 6 9917  0.04489474 0.006333883  0.03278400 0.007513093</span></span></code></pre></div>
-<ul>
-<li>Due to the nature of the conditional likelihood methods, we cannot
-obtain standard errors of the adjusted <code>beta</code> estimates in
-this manner.</li>
-</ul>
+<p><span style="color: blue;"><span class="math inline">\(\star\)</span></span> <strong>Note:</strong> Due
+to the nature of the conditional likelihood methods, i.e. adjustments
+are only made to association estimates of SNPs with <span class="math inline">\(p\)</span>-values less than a chosen significance
+threshold, it is not possible to obtain standard errors of the
+conditional likelihood adjusted association estimates in the above
+manner.</p>
+<p><span style="color: blue;"><span class="math inline">\(\star\)</span></span> <strong>Note:</strong>
+Currently, this package does not provide a way to create confidence
+intervals for adjusted association estimates obtained using the three
+methods mentioned above, empirical Bayes, FDR Inverse Quantile
+Transformation and bootstrap. However, one option that could be
+considered is to take an approach similar to that of
+<code>se_adjust</code> and obtain quantiles by means of parametric
+bootstrap. Unfortunately, in order to ensure accurate quantiles, this
+would require many <code>n_boot</code> simulated data sets to which the
+correction method of choice is applied, resulting in a very
+computationally intensive process. For this reason, a function that
+would generate suitable quantiles for each adjusted association estimate
+has been omitted from the R package for now.</p>
 </div>
 <div class="section level3">
 <h3 id="confidence-intervals-for-estimates-adjusted-by-conditional-likelihood-methods">Confidence intervals for estimates adjusted by conditional
@@ -199,10 +216,6 @@ each SNP. As well as a data set in the form of a data frame with columns
 specifies the significance threshold and <code>conf</code>, a value
 between 0 and 1 which determines the confidence interval. The default
 setting for <code>conf</code> is 0.95.</p></li>
-<li><p><strong>Note:</strong> In order for this function to output an
-appropriate confidence interval for each significant SNP, the absolute
-value of the largest <span class="math inline">\(z\)</span>-statistic in
-the data set must be less than 150.</p></li>
 <li><p>This confidence interval for the adjusted estimate is specified
 in <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2665019/" class="external-link">Ghosh
 <em>et al.</em> (2008)</a>. With <span class="math inline">\(\mu =
@@ -223,7 +236,8 @@ warning message:
 <code>WARNING: There are no significant SNPs at this threshold</code>.</p></li>
 <li><p><code>cl_interval</code> can be used in conjunction with the toy
 data set as shown below, in which <code>alpha</code> is specified as
-<code>5e-8</code> and a 95% confidence interval is desired:</p></li>
+<code>5e-8</code> and a <strong>95%</strong> confidence interval is
+desired:</p></li>
 </ul>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/cl_interval.html">cl_interval</a></span><span class="op">(</span>summary_data<span class="op">=</span><span class="va">summary_stats</span>, alpha <span class="op">=</span> <span class="fl">5e-8</span>, conf_level<span class="op">=</span><span class="fl">0.95</span><span class="op">)</span></span>
@@ -242,16 +256,51 @@ data set as shown below, in which <code>alpha</code> is specified as
 <span><span class="co">#&gt; 4  0.05848347</span></span>
 <span><span class="co">#&gt; 5  0.05818280</span></span>
 <span><span class="co">#&gt; 6  0.05664522</span></span></code></pre></div>
+<p><span style="color: blue;"><span class="math inline">\(\star\)</span></span> <strong>Note:</strong>
+Similar to <code>condlike_rep</code> discussed in the <a href="https://amandaforde.github.io/winnerscurse/articles/discovery_replication.html" class="external-link">second
+vignette</a>, <code>cl_interval</code> also uses the R function
+<code>uniroot</code> which generates values for <code>upper</code> and
+<code>lower</code> numerically and thus, we advise users to be cautious
+of <code>uniroot</code>’s possible failure to obtain appropriate values
+in certain circumstances. In practice, this failure has been witnessed
+to occur very rarely. However, in order to ensure a greater possibility
+that <code>cl_interval</code> will produce appropriate confidence
+intervals for each significant SNPs, <code>cl_interval</code> can only
+be used with data sets in which the absolute value of the
+<strong>largest naive <span class="math inline">\(z\)</span>-statistic
+is less than 150</strong>.</p>
+<p>In the final part of this vignette, we will evaluate and visualise
+the above obtained confidence intervals. Firstly, we will consider
+computing the <strong><em>coverage</em></strong> of these confidence
+intervals for the significant SNPs, i.e. we calculate what percentage of
+these confidence intervals contain the true association estimate, as
+shown below.</p>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## Simulated true effect sizes:</span></span>
+<span><span class="va">true_beta</span> <span class="op">&lt;-</span> <span class="va">sim_dataset</span><span class="op">$</span><span class="va">true</span><span class="op">$</span><span class="va">true_beta</span><span class="op">[</span><span class="va">out</span><span class="op">$</span><span class="va">rsid</span><span class="op">]</span></span>
+<span></span>
+<span><span class="co">## coverage</span></span>
+<span><span class="va">coverage</span> <span class="op">&lt;-</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="op">(</span><span class="va">true_beta</span> <span class="op">&gt;</span> <span class="va">out</span><span class="op">$</span><span class="va">lower</span><span class="op">)</span> <span class="op">&amp;</span> <span class="op">(</span><span class="va">true_beta</span> <span class="op">&lt;</span> <span class="va">out</span><span class="op">$</span><span class="va">upper</span><span class="op">)</span><span class="op">)</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">true_beta</span><span class="op">)</span><span class="op">)</span><span class="op">*</span><span class="fl">100</span></span>
+<span><span class="va">coverage</span></span>
+<span><span class="co">#&gt; [1] 97.05882</span></span></code></pre></div>
+<p>Next, we construct a <em>simple forest plot</em> to illustrate the
+adjusted association estimates and corresponding confidence intervals
+for each SNP in our simulated data set. Of the three conditional
+likelihood adjusted estimates, we include <code>beta.cl2</code> as the
+<strong>effect size</strong> in our plot.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">RColorBrewer</span><span class="op">)</span></span>
+<span><span class="va">col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/RColorBrewer/man/ColorBrewer.html" class="external-link">brewer.pal</a></span><span class="op">(</span><span class="fl">8</span>,<span class="st">"Dark2"</span><span class="op">)</span></span>
+<span><span class="va">out</span><span class="op">$</span><span class="va">index</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">34</span><span class="op">:</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">out</span><span class="op">$</span><span class="va">pos</span> <span class="op">&lt;-</span> <span class="va">out</span><span class="op">$</span><span class="va">beta</span> <span class="op">&gt;</span> <span class="fl">0</span></span>
+<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span>data<span class="op">=</span><span class="va">out</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>y<span class="op">=</span><span class="va">index</span>, x<span class="op">=</span><span class="va">beta.cl2</span>, xmin<span class="op">=</span><span class="va">lower</span>, xmax<span class="op">=</span><span class="va">upper</span>, color<span class="op">=</span><span class="va">pos</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_point.html" class="external-link">geom_point</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_errorbarh.html" class="external-link">geom_errorbarh</a></span><span class="op">(</span>height<span class="op">=</span><span class="fl">.5</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_manual.html" class="external-link">scale_color_manual</a></span><span class="op">(</span>values<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">col</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,<span class="va">col</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_continuous</a></span><span class="op">(</span>name <span class="op">=</span> <span class="st">"SNP ID"</span>, breaks<span class="op">=</span><span class="fl">1</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span>, labels<span class="op">=</span><span class="va">out</span><span class="op">$</span><span class="va">rsid</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/expression.html" class="external-link">expression</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Effect size of sig. SNPs at  "</span>, <span class="fl">5</span><span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span><span class="fl">10</span><span class="op">^</span><span class="op">-</span><span class="fl">8</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_bw</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_abline.html" class="external-link">geom_vline</a></span><span class="op">(</span>xintercept<span class="op">=</span><span class="fl">0</span>, colour<span class="op">=</span><span class="st">"black"</span>,linetype<span class="op">=</span><span class="st">'dashed'</span>, alpha<span class="op">=</span><span class="fl">.5</span><span class="op">)</span> <span class="op">+</span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>text <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/element.html" class="external-link">element_text</a></span><span class="op">(</span>size<span class="op">=</span><span class="fl">10</span><span class="op">)</span>,legend.position<span class="op">=</span><span class="st">"none"</span><span class="op">)</span> </span></code></pre></div>
+<p><img src="standard_errors_confidence_intervals_files/figure-html/unnamed-chunk-6-1.png" width="624"></p>
 <p><span class="math inline">\(~\)</span> <span class="math inline">\(~\)</span></p>
-<p><strong>NOTE:</strong></p>
-<ul>
-<li>Future work includes creating confidence intervals for the other
-three methods. However, we have noted that the adjusted estimates of
-<code>BR_ss</code> do not tend to be normally distributed. One option
-that we could consider is to obtain quantiles by means of parametric
-bootstrap, similar to the implementation of <code>se_adjust</code>.
-Unfortunately, this would be very computationally intensive.</li>
-</ul>
 </div>
   </div>
 

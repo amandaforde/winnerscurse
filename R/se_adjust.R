@@ -40,7 +40,7 @@ se_adjust <- function(summary_data, method, n_boot = 100){
   stopifnot(all(c("rsid", "beta","se") %in% names(summary_data)))
   stopifnot(!all(is.na(summary_data$rsid)) && !all(is.na(summary_data$beta)) && !all(is.na(summary_data$se)))
   stopifnot(is.numeric(summary_data$beta) && is.numeric(summary_data$se))
-   stopifnot(!any(duplicated(summary_data$rsid)))
+  stopifnot(!any(duplicated(summary_data$rsid)))
   stopifnot(n_boot > 1)
 
   N <- nrow(summary_data)
