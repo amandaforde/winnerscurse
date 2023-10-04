@@ -1,6 +1,6 @@
 <!-- badges: start -->
 
-[![R-CMD-check](https://github.com/amandaforde/winners_curse/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/amandaforde/winners_curse/actions/workflows/R-CMD-check.yaml) [![codecov](https://codecov.io/gh/amandaforde/winnerscurse/branch/main/graph/badge.svg?token=BORRC1EUZ7)](https://app.codecov.io/gh/amandaforde/winnerscurse)
+[![R-CMD-check](https://github.com/amandaforde/winners_curse/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/amandaforde/winnerscurse/actions/workflows/R-CMD-check.yaml) [![codecov](https://codecov.io/gh/amandaforde/winnerscurse/branch/main/graph/badge.svg?token=BORRC1EUZ7)](https://app.codecov.io/gh/amandaforde/winnerscurse)
 <!-- badges: end -->
 
 # Winner's Curse Adjustment Methods for GWAS summary statistics
