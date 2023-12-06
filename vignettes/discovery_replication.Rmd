@@ -195,7 +195,7 @@ library(ggplot2)
 col <- brewer.pal(8,"Dark2")
 col1 <- brewer.pal(11,"RdYlBu")
 
-all_results <- data.frame(rsid = c(rep(out_CL$rsid,8)), beta_disc = c(rep(out_CL$beta_disc,8)), se_disc = c(rep(out_CL$se_disc,8)), adj_beta = c(out_CL$beta_disc,out_CL$beta_rep,out_CL$beta_com,out_CL$beta_MLE,out_CL$beta_MSE,out_UMVCUE$beta_UMVCUE,out_minimizerA$beta_joint,out_minimizerB$beta_joint), method = c(rep("disc",34),rep("rep",34),rep("CL_com",34),rep("CL_MLE",34),rep("CL_MSE",34),rep("UMVCUE",34),rep("minimizerA",34),rep("minimizerB",34)))
+all_results <- data.frame(rsid = c(rep(out_CL$rsid,8)), beta_disc = c(rep(out_CL$beta_disc,8)), se_disc = c(rep(out_CL$se_disc,8)), adj_beta = c(out_CL$beta_disc,out_CL$beta_rep,out_CL$beta_com,out_CL$beta_MLE,out_CL$beta_MSE,out_UMVCUE$beta_UMVCUE,out_minimizerA$beta_joint,out_minimizerB$beta_joint), method = c(rep("disc",33),rep("rep",33),rep("CL_com",33),rep("CL_MLE",33),rep("CL_MSE",33),rep("UMVCUE",33),rep("minimizerA",33),rep("minimizerB",33)))
 all_results$rmse <- sqrt((all_results$adj_beta - true_beta[all_results$rsid])^2)
 all_results$method <- factor(all_results$method, levels=c("disc","rep","CL_com", "CL_MLE", "CL_MSE", "UMVCUE", "minimizerA", "minimizerB"))
 
@@ -206,7 +206,7 @@ ggplot(all_results,aes(x=method,y=rmse,fill=method, color=method)) + geom_boxplo
 In addition, we can gain a visual insight into the adjustments made by these functions by constructing a **density** plot with the adjusted *absolute* values along with the naive estimates and the true *absolute $\beta$* values of significant SNPs, as follows:
 
 ```{r, fig.height=4.5,fig.width=6.5, warning=FALSE}
-true <- data.frame(rsid = c(out_CL$rsid), beta_disc =c(out_CL$beta_disc), se_disc =c(out_CL$se_disc),adj_beta=true_beta[out_CL$rsid],method=c(rep("true",34)))
+true <- data.frame(rsid = c(out_CL$rsid), beta_disc =c(out_CL$beta_disc), se_disc =c(out_CL$se_disc),adj_beta=true_beta[out_CL$rsid],method=c(rep("true",33)))
 all_resultsA <- rbind(all_results[,1:5],true)
 
 ggplot(all_resultsA, aes(x=abs(adj_beta),colour=method,fill=method)) + geom_density(alpha=0.05,size=1) + scale_fill_manual(values=c(col[1],col[2],col[3],col[4],col[5],col[6],col[7],col[8],col1[11])) + scale_color_manual(values=c(col[1],col[2],col[3],col[4],col[5],col[6],col[7],col[8],col1[11])) + xlim(-0.01,0.08) +
@@ -268,12 +268,12 @@ bias_down
 
 ```{r, fig.height=4, fig.width=3.6, warning=FALSE,fig.show='hold'}
 par(mfrow = c(2, 1))
-all_results <- data.frame(rsid = c(rep(out_CL$rsid,4)), beta_disc = c(rep(out_CL$beta_disc,4)), se_disc = c(rep(out_CL$se_disc,4)), adj_beta = c(out_CL$beta_disc,out_CL$beta_rep,out_EB_com$beta_EB,out_boot_com$beta_boot), method = c(rep("disc",34),rep("rep",34),rep("EB_com",34),rep("boot_com",34)))
+all_results <- data.frame(rsid = c(rep(out_CL$rsid,4)), beta_disc = c(rep(out_CL$beta_disc,4)), se_disc = c(rep(out_CL$se_disc,4)), adj_beta = c(out_CL$beta_disc,out_CL$beta_rep,out_EB_com$beta_EB,out_boot_com$beta_boot), method = c(rep("disc",33),rep("rep",33),rep("EB_com",33),rep("boot_com",33)))
 all_results$rmse <- sqrt((all_results$adj_beta - true_beta[all_results$rsid])^2)
 all_results$method <- factor(all_results$method, levels=c("disc","rep","EB_com", "boot_com"))
 ggplot(all_results,aes(x=method,y=rmse,fill=method, color=method)) + geom_boxplot(size=0.7,aes(fill=method, color=method, alpha=0.2)) + scale_fill_manual(values=c(col[1],col[2],col[3],col[4])) + scale_color_manual(values=c(col[1],col[2],col[3],col[4]))  + xlab("Method") +
   ylab(expression(paste("RMSE of sig. SNPs at  ", 5%*%10^-8))) + theme_bw() + geom_hline(yintercept=0, colour="black") +  theme(axis.text.x=element_text(angle=90, vjust=0.5, hjust=1),text = element_text(size=10),legend.position = "none", strip.text = element_text(face="italic")) 
-true <- data.frame(rsid = c(out_CL$rsid), beta_disc =c(out_CL$beta_disc), se_disc =c(out_CL$se_disc),adj_beta=true_beta[out_CL$rsid],method=c(rep("true",34)))
+true <- data.frame(rsid = c(out_CL$rsid), beta_disc =c(out_CL$beta_disc), se_disc =c(out_CL$se_disc),adj_beta=true_beta[out_CL$rsid],method=c(rep("true",33)))
 all_resultsA <- rbind(all_results[,1:5],true)
 ggplot(all_resultsA, aes(x=abs(adj_beta),colour=method,fill=method)) + geom_density(alpha=0.05,size=1) + scale_fill_manual(values=c(col[1],col[2],col[3],col[4],col[8])) + scale_color_manual(values=c(col[1],col[2],col[3],col[4],col[8])) + xlim(-0.01,0.08) +
   ylab("Density") + xlab(expression(paste("|", beta, "| " , "of sig. SNPs at  ", 5%*%10^-8))) + theme_bw() +  theme(text = element_text(size=10),legend.position="bottom") + labs(fill = "Method",colour="Method") +guides(fill=guide_legend(nrow=2,byrow=TRUE))

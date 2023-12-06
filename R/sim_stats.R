@@ -45,7 +45,7 @@
 sim_stats <- function(nsnp=10^6,h2=0.4,prop_effect=0.01,nid=50000,rep=FALSE,rep_nid=50000){
   effect_snps <- prop_effect*nsnp
   maf <- stats::runif(nsnp,0.01,0.5)
-  true_beta <- stats::rnorm(effect_snps,0,sd=sqrt((2*maf*(1-maf))))
+  true_beta <- stats::rnorm(effect_snps,0,sd=1)
   var_y <- sum(2*maf[1:effect_snps]*(1-maf[1:effect_snps])*true_beta^2)/h2
   true_beta <- true_beta/sqrt(var_y)
   true_beta <- c(true_beta, rep(0,nsnp-effect_snps))

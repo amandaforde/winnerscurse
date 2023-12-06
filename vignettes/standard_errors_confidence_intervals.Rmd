@@ -102,7 +102,7 @@ Next, we construct a *simple forest plot* to illustrate the adjusted association
 library(ggplot2)
 library(RColorBrewer)
 col <- brewer.pal(8,"Dark2")
-out$index <- c(34:1)
+out$index <- c(33:1)
 out$pos <- out$beta > 0
 ggplot(data=out, aes(y=index, x=beta.cl2, xmin=lower, xmax=upper, color=pos)) +
   geom_point() +

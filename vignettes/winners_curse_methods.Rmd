@@ -61,7 +61,7 @@ An important feature which distinguishes these four methods is detailed in the t
  
 - With the above specifications, a set of rather realistic summary statistics can be obtained as shown below. For convenience purposes, the following default values have been supplied for the function's arguments: `nsnp=10^6`, `h2=0.4`, `prop_effect=0.01`, `nid=50000`. These values simulate summary statistics for 1,000,000 independent SNPs in which 1% have a true effect on this trait with moderate heritability and a total of 50,000 individuals have been sampled in the study.
 
-- **Note:** For further information regarding simulating GWAS summary statistics, refer to the [text supplement](https://doi.org/10.1371/journal.pgen.1010546.s039) of [Forde *et al.* (2023)](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1010546). This function has been designed based on the details described under the heading *'Quantitative trait with independence assumed'*.
+- **Note:** For further information regarding simulating GWAS summary statistics, refer to the [text supplement](https://doi.org/10.1371/journal.pgen.1010546.s039) of [Forde *et al.* (2023)](https://journals.plos.org/plosgenetics/article?id=10.1371/journal.pgen.1010546). This function has been designed based on the details described under the heading *'Quantitative trait with independence assumed'*. However, note that for step 3) of these details, $\beta_i$ is in fact sampled from the distribution $\beta_i \sim N(0,1)$ instead of $\beta_i \sim N(0, 2 \text{maf}_i(1-\text{maf}_i)$.
 
 - `sim_stats` outputs a list with three components. When only the discovery GWAS is considered, the third element in this list is merely `NULL`, and so we are just concerned with the first two, `true` and `disc`. `true` is a data frame with two columns, `rsid` which contains identification numbers for each SNP and `true_beta` which is each SNP's simulated true association value. This data frame is most useful if we wish to check how well our *Winner's Curse* correction methods are performing. `disc` has three columns representing the summary statistics one would obtain in a discovery GWAS. For each SNP, this data frame contains its ID number, its estimated effect size and associated standard error. We note that this function outputs the set of summary statistics, `disc`, in a suitable way so that the *Winner's Curse* correction methods can be directly applied, i.e. in the form of a **data frame with three columns `rsid`, `beta` and `se`.** 
 
@@ -245,12 +245,12 @@ bias_down
 To complement the above, we provide an illustration of boxplots obtained for the root mean square error of significant SNPs (**RMSE of sig. SNPs at $5 \times 10^{-8}$**), plotted for each *Winner's Curse* correction method (**Method**). 
 
 
-```{r, fig.height=4.5,fig.width=6.5, warning=FALSE}
+```{r, fig.height=4.5,fig.width=6.5, warning=FALSE, message=FALSE}
 library(RColorBrewer)
 library(ggplot2)
 col <- brewer.pal(8,"Dark2")
 
-all_results <- data.frame(rsid = c(rep(out_CL$rsid,7)), beta = c(rep(out_CL$beta,7)), se = c(rep(out_CL$se,7)), adj_beta = c(out_CL$beta,out_CL$beta.cl1,out_CL$beta.cl2,out_CL$beta.cl3,out_EB_sig$beta_EB,out_FIQT_sig$beta_FIQT,out_BR_ss_sig$beta_BR_ss), method = c(rep("naive",34),rep("CL1",34),rep("CL2",34),rep("CL3",34),rep("EB",34),rep("FIQT",34),rep("boot",34)))
+all_results <- data.frame(rsid = c(rep(out_CL$rsid,7)), beta = c(rep(out_CL$beta,7)), se = c(rep(out_CL$se,7)), adj_beta = c(out_CL$beta,out_CL$beta.cl1,out_CL$beta.cl2,out_CL$beta.cl3,out_EB_sig$beta_EB,out_FIQT_sig$beta_FIQT,out_BR_ss_sig$beta_BR_ss), method = c(rep("naive",33),rep("CL1",33),rep("CL2",33),rep("CL3",33),rep("EB",33),rep("FIQT",33),rep("boot",33)))
 all_results$rmse <- sqrt((all_results$adj_beta - true_beta[all_results$rsid])^2)
 all_results$method <- factor(all_results$method, levels=c("naive","CL1", "CL2", "CL3", "EB", "boot", "FIQT"))
 
@@ -262,7 +262,7 @@ ggplot(all_results,aes(x=method,y=rmse,fill=method, color=method)) + geom_boxplo
 In addition, we can gain a visual insight into the adjustments made by these functions by constructing a **density** plot with the adjusted *absolute* values along with the naive estimates and the true *absolute* $\beta$ values of significant SNPs, as follows: 
 
 ```{r, fig.height=4.5,fig.width=6.5, warning=FALSE}
-true <- data.frame(rsid = c(out_CL$rsid), beta=c(out_CL$beta), se=c(out_CL$se),adj_beta=true_beta[out_CL$rsid],method=c(rep("true",34)))
+true <- data.frame(rsid = c(out_CL$rsid), beta=c(out_CL$beta), se=c(out_CL$se),adj_beta=true_beta[out_CL$rsid],method=c(rep("true",33)))
 all_resultsA <- rbind(all_results[,1:5],true)
 
 ggplot(all_resultsA, aes(x=abs(adj_beta),colour=method,fill=method)) + geom_density(alpha=0.05,size=1) + scale_color_brewer(palette="Dark2") + scale_fill_brewer(palette="Dark2") + xlim(-0.01,0.08) +
