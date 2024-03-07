@@ -62,7 +62,7 @@ UMVCUE <- function(summary_disc, summary_rep, alpha=5e-8){
 
   stopifnot(all(c("rsid", "beta","se") %in% names(summary_rep)))
   stopifnot(!all(is.na(summary_rep$rsid)) && !all(is.na(summary_rep$beta)) && !all(is.na(summary_rep$se)))
-  stopifnot(is.numeric(summary_rep$rsid) && is.numeric(summary_rep$rsid) && is.numeric(summary_rep$rsid))
+  stopifnot(is.numeric(summary_rep$beta) && is.numeric(summary_rep$se))
   stopifnot(!any(duplicated(summary_rep$rsid)))
 
   stopifnot(summary_disc$rsid == summary_rep$rsid)
